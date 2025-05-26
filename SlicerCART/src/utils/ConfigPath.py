@@ -10,6 +10,9 @@ class ConfigPath():
     def __init__(self):
         self.set_config_values(INITIAL_CONFIG_FILE)
 
+        self.flag_combobox = True
+        self.combobox_version = 'v00'
+
     @enter_function
     def check_existing_configuration(self):
         """
@@ -53,7 +56,19 @@ class ConfigPath():
                 self.config_yaml = {}
                 self.config_yaml = yaml.safe_load(file)
 
+        # self.all_combobox_version = self.config_yaml['comboboxes'].keys()
+
         return self.config_yaml
+
+    @enter_function
+    def get_comboboxes_versions(self):
+        return self.all_combobox_version
+
+        # appropriate_config = ConfigPath.open_project_config_file()
+        # combobox_versions_initial = appropriate_config['comboboxes'].keys()
+        #
+        # return combobox_versions_initial
+
 
     @enter_function
     # Was in the initial code. Kept here for further usage if needed.
@@ -296,6 +311,19 @@ class ConfigPath():
             final_config_file[element] = initial_config_file_dict[element]
 
         return final_config_file
+
+    @enter_function
+    def set_combobox_flag(self, value=False):
+        self.flag_combobox = value
+
+    @enter_function
+    def set_combobox_version(self, value):
+        self.combobox_version = value
+
+    @enter_function
+    def get_combobox_version(self):
+        return self.combobox_version
+
 
 
 # Creating an instance of ConfigPath. This ensures that all the same

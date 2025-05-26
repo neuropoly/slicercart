@@ -124,10 +124,13 @@ class SlicerCARTWidget(ScriptedLoadableModuleWidget, VTKObservationMixin):
     # MB: code below added in the configuration setup since its absence
     # created issues when trying to load cases after selecting a volume folder.
     self.config_yaml = ConfigPath.open_project_config_file()
+
+    #### ATTENTION MB MB ; DANS LE MAIN MAIS MAYBE DELETE THE COMMENTS
     # ATTENTION! self.current_label_index refers to an index, but it is
     # getting its value based on the first label value (assumes it is always
     # 1): so, first index value = 1 -1 == 0
-    self.current_label_index = (self.config_yaml['labels'][0]['value']-1)
+    # self.current_label_index = (self.config_yaml['labels'][0]['value']-1)
+    self.current_label_index = self.config_yaml['labels'][0]['value']
   
     self.ui.PauseTimerButton.setText('Pause')
     self.ui.SelectVolumeFolder.connect('clicked(bool)', self.onSelectVolumesFolderButton)
@@ -373,8 +376,9 @@ class SlicerCARTWidget(ScriptedLoadableModuleWidget, VTKObservationMixin):
               self.ui.ClassificationGridLayout.itemAt(i).widget().setParent(
                   None)
 
-      comboboxesStartRow = self.setupCheckboxes(3)
-      freetextStartRow = self.setupComboboxes(comboboxesStartRow)
+      comboboxesStartRow = self.setupCheckboxes(3, self.config_yaml)
+      freetextStartRow = self.setupComboboxes(comboboxesStartRow,
+                                              self.config_yaml)
       self.setupFreeText(freetextStartRow)
 
   def set_master_volume_intensity_mask_according_to_modality(self):
@@ -383,12 +387,31 @@ class SlicerCARTWidget(ScriptedLoadableModuleWidget, VTKObservationMixin):
       elif ConfigPath.MODALITY == 'MRI':
             self.segmentEditorNode.SetMasterVolumeIntensityMask(False)
   
-  def setupCheckboxes(self, number_of_columns):
+  # def setupCheckboxes(self, number_of_columns):
+  #     self.checkboxWidgets = {}
+  #
+  #     row_index = 0
+  #
+  #     for i, (objectName, label) in enumerate(self.config_yaml["checkboxes"].items()):
+  #       #print(objectName, label)
+  #       checkbox = qt.QCheckBox()
+  #       checkbox.setText(label)
+  #       checkbox.setObjectName(objectName)
+  #
+  #       row_index = i / number_of_columns + 1
+  #       column_index = i % number_of_columns
+  #
+  #       self.ui.ClassificationGridLayout.addWidget(checkbox, row_index, column_index)
+  #       self.checkboxWidgets[objectName] = checkbox
+  #
+  #
+  #     return row_index + 1
+  def setupCheckboxes(self, number_of_columns, classif_label):
       self.checkboxWidgets = {}
 
       row_index = 0
 
-      for i, (objectName, label) in enumerate(self.config_yaml["checkboxes"].items()):
+      for i, (objectName, label) in enumerate(classif_label["checkboxes"].items()):
         #print(objectName, label)
         checkbox = qt.QCheckBox()
         checkbox.setText(label)
@@ -403,22 +426,43 @@ class SlicerCARTWidget(ScriptedLoadableModuleWidget, VTKObservationMixin):
 
       return row_index + 1
   
-  def setupComboboxes(self, start_row):
+  # def setupComboboxes(self, start_row):
+  #     self.comboboxWidgets = {}
+  #
+  #     row_index = start_row
+  #     for i, (comboBoxName, options) in enumerate(self.config_yaml["comboboxes"].items()):
+  #       comboboxLabel = qt.QLabel(comboBoxName.replace("_", " ").capitalize() + " :")
+  #       comboboxLabel.setStyleSheet("font-weight: bold")
+  #       self.ui.ClassificationGridLayout.addWidget(comboboxLabel, row_index, 0)
+  #
+  #       combobox = qt.QComboBox()
+  #       combobox.setObjectName(comboBoxName)
+  #       for optionKey, optionLabel in options.items():
+  #           combobox.addItem(optionLabel, optionKey)
+  #       self.ui.ClassificationGridLayout.addWidget(combobox, row_index, 1)
+  #       self.comboboxWidgets[comboBoxName] = combobox
+  #       row_index = row_index + 1
+  #     return row_index + 1
+  def setupComboboxes(self, start_row, classif_label):
       self.comboboxWidgets = {}
-      
+      print('')
+
       row_index = start_row
-      for i, (comboBoxName, options) in enumerate(self.config_yaml["comboboxes"].items()):
-        comboboxLabel = qt.QLabel(comboBoxName.replace("_", " ").capitalize() + " :")
-        comboboxLabel.setStyleSheet("font-weight: bold")
-        self.ui.ClassificationGridLayout.addWidget(comboboxLabel, row_index, 0)
-        
-        combobox = qt.QComboBox()
-        combobox.setObjectName(comboBoxName)
-        for optionKey, optionLabel in options.items():
-            combobox.addItem(optionLabel, optionKey)
-        self.ui.ClassificationGridLayout.addWidget(combobox, row_index, 1)
-        self.comboboxWidgets[comboBoxName] = combobox 
-        row_index = row_index + 1
+      for i, (comboBoxName, options) in enumerate(
+              classif_label["comboboxes"].items()):
+          comboboxLabel = qt.QLabel(
+              comboBoxName.replace("_", " ").capitalize() + " :")
+          comboboxLabel.setStyleSheet("font-weight: bold")
+          self.ui.ClassificationGridLayout.addWidget(comboboxLabel, row_index,
+                                                     0)
+
+          combobox = qt.QComboBox()
+          combobox.setObjectName(comboBoxName)
+          for optionKey, optionLabel in options.items():
+              combobox.addItem(optionLabel, optionKey)
+          self.ui.ClassificationGridLayout.addWidget(combobox, row_index, 1)
+          self.comboboxWidgets[comboBoxName] = combobox
+          row_index = row_index + 1
       return row_index + 1
   
   def setupFreeText(self, start_row):
@@ -842,13 +886,11 @@ class SlicerCARTWidget(ScriptedLoadableModuleWidget, VTKObservationMixin):
                               self.visibilityModifiedCallback)
 
       # restart the current timer 
-      self.timers[self.current_label_index] = Timer(
-          number=self.current_label_index)
+      self.timers[self.current_label_index] = Timer(number=self.current_label_index)
       # reset tool 
       self.segmentEditorWidget.setActiveEffectByName("No editing")
       
   # Load all segments at once    
-  @enter_function
   def createNewSegments(self):
       for label in self.config_yaml["labels"]:
           self.onNewLabelSegm(label["name"], label["color_r"], label["color_g"], label["color_b"], label["lower_bound_HU"], label["upper_bound_HU"])
@@ -883,11 +925,10 @@ class SlicerCARTWidget(ScriptedLoadableModuleWidget, VTKObservationMixin):
       Segmentation = self.segmentationNode.GetSegmentation()
       self.SegmentID = Segmentation.GetSegmentIdBySegmentName(segment_name)
       segment = Segmentation.GetSegment(self.SegmentID)
-      segment.SetColor(label_color_r/255,label_color_g/255,label_color_b/255)
+      segment.SetColor(label_color_r/255,label_color_g/255,label_color_b/255) 
       self.onPushButton_select_label(segment_name, label_LB_HU, label_UB_HU)
    
-  @enter_function
-  def onPushButton_select_label(self, segment_name, label_LB_HU, label_UB_HU):
+  def onPushButton_select_label(self, segment_name, label_LB_HU, label_UB_HU):  
       self.segmentationNode=slicer.util.getNodesByClass('vtkMRMLSegmentationNode')[0]
       Segmentation = self.segmentationNode.GetSegmentation()
       self.SegmentID = Segmentation.GetSegmentIdBySegmentName(segment_name)
@@ -895,10 +936,9 @@ class SlicerCARTWidget(ScriptedLoadableModuleWidget, VTKObservationMixin):
       self.updateCurrentPath()
       self.LB_HU = label_LB_HU
       self.UB_HU = label_UB_HU
-
+  
       if (self.MostRecentPausedCasePath != self.currentCasePath and self.MostRecentPausedCasePath != ""):
-        self.timers[self.current_label_index] = Timer(
-            number=self.current_label_index) # new path, new timer
+        self.timers[self.current_label_index] = Timer(number=self.current_label_index) # new path, new timer
       
       self.timer_router()
 
@@ -1021,9 +1061,7 @@ class SlicerCARTWidget(ScriptedLoadableModuleWidget, VTKObservationMixin):
           self.enableSegmentAndPaintButtons()
 
   # for the timer Class not the LCD one
-  @enter_function
   def timer_router(self):
-      self.config_yaml = ConfigPath.open_project_config_file()
       self.timers[self.current_label_index].start()
       self.flag = True
       
@@ -1641,38 +1679,37 @@ class SlicerCARTWidget(ScriptedLoadableModuleWidget, VTKObservationMixin):
       if list_of_segmentation_filenames == []:
           version = version + "01"
       else:
-          existing_versions = self.look_for_existing_version(
-              list_of_segmentation_filenames)
-
+          existing_versions = [(int)(filename.split('_v')[1].split(".")[0]) for
+                               filename in list_of_segmentation_filenames]
           next_version_number = max(existing_versions) + 1
           next_version_number = min(next_version_number, 99)  # max 99 versions
           version = f'{version}{next_version_number:02d}'
       return version
 
-  @enter_function
-  def look_for_existing_version(self, list_of_segmentation_filenames):
-      """
-        Check for all versions in the folder, but avoid to crash if other
-        files than segmentatino are in the folder where segmentation
-        masks should be saved.
-        :param list_of_segmentation_filenames: list of all files in the
-        folder where segmentation should be saved.
-        :return: list of existing versions for the current file
-      """
-      existing_versions = []
-      for filename in list_of_segmentation_filenames:
-          # Check if '_v' exists in the filename
-          if '_v' in filename:
-              try:
-                  # Extract the version number after '_v'
-                  version = int(filename.split('_v')[1].split(".")[0])
-                  existing_versions.append(version)
-              except (IndexError, ValueError):
-                  # Handle cases where splitting or conversion to int fails
-                  print(f"Skipping invalid filename: {filename}")
-          else:
-              print(f"No version found in filename: {filename}")
-      return existing_versions
+  # @enter_function
+  # def look_for_existing_version(self, list_of_segmentation_filenames):
+  #     """
+  #       Check for all versions in the folder, but avoid to crash if other
+  #       files than segmentatino are in the folder where segmentation
+  #       masks should be saved.
+  #       :param list_of_segmentation_filenames: list of all files in the
+  #       folder where segmentation should be saved.
+  #       :return: list of existing versions for the current file
+  #     """
+  #     existing_versions = []
+  #     for filename in list_of_segmentation_filenames:
+  #         # Check if '_v' exists in the filename
+  #         if '_v' in filename:
+  #             try:
+  #                 # Extract the version number after '_v'
+  #                 version = int(filename.split('_v')[1].split(".")[0])
+  #                 existing_versions.append(version)
+  #             except (IndexError, ValueError):
+  #                 # Handle cases where splitting or conversion to int fails
+  #                 print(f"Skipping invalid filename: {filename}")
+  #         else:
+  #             print(f"No version found in filename: {filename}")
+  #     return existing_versions
 
   def msg2_clicked(self, msg2_button):
       if msg2_button.text == 'OK':
@@ -1836,6 +1873,9 @@ class SlicerCARTWidget(ScriptedLoadableModuleWidget, VTKObservationMixin):
   def onLoadClassification(self):
       classificationInformationPath = f'{self.currentOutputPath}{os.sep}{self.currentVolumeFilename}_ClassificationInformation.csv'
       classificationInformation_df = None
+
+      # self.config_yaml = ConfigPath.open_project_config_file()
+
       if os.path.exists(classificationInformationPath):
           classificationInformation_df = pd.read_csv(classificationInformationPath)
       else:
@@ -1855,7 +1895,14 @@ class SlicerCARTWidget(ScriptedLoadableModuleWidget, VTKObservationMixin):
       self.annotator_name = self.ui.Annotator_name.text
       self.annotator_degree = self.ui.AnnotatorDegree.currentText
 
+      self.combobox_version = ConfigPath.get_combobox_version()
+      print('self combobx version', self.combobox_version)
+
+
       classification_df = self.getClassificationInformation()
+
+      print('classificatino df', classification_df)
+
       
       # Create folders if don't exist
       self.createFolders()
