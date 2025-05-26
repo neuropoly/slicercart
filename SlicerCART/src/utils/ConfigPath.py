@@ -11,6 +11,7 @@ class ConfigPath():
         self.set_config_values(INITIAL_CONFIG_FILE)
 
         self.flag_combobox = True
+        self.flag_remove_combobox = True
         self.combobox_version = 'v00'
 
     @enter_function
@@ -60,23 +61,7 @@ class ConfigPath():
 
         return self.config_yaml
 
-    @enter_function
-    def get_comboboxes_versions(self):
-        return self.all_combobox_version
 
-        # appropriate_config = ConfigPath.open_project_config_file()
-        # combobox_versions_initial = appropriate_config['comboboxes'].keys()
-        #
-        # return combobox_versions_initial
-
-    @enter_function
-    def get_latest_combobox_version(self, config_file):
-        print('config_fle combooxbo null', config_file['comboboxes'])
-        if config_file['comboboxes'] != None :
-            versions = config_file['comboboxes'].keys()
-            self.combobox_version = max(versions, key=lambda k: int(k[1:]))
-            print('latest_version in get latest verison', self.combobox_version)
-        return self.combobox_version
 
 
 
@@ -328,12 +313,43 @@ class ConfigPath():
         self.flag_combobox = value
 
     @enter_function
+    def get_combobox_flag(self):
+        return self.flag_combobox
+
+    @enter_function
     def set_combobox_version(self, value):
         self.combobox_version = value
 
     @enter_function
     def get_combobox_version(self):
         return self.combobox_version
+
+    @enter_function
+    def get_comboboxes_versions(self):
+        return self.all_combobox_version
+
+        # appropriate_config = ConfigPath.open_project_config_file()
+        # combobox_versions_initial = appropriate_config['comboboxes'].keys()
+        #
+        # return combobox_versions_initial
+
+    @enter_function
+    def get_latest_combobox_version(self, config_file):
+        print('config_fle combooxbo null', config_file['comboboxes'])
+        if config_file['comboboxes'] != None :
+            versions = config_file['comboboxes'].keys()
+            self.combobox_version = max(versions, key=lambda k: int(k[1:]))
+            print('latest_version in get latest verison', self.combobox_version)
+        return self.combobox_version
+
+    @enter_function
+    def set_remove_combobox_flag(self, value=False):
+        print('set remov combobox flag', value)
+        self.flag_remove_combobox = value
+
+    @enter_function
+    def get_remove_combobox_flag(self):
+        return self.flag_remove_combobox
 
 
 

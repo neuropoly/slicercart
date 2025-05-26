@@ -1115,11 +1115,13 @@ class SlicerCARTWidget(ScriptedLoadableModuleWidget, VTKObservationMixin):
   def resetClassificationInformation(self):
         # Try/Except to prevent crashing when selecting another file in the
         # UI case list if no classification_config_yaml file is already created.
+        version = ConfigPath.get_combobox_version()
         try :
             self.config_yaml["checkboxes"]
             for i, (objectName, label) in enumerate(self.config_yaml["checkboxes"].items()):
                 self.checkboxWidgets[objectName].setChecked(False)
-            for i, (comboBoxName, options) in enumerate(self.config_yaml["comboboxes"].items()):
+            for i, (comboBoxName, options) in enumerate(self.config_yaml[
+                                                            "comboboxes"][version].items()):
                 self.comboboxWidgets[comboBoxName].currentText = list(options.items())[0][1]
             for i, (freeTextBoxObjectName, label) in enumerate(self.config_yaml["freetextboxes"].items()):
                 self.freeTextBoxes[freeTextBoxObjectName].setText("")
@@ -1134,6 +1136,10 @@ class SlicerCARTWidget(ScriptedLoadableModuleWidget, VTKObservationMixin):
       information available to an updated dataframe.
       return: dataframe with all previous and actual classification labels.
       """
+
+      print('self currentOutputpath', self.currentOutputPath)
+      print('self currentVOlume fIlename', self.currentVolumeFilename)
+
       self.outputClassificationInformationFile = (
           os.path.join(self.currentOutputPath,
                        '{}_ClassificationInformation.csv'.format(
@@ -1231,30 +1237,124 @@ class SlicerCARTWidget(ScriptedLoadableModuleWidget, VTKObservationMixin):
       """
       header_dict = {}
       value_dict = {}
+      version = ConfigPath.get_combobox_version()
+
+      print('self config yamal classif label', self.config_yaml[classif_label].items())
+
+
 
       for i, (objectName, label) in enumerate(
               self.config_yaml[classif_label].items()):
+
+          print('begin foor loop')
+          print('object name', objectName)
+          print('label', label)
 
           local_header_dict = {}
 
           # Adapt the format of label value saving depending of the type
           if classif_label == "checkboxes":
+              print('in classif labelcheckboxes')
               local_header_dict[label] = classif_label
               data = "No"
               if self.checkboxWidgets[objectName].isChecked():
                   data = "Yes"
 
           elif classif_label == "comboboxes":
-              local_header_dict[objectName] = classif_label
-              data = self.comboboxWidgets[objectName].currentText
+              if objectName == version:
+                  print('i', i)
+                  print('object name', objectName)
+                  print('label', label)
+                  print('self config yaml classif items', self.config_yaml[classif_label].items())
+                  for key, value in label.items():
+                      print('key', key)
+                      print('value,', value)
+                      local_header_dict[key] = classif_label
+                      data = self.comboboxWidgets[key].currentText
+                      print('local_header_dict', local_header_dict)
+
+                      header_dict[f"{local_header_dict}"] = classif_label
+                      value_dict[f"{local_header_dict}"] = data
+                      local_header_dict = {}
+
+              else:
+                  continue
+
+              # continue
+          #     if objectName == version:
+          #         objectVersion = self.config_yaml[classif_label][version]
+          #         for key, value in objectVersion.items():
+          #             print('key', key)
+          #             print('value', value)
+          #             local_header_dict[key] = classif_label
+          #             data = self.comboboxWidgets[objectVersion].currentText
+          #             print('data', data)
+
+                  # print('version combobox : ', version)
+                  # print('classif label vesion', classif_label)
+                  # print('object name', objectName)
+                  # print('object version', objectVersion)
+                  # print('local header dict', local_header_dict)
+                  # print('local header dict pversion]', local_header_dict[objectVersion])
+
+                  # local_header_dict[objectName] = classif_label
+                  # local_header_dict[objectVersion] = classif_label
+
+                  # value = self.comboboxWidgets[objectName]
+                  # print('value', value)
+
+                  # data = value.currentText
 
           elif classif_label == "freetextboxes":
+              print('in free textboxe')
               local_header_dict[label] = classif_label
               data = self.freeTextBoxes[objectName].text.replace(
                   "\n", " // ")
 
-          header_dict[f"{local_header_dict}"] = classif_label
-          value_dict[f"{local_header_dict}"] = data
+      # for i, (objectName, label) in enumerate(
+      #         self.config_yaml[classif_label].items()):
+      #
+      #     local_header_dict = {}
+      #
+      #     # Adapt the format of label value saving depending of the type
+      #     if classif_label == "checkboxes":
+      #         local_header_dict[label] = classif_label
+      #         data = "No"
+      #         if self.checkboxWidgets[objectName].isChecked():
+      #             data = "Yes"
+      #
+      #     elif classif_label == "comboboxes":
+      #         version = ConfigPath.get_combobox_version()
+      #         objectVersion = self.config_yaml[classif_label][version]
+      #
+      #         print('version combobox : ', version)
+      #         print('classif label vesion', classif_label)
+      #         print('object name', objectName)
+      #         print('object version', objectVersion)
+      #         print('local header dict', local_header_dict)
+      #         print('local header dict pversion]', local_header_dict[objectVersion])
+      #
+      #         # local_header_dict[objectName] = classif_label
+      #         local_header_dict[objectVersion] = classif_label
+      #
+      #
+      #         value = self.comboboxWidgets[objectName]
+      #         print('value', value)
+      #
+      #         data = value.currentText
+      #
+      #     elif classif_label == "freetextboxes":
+      #         local_header_dict[label] = classif_label
+      #         data = self.freeTextBoxes[objectName].text.replace(
+      #             "\n", " // ")
+
+          print('classif label', classif_label)
+          print('data;', data)
+          print('local header dict', local_header_dict)
+
+          if not classif_label == "comboboxes":
+              header_dict[f"{local_header_dict}"] = classif_label
+              value_dict[f"{local_header_dict}"] = data
 
       return header_dict, value_dict
 
@@ -1361,6 +1461,7 @@ class SlicerCARTWidget(ScriptedLoadableModuleWidget, VTKObservationMixin):
       info_dict = {}
       info_dict['Volume filename'] = self.currentCase
       info_dict['Classification version'] = currentClassificationInformationVersion
+      info_dict['Combobox version'] = self.combobox_version
       info_dict['Annotator Name'] = self.annotator_name
       info_dict['Annotator degree'] = self.annotator_degree
       info_dict['Revision step'] = self.ui.RevisionStep.currentText
@@ -1665,6 +1766,7 @@ class SlicerCARTWidget(ScriptedLoadableModuleWidget, VTKObservationMixin):
       classification_df.to_csv(self.outputClassificationInformationFile,
                                index=False)
 
+  @enter_function
   def getClassificationInformationVersion(self):
       version = "v"
       classificationInformationPath = f'{self.currentOutputPath}{os.sep}{self.currentVolumeFilename}_ClassificationInformation.csv'
@@ -1674,6 +1776,8 @@ class SlicerCARTWidget(ScriptedLoadableModuleWidget, VTKObservationMixin):
       else:
           csv_data = pd.read_csv(classificationInformationPath)
           existing_version_strings = csv_data['Classification version'].to_list()
+          print('existing version strings', existing_version_strings)
+
           existing_version_numbers = [(int)(version_string.split("v")[1]) for version_string in existing_version_strings]
           next_version_number =  max(existing_version_numbers) + 1
           version = f'{version}{next_version_number:02d}'

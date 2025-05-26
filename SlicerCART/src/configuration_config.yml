@@ -24,12 +24,62 @@ KEYBOARD_SHORTCUTS:
   callback: onSaveClassificationButton
   shortcut: c
 checkboxes:
-  qqqq: Qqqq
+  aaaaa: Aaaaa
+  ttt: Ttt
 comboboxes:
   v01: {}
   v02:
     asdasd:
-      '222': '222'
+      '222': '122'
+  v03:
+    jean: &id001
+      a: a
+      bb: bb
+      ccc: ccc
+    roberto: &id002
+      '1': '1'
+      '22': '22'
+      '333': '333'
+      '4444': '4444'
+  v04:
+    jean: *id001
+    roberto: *id002
+    yoyo:
+      '22': '22'
+      '33': '33'
+  v05:
+    jean: *id001
+    maxime:
+      t: t
+      u: u
+      y: y
+    roberto: *id002
+  v06: {}
+  v07:
+    jean: *id001
+    roberto: *id002
+    yoyo:
+      '22': '22'
+      '33': '33'
+  v08:
+    jean:
+      a: a
+      bb: bb
+      ccc: ccc
+    roberto:
+      '1': '1'
+      '22': '22'
+      '333': '333'
+      '4444': '4444'
+  v09:
+    maxima:
+      auto: auto
+      b: b
+    roberto:
+      '1': '1'
+      '22': '22'
+      '333': '333'
+      '4444': '4444'
 ct_window_level: 45
 ct_window_width: 85
 default_segmentation_directory: ''
@@ -37,6 +87,7 @@ default_volume_directory: ''
 enable_debug: true
 freetextboxes:
   aasdas: Aasdas
+  zimbabwe: Zimbabwe
 impose_bids_format: false
 input_filetype: '*.nii.gz'
 interpolate_value: 0
