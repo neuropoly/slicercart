@@ -24,79 +24,19 @@ KEYBOARD_SHORTCUTS:
   callback: onSaveClassificationButton
   shortcut: c
 checkboxes:
-  Anoxic_injury_checkbox: Anoxic injury
-  Brain_edema_checkbox: Brain edema
-  Craniectomy_checkbox: Craniectomy
-  Craniotomy_checkbox: Craniotomy
-  EDH_checkbox: EDH
-  EVD_checkbox: EVD
-  ICH_checkbox: ICH
-  IVH_checkbox: IVH
-  Infarct_checkbox: Infarct
-  Intra_axial_tumor_checkbox: Intra-axial tumor
-  Menigioma_checkbox: Meningioma
-  Metal_artifact_checkbox: Metal artifact
-  Midline_shift_checkbox: Midline shift
-  Motion_artifact_checkbox: Motion artifact
-  Multiple_lesions_checkbox: Multiple lesions
-  Normal_checkbox: Normal
-  Pressure_monitor_checkbox: Pressure monitor
-  SAH_checkbox: SAH
-  SDH_checkbox: SDH
-  Tonsillar_herniation_checkbox: Tonsillar herniation
-  aaaaaa: Aaaaaa
+  qqqq: Qqqq
 comboboxes:
-  v00:
-    atrophy:
-      atrophy_mild: Mild
-      atrophy_moderate: Moderate
-      atrophy_none: None
-      atrophy_severe: Severe
+  v01: {}
   v02:
-    atrophy:
-      atrophy_mild: Mild
-      atrophy_moderate: Moderate
-      atrophy_none: None
-      atrophy_severe: Severe
-    jacques:
-      mb1: mb1
-      mb2: mb2
-      mb3: mb3
-      mb4: mb4
-      mb5: mb5
-  v03:
-    atrophy:
-      atrophy_mild: Mild
-      atrophy_moderate: Moderate
-      atrophy_none: None
-      atrophy_severe: Severe
-  v07:
-    maxime: &id001
-      '23': '23'
-      re: re
-      rr: rr
-    test_dd: &id002
-      '1': '1'
-    ventricular_size: &id003
-      ventricular_size_mild: Mild
-      ventricular_size_moderate: Moderate
-      ventricular_size_normal: Normal/proportional
-      ventricular_size_severe: Severe
-  v08:
-    maxime: *id001
-    test_dd: *id002
-    ventricular_size: *id003
-    werty:
-      www: www
+    asdasd:
+      '222': '222'
 ct_window_level: 45
 ct_window_width: 85
 default_segmentation_directory: ''
 default_volume_directory: ''
 enable_debug: true
 freetextboxes:
-  cheese: Cheese
-  number_of_focal_points: Number of focal points
-  other_comments: Comments
+  aasdas: Aasdas
 impose_bids_format: false
 input_filetype: '*.nii.gz'
 interpolate_value: 0

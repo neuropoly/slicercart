@@ -69,6 +69,17 @@ class ConfigPath():
         #
         # return combobox_versions_initial
 
+    @enter_function
+    def get_latest_combobox_version(self, config_file):
+        print('config_fle combooxbo null', config_file['comboboxes'])
+        if config_file['comboboxes'] != None :
+            versions = config_file['comboboxes'].keys()
+            self.combobox_version = max(versions, key=lambda k: int(k[1:]))
+            print('latest_version in get latest verison', self.combobox_version)
+        return self.combobox_version
+
+
+
 
     @enter_function
     # Was in the initial code. Kept here for further usage if needed.

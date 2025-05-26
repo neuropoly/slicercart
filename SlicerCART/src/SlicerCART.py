@@ -411,17 +411,19 @@ class SlicerCARTWidget(ScriptedLoadableModuleWidget, VTKObservationMixin):
 
       row_index = 0
 
-      for i, (objectName, label) in enumerate(classif_label["checkboxes"].items()):
-        #print(objectName, label)
-        checkbox = qt.QCheckBox()
-        checkbox.setText(label)
-        checkbox.setObjectName(objectName)
+      if classif_label["checkboxes"] != None:
 
-        row_index = i / number_of_columns + 1
-        column_index = i % number_of_columns
+          for i, (objectName, label) in enumerate(classif_label["checkboxes"].items()):
+            #print(objectName, label)
+            checkbox = qt.QCheckBox()
+            checkbox.setText(label)
+            checkbox.setObjectName(objectName)
 
-        self.ui.ClassificationGridLayout.addWidget(checkbox, row_index, column_index)
-        self.checkboxWidgets[objectName] = checkbox
+            row_index = i / number_of_columns + 1
+            column_index = i % number_of_columns
+
+            self.ui.ClassificationGridLayout.addWidget(checkbox, row_index, column_index)
+            self.checkboxWidgets[objectName] = checkbox
 
 
       return row_index + 1
@@ -446,37 +448,47 @@ class SlicerCARTWidget(ScriptedLoadableModuleWidget, VTKObservationMixin):
   def setupComboboxes(self, start_row, classif_label):
       self.comboboxWidgets = {}
       print('')
+      latest_combobox_version = ConfigPath.get_latest_combobox_version(
+          self.config_yaml)
+      print('latest_version_combobox:', latest_combobox_version)
 
       row_index = start_row
-      for i, (comboBoxName, options) in enumerate(
-              classif_label["comboboxes"].items()):
-          comboboxLabel = qt.QLabel(
-              comboBoxName.replace("_", " ").capitalize() + " :")
-          comboboxLabel.setStyleSheet("font-weight: bold")
-          self.ui.ClassificationGridLayout.addWidget(comboboxLabel, row_index,
-                                                     0)
+      if self.config_yaml['comboboxes'] != None :
+          for i, (comboBoxName, options) in enumerate(
+                  classif_label["comboboxes"][latest_combobox_version].items()):
+              comboboxLabel = qt.QLabel(
+                  comboBoxName.replace("_", " ").capitalize() + " :")
+              comboboxLabel.setStyleSheet("font-weight: bold")
+              self.ui.ClassificationGridLayout.addWidget(comboboxLabel, row_index,
+                                                         0)
 
-          combobox = qt.QComboBox()
-          combobox.setObjectName(comboBoxName)
-          for optionKey, optionLabel in options.items():
-              combobox.addItem(optionLabel, optionKey)
-          self.ui.ClassificationGridLayout.addWidget(combobox, row_index, 1)
-          self.comboboxWidgets[comboBoxName] = combobox
-          row_index = row_index + 1
+              combobox = qt.QComboBox()
+              combobox.setObjectName(comboBoxName)
+
+              print('combobox name:', comboBoxName)
+
+              for optionKey, optionLabel in options.items():
+                  combobox.addItem(optionLabel, optionKey)
+              self.ui.ClassificationGridLayout.addWidget(combobox, row_index, 1)
+              self.comboboxWidgets[comboBoxName] = combobox
+              row_index = row_index + 1
       return row_index + 1
   
   def setupFreeText(self, start_row):
       self.freeTextBoxes = {}
 
       row_index = start_row
-      for i, (freeTextObjectName, freeTextLabel) in enumerate(self.config_yaml["freetextboxes"].items()):
-          freeTextQLabel = qt.QLabel(freeTextLabel.capitalize() + " :")
-          freeTextQLabel.setStyleSheet("font-weight: bold")
-          self.ui.ClassificationGridLayout.addWidget(freeTextQLabel, row_index, 0)
-          lineEdit = qt.QLineEdit()
-          self.freeTextBoxes[freeTextObjectName] = lineEdit
-          self.ui.ClassificationGridLayout.addWidget(lineEdit, row_index, 1)
-          row_index = row_index + 1
+
+      if self.config_yaml["freetextboxes"] != None:
+
+          for i, (freeTextObjectName, freeTextLabel) in enumerate(self.config_yaml["freetextboxes"].items()):
+              freeTextQLabel = qt.QLabel(freeTextLabel.capitalize() + " :")
+              freeTextQLabel.setStyleSheet("font-weight: bold")
+              self.ui.ClassificationGridLayout.addWidget(freeTextQLabel, row_index, 0)
+              lineEdit = qt.QLineEdit()
+              self.freeTextBoxes[freeTextObjectName] = lineEdit
+              self.ui.ClassificationGridLayout.addWidget(lineEdit, row_index, 1)
+              row_index = row_index + 1
 
   def connectShortcut(self, shortcutKey, button, callback):
       shortcut = qt.QShortcut(slicer.util.mainWindow())

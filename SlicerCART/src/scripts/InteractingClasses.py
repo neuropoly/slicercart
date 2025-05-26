@@ -8,6 +8,9 @@
 # This import needs to be done in each script file for appropriate use.
 from utils import *
 
+# from SlicerCART.src.utils import ConfigPath
+
+
 ###############################################################################
 
 ###############################################################################
@@ -834,7 +837,7 @@ class ConfigureSegmentationWindow(qt.QWidget):
         self.label_table_view = qt.QTableWidget()
         layout.addWidget(self.label_table_view)
 
-        if len(self.config_yaml['labels']) > 0:
+        if self.config_yaml['labels'] != None:
             number_of_labels = len(self.config_yaml['labels'])
 
             self.label_table_view.setRowCount(number_of_labels)
@@ -1345,7 +1348,7 @@ class ConfigureClassificationWindow(qt.QWidget):
         self.checkbox_table_view = qt.QTableWidget()
         layout.addWidget(self.checkbox_table_view)
 
-        if len(self.config_yaml['checkboxes']) > 0:
+        if self.config_yaml['checkboxes'] != None:
             number_of_checkboxes = len(self.config_yaml['checkboxes'])
 
             self.checkbox_table_view.setRowCount(number_of_checkboxes)
@@ -1409,7 +1412,7 @@ class ConfigureClassificationWindow(qt.QWidget):
         # latest_combobox_dict = (
         #     self.config_yaml)['comboboxes'][latest_combobox_version]
 
-        if len(latest_combobox_dict) > 0:
+        if latest_combobox_dict != None:
             number_of_comboboxes = len(
                 self.config_yaml['comboboxes'][latest_combobox_version])
             print('number_of_comboboxes', number_of_comboboxes)
@@ -1536,7 +1539,7 @@ class ConfigureClassificationWindow(qt.QWidget):
         self.freetext_table_view = qt.QTableWidget()
         layout.addWidget(self.freetext_table_view)
 
-        if len(self.config_yaml['freetextboxes']) > 0:
+        if self.config_yaml['freetextboxes'] != None:
             number_of_freetextboxes = len(self.config_yaml['freetextboxes'])
 
             self.freetext_table_view.setRowCount(number_of_freetextboxes)
@@ -1598,7 +1601,13 @@ class ConfigureClassificationWindow(qt.QWidget):
 
         latest_combobox_version = search_latest_combobox_version(
             dict_of_comboboxes)
-        latest_combobox_dict = (dict_of_comboboxes[latest_combobox_version])
+        if dict_of_comboboxes != None:
+            latest_combobox_dict = (dict_of_comboboxes[latest_combobox_version])
+        else:
+            latest_combobox_dict = None
+
+        print('dict of comboboxes:', dict_of_comboboxes)
+        print('latest comboboxes:', latest_combobox_version)
 
         return latest_combobox_version, latest_combobox_dict
 
@@ -1697,7 +1706,7 @@ class ConfigureClassificationWindow(qt.QWidget):
         print('in push save latest combobox version file',
               latest_combobox_version_file)
         print('latest dict in file', latest_combobox_dict_file)
-        print('len self coboox', self.config_yaml['comboboxes'].keys())
+        # print('len self coboox', self.config_yaml['comboboxes'].keys())
 
         # Reset combobox flag for enabling to track the correct combobox version
         ConfigPath.set_combobox_flag(True)
@@ -1998,15 +2007,20 @@ class ConfigureSingleClassificationItemWindow(qt.QWidget):
 
         if self.item_added == 'checkbox':
             label_found = False
-            for i, (_, label) in enumerate(
-                    self.config_yaml['checkboxes'].items()):
-                if label == current_label_name:
-                    label_found = True
-
+            if self.config_yaml['checkboxes'] != None:
+                for i, (_, label) in enumerate(
+                        self.config_yaml['checkboxes'].items()):
+                    if label == current_label_name:
+                        label_found = True
             if label_found == False:
                 # append
-                self.config_yaml['checkboxes'].update(
-                    {object_name: current_label_name.capitalize()})
+                if self.config_yaml['checkboxes'] == None:
+                    self.config_yaml['checkboxes'] = {object_name:
+                                                          current_label_name.capitalize()}
+
+                else:
+                    self.config_yaml['checkboxes'].update(
+                        {object_name: current_label_name.capitalize()})
         elif self.item_added == 'combobox':
             # if self.options_combobox.count == 0:
             #     msg = qt.QMessageBox()
@@ -2055,10 +2069,13 @@ class ConfigureSingleClassificationItemWindow(qt.QWidget):
                     options_dict.update({option.replace(' ', '_'): option})
 
                 item_found = False
-                for i, (combobox_name, _) in enumerate(
-                        self.config_yaml['comboboxes'].items()):
-                    if combobox_name == object_name:
-                        item_found = True
+                if self.config_yaml['comboboxes'] != None:
+                    for i, (combobox_name, _) in enumerate(
+                            self.config_yaml['comboboxes'].items()):
+                        if combobox_name == object_name:
+                            item_found = True
+                else:
+                    self.config_yaml['comboboxes'] = {}
 
                 # if item_found == False:
                 #     # append
@@ -2084,7 +2101,10 @@ class ConfigureSingleClassificationItemWindow(qt.QWidget):
                 #     version_numbers) + 1 if version_numbers else 1
                 if ConfigPath.flag_combobox:
                     print('shoudl enter 1once *******')
-                    new_version_number = latest_saved_version + 1
+                    # latest_saved_version = latest_saved_version
+                    print('latest saved version', latest_saved_version)
+
+                    new_version_number = int(latest_saved_version) + 1
                     ConfigPath.set_combobox_flag()
                     print('congif combobox flag value', ConfigPath.flag_combobox)
                     # self.flag_all_combobox_versions = False
@@ -2119,15 +2139,21 @@ class ConfigureSingleClassificationItemWindow(qt.QWidget):
 
         elif self.item_added == 'freetextbox':
             label_found = False
-            for i, (_, label) in enumerate(
-                    self.config_yaml['freetextboxes'].items()):
-                if label == current_label_name:
-                    label_found = True
+
+            if self.config_yaml['freetextboxes'] != None:
+                for i, (_, label) in enumerate(
+                        self.config_yaml['freetextboxes'].items()):
+                    if label == current_label_name:
+                        label_found = True
 
             if label_found == False:
                 # append
-                self.config_yaml['freetextboxes'].update(
-                    {object_name: current_label_name.capitalize()})
+                if self.config_yaml['freetextboxes'] == None:
+                    self.config_yaml['freetextboxes'] = {object_name: current_label_name.capitalize()}
+
+                else:
+                    self.config_yaml['freetextboxes'].update(
+                        {object_name: current_label_name.capitalize()})
 
         configureClassificationWindow = ConfigureClassificationWindow(
             self.segmenter, self.edit_conf, self.config_yaml)
@@ -2145,8 +2171,14 @@ class ConfigureSingleClassificationItemWindow(qt.QWidget):
         # initial_config = ConfigPath.open_project_config_file()
         # existing_versions = initial_config['comboboxes'].keys()
 
-        existing_versions = all_combobox_versions
-        print('initial config', existing_versions)
-        version_numbers = max([int(k[1:]) for k in existing_versions if
-                           k.startswith('v') and k[1:].isdigit()])
+        if (len(all_combobox_versions) > 0):
+
+            existing_versions = all_combobox_versions
+            print('initial config', existing_versions)
+            version_numbers = max([int(k[1:]) for k in existing_versions if
+                               k.startswith('v') and k[1:].isdigit()])
+        else:
+            # version_numbers = ConfigPath.get_combobox_version()
+            version_numbers = 0
+
         return version_numbers
