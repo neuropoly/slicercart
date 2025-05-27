@@ -1246,9 +1246,10 @@ class SlicerCARTWidget(ScriptedLoadableModuleWidget, VTKObservationMixin):
                                '{}_ClassificationInformation.csv'.format(
                                    self.currentVolumeFilename)))
               df = None
-              if os.path.exists(
-                      self.outputClassificationInformationFile) and os.path.isfile(
-                  self.outputClassificationInformationFile):
+              if (os.path.exists(
+                      self.outputClassificationInformationFile)
+                      and os.path.isfile(
+                  self.outputClassificationInformationFile)):
                   df = pd.read_csv(self.outputClassificationInformationFile)
 
               if df is not None:

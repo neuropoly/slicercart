@@ -80,7 +80,8 @@ class LoadClassificationWindow(qt.QWidget):
                    'Classification version'
                ]==selected_version].reset_index(drop = True))
 
-       columns_names = self.get_csv_all_classification_labels(self.classificationInformation_df)
+       columns_names = self.get_csv_all_classification_labels(
+           self.classificationInformation_df)
 
        selected_version_df = (
                                  selected_version_df.loc)[:,
@@ -125,7 +126,8 @@ class LoadClassificationWindow(qt.QWidget):
        # Ensure code iterates through the appropriate label configuration
        iteration_dict = self.segmenter.get_label_iteration_dict()
 
-       for i, (objectName, label) in enumerate(classif_label["checkboxes"].items()):
+       for i, (objectName, label) in enumerate(
+               classif_label["checkboxes"].items()):
 
            config_file_dict = classif_label['checkboxes']
 
@@ -165,7 +167,8 @@ class LoadClassificationWindow(qt.QWidget):
        # classificaitno
        ConfigPath.set_combobox_version(combobox_version)
 
-       for i, (freeTextBoxObjectName, label) in enumerate(classif_label['freetextboxes'].items()):
+       for i, (freeTextBoxObjectName, label) in enumerate(
+               classif_label['freetextboxes'].items()):
 
            column_name = self.recreate_column_name(freeTextBoxObjectName,
                                                    'freetextboxes')
@@ -174,9 +177,11 @@ class LoadClassificationWindow(qt.QWidget):
                saved_text = selected_version_df.at[0, column_name]
 
                if str(saved_text) != 'nan':
-                   self.segmenter.freeTextBoxes[freeTextBoxObjectName].setText(saved_text)
+                   self.segmenter.freeTextBoxes[
+                       freeTextBoxObjectName].setText(saved_text)
                else:
-                   self.segmenter.freeTextBoxes[freeTextBoxObjectName].setText("")
+                   self.segmenter.freeTextBoxes[
+                       freeTextBoxObjectName].setText("")
 
            except:
                print('Means that the column name does not exist in the '
