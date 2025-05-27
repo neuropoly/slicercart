@@ -379,7 +379,7 @@ class SlicerCARTWidget(ScriptedLoadableModuleWidget, VTKObservationMixin):
       comboboxesStartRow = self.setupCheckboxes(3, self.config_yaml)
       freetextStartRow = self.setupComboboxes(comboboxesStartRow,
                                               self.config_yaml)
-      self.setupFreeText(freetextStartRow)
+      self.setupFreeText(freetextStartRow, self.config_yaml["freetextboxes"])
 
   def set_master_volume_intensity_mask_according_to_modality(self):
       if ConfigPath.MODALITY == 'CT':
@@ -445,43 +445,118 @@ class SlicerCARTWidget(ScriptedLoadableModuleWidget, VTKObservationMixin):
   #       self.comboboxWidgets[comboBoxName] = combobox
   #       row_index = row_index + 1
   #     return row_index + 1
-  def setupComboboxes(self, start_row, classif_label):
+  @enter_function
+  def setupComboboxes(self, start_row, classif_label, combobox_version=None):
       self.comboboxWidgets = {}
       print('')
-      latest_combobox_version = ConfigPath.get_latest_combobox_version(
-          self.config_yaml)
-      print('latest_version_combobox:', latest_combobox_version)
+
+      print('combobox_version', combobox_version)
+
+      if combobox_version == None:
+          combobox_version = ConfigPath.get_latest_combobox_version(
+              self.config_yaml)
+          print('latest_version_combobox:', combobox_version)
+
+      else:
+          print('classif_label', classif_label)
+          print('combobox_version', combobox_version)
+          print('self.config yamlv ersion', self.config_yaml[
+              'comboboxes'][combobox_version])
+          # Means that we need to read the comboboxes from the config yaml
+          # Expand the classif_label using the full definitions
+          full_definitions = self.config_yaml['comboboxes'][combobox_version]
+          # classif_label["comboboxes"][combobox_version] = {
+          #     key: full_definitions[key] for key in
+          #     classif_label["comboboxes"][combobox_version]
+          # }
+          classif_label["comboboxes"][combobox_version] = {
+              key: full_definitions[key]
+              for key in sorted(classif_label["comboboxes"][combobox_version])
+          }
+
+          print('classif label after', classif_label)
+
 
       row_index = start_row
       if self.config_yaml['comboboxes'] != None :
-          for i, (comboBoxName, options) in enumerate(
-                  classif_label["comboboxes"][latest_combobox_version].items()):
-              comboboxLabel = qt.QLabel(
-                  comboBoxName.replace("_", " ").capitalize() + " :")
-              comboboxLabel.setStyleSheet("font-weight: bold")
-              self.ui.ClassificationGridLayout.addWidget(comboboxLabel, row_index,
-                                                         0)
+          for i, (version, comboBoxes) in enumerate(
+                  self.config_yaml["comboboxes"].items()):
+              if version == combobox_version:
 
-              combobox = qt.QComboBox()
-              combobox.setObjectName(comboBoxName)
+                  print('i', i)
+                  print('comboboxName22', version)
+                  print('options',  comboBoxes)
+                  print('classif label before faile', classif_label[
+                      "comboboxes"])
 
-              print('combobox name:', comboBoxName)
+                  print('items classif label omcoboxes', classif_label[
+                      "comboboxes"][combobox_version])
 
-              for optionKey, optionLabel in options.items():
-                  combobox.addItem(optionLabel, optionKey)
-              self.ui.ClassificationGridLayout.addWidget(combobox, row_index, 1)
-              self.comboboxWidgets[comboBoxName] = combobox
-              row_index = row_index + 1
+                  for comboBoxName, options in classif_label[
+                      "comboboxes"][combobox_version].items():
+
+                      print('combobox name:', comboBoxName)
+
+
+
+
+
+
+                      comboboxLabel = qt.QLabel(
+                          comboBoxName.replace("_", " ").capitalize() + " :")
+                      comboboxLabel.setStyleSheet("font-weight: bold")
+                      self.ui.ClassificationGridLayout.addWidget(comboboxLabel, row_index,
+                                                                 0)
+
+                      combobox = qt.QComboBox()
+                      combobox.setObjectName(comboBoxName)
+
+
+                      for optionKey, optionLabel in options.items():
+                          combobox.addItem(optionLabel, optionKey)
+                      self.ui.ClassificationGridLayout.addWidget(combobox, row_index, 1)
+                      self.comboboxWidgets[comboBoxName] = combobox
+                      row_index = row_index + 1
+      # if self.config_yaml['comboboxes'] != None :
+      #     for i, (comboBoxName, options) in enumerate(
+      #             classif_label["comboboxes"].items()):
+      #
+      #         print('i', i)
+      #         print('comboboxName22', comboBoxName)
+      #         print('options', options)
+      #         print('items classif label omcoboxes', classif_label["comboboxes"].items())
+      #
+      #
+      #
+      #         comboboxLabel = qt.QLabel(
+      #             comboBoxName.replace("_", " ").capitalize() + " :")
+      #         comboboxLabel.setStyleSheet("font-weight: bold")
+      #         self.ui.ClassificationGridLayout.addWidget(comboboxLabel, row_index,
+      #                                                    0)
+      #
+      #         combobox = qt.QComboBox()
+      #         combobox.setObjectName(comboBoxName)
+      #
+      #         print('combobox name:', comboBoxName)
+      #
+      #         for optionKey, optionLabel in options.items():
+      #             combobox.addItem(optionLabel, optionKey)
+      #         self.ui.ClassificationGridLayout.addWidget(combobox, row_index, 1)
+      #         self.comboboxWidgets[comboBoxName] = combobox
+      #         row_index = row_index + 1
+
       return row_index + 1
   
-  def setupFreeText(self, start_row):
+  def setupFreeText(self, start_row, columns_to_check=None):
       self.freeTextBoxes = {}
 
       row_index = start_row
 
+      print('columsn to check setup free text', columns_to_check)
+
       if self.config_yaml["freetextboxes"] != None:
 
-          for i, (freeTextObjectName, freeTextLabel) in enumerate(self.config_yaml["freetextboxes"].items()):
+          for i, (freeTextObjectName, freeTextLabel) in enumerate(columns_to_check.items()):
               freeTextQLabel = qt.QLabel(freeTextLabel.capitalize() + " :")
               freeTextQLabel.setStyleSheet("font-weight: bold")
               self.ui.ClassificationGridLayout.addWidget(freeTextQLabel, row_index, 0)
@@ -1255,7 +1330,14 @@ class SlicerCARTWidget(ScriptedLoadableModuleWidget, VTKObservationMixin):
           # Adapt the format of label value saving depending of the type
           if classif_label == "checkboxes":
               print('in classif labelcheckboxes')
-              local_header_dict[label] = classif_label
+              print('classif label', classif_label)
+              print('label1111', label)
+              print('ibjectname', objectName)
+              print('item sself config yaml items', self.config_yaml[classif_label].items())
+              # local_header_dict[label] = classif_label
+              local_header_dict[objectName] = classif_label
+
+
               data = "No"
               if self.checkboxWidgets[objectName].isChecked():
                   data = "Yes"
@@ -1307,7 +1389,8 @@ class SlicerCARTWidget(ScriptedLoadableModuleWidget, VTKObservationMixin):
 
           elif classif_label == "freetextboxes":
               print('in free textboxe')
-              local_header_dict[label] = classif_label
+              # local_header_dict[label] = classif_label
+              local_header_dict[objectName] = classif_label
               data = self.freeTextBoxes[objectName].text.replace(
                   "\n", " // ")
 

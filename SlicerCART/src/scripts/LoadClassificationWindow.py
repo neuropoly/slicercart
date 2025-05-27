@@ -93,6 +93,9 @@ class LoadClassificationWindow(qt.QWidget):
                              ~selected_version_df.isin(['--']).any()]
        print('selected_version_df', selected_version_df)
 
+
+
+
        intersection = set(selected_version_df.columns).intersection(
            columns_names.keys())
 
@@ -110,8 +113,41 @@ class LoadClassificationWindow(qt.QWidget):
        comboboxesStartRow = self.segmenter.setupCheckboxes(3, classif_label)
        print('checkboxes added')
 
-       self.segmenter.setupComboboxes(comboboxesStartRow, classif_label)
+       print('selectd version df is the combobox version column present')
+       print('column selected', selected_version_df['Combobox version'])
+       combobox_version = selected_version_df['Combobox version'].iloc[0]
+       print('combobox version', combobox_version)
+
+       version_combobox_label_dict = {}
+       version_combobox_label_dict[combobox_version] = classif_label[
+           'comboboxes']
+       total_dict_combobox = {}
+       total_dict_combobox['comboboxes'] = version_combobox_label_dict
+
+       print('total_dict_combobox', total_dict_combobox)
+       print('classif label', classif_label)
+
+
+       # self.segmenter.setupComboboxes(comboboxesStartRow, classif_label, combobox_version)
+       start_row = self.segmenter.setupComboboxes(comboboxesStartRow,
+                                       total_dict_combobox, combobox_version)
+
        print('comboboxes added')
+
+       # Set up free text boxes
+
+       # print('in set up free text rebuilding')
+       # print('freeTextboxc name', freeTextObjectName)
+       # print('free text label', freeTextLabel)
+       # if freeTextLabel == '--':
+       #     continue
+       # else:
+
+       print('classif label freetextbozxese', classif_label['freetextboxes'])
+
+       self.segmenter.setupFreeText(start_row, classif_label['freetextboxes'])
+
+
 
        ### RENDU ICI ; AJOUTER LES COMBOBOX! ATTENTON IL NY EN A PAS DANS LE
        # SET CREER CLASSIF_LABEL 1RE ETAPE= LES AJOUTER
@@ -137,21 +173,106 @@ class LoadClassificationWindow(qt.QWidget):
 
        # On prend le fichier csv et pas le config yaml pour
 
+       print('in adding checboexes')
        for i, (objectName, label) in enumerate(self.segmenter.config_yaml["checkboxes"].items()):
-           if selected_version_df.at[0, label] == 'Yes':
+
+           print('columns names', list(selected_version_df.columns))
+           print('adding i', i)
+           print(' objectName adding', objectName)
+           print('label adding', label)
+           print('module checbokex', self.segmenter.config_yaml["checkboxes"].items())
+
+           config_file_dict = self.segmenter.config_yaml["checkboxes"]
+           # column_name = f'"{{\'{config_file_dict[objectName]}\': \'checkboxes\'}}"'
+           # column_name = f"'{config_file_dict[objectName]}': 'checkboxes'"
+
+           print('testing correct name', config_file_dict)
+           print('testinc 2 corre anem ', config_file_dict[objectName])
+
+           column_name = self.recreate_column_name(objectName,
+                                                   'checkboxes')
+
+
+           print('column name', column_name)
+
+           if selected_version_df.at[0, column_name] == 'Yes':
                self.segmenter.checkboxWidgets[objectName].setChecked(True)
-           elif selected_version_df.at[0, label] == 'No' or str(selected_version_df.at[0, label]) == 'nan':
+           elif selected_version_df.at[0, column_name] == 'No' or str(selected_version_df.at[0, column_name]) == 'nan':
                self.segmenter.checkboxWidgets[objectName].setChecked(False)
 
-       for i, (comboBoxName, options) in enumerate(self.segmenter.config_yaml["comboboxes"].items()):
-          self.segmenter.comboboxWidgets[comboBoxName].setCurrentText(selected_version_df.at[0, comboBoxName.replace("_", " ").capitalize()])
+       for i, (comboBoxName, options) in enumerate(
+               self.segmenter.config_yaml["comboboxes"][
+                   combobox_version].items()):
+           print('columns names', list(selected_version_df.columns))
+           print('adding i', i)
+           print(' combobox name adding', comboBoxName)
+           print('label adding', options)
 
-       for i, (freeTextBoxObjectName, label) in enumerate(self.segmenter.config_yaml["freetextboxes"].items()):
-           saved_text = selected_version_df.at[0, label.capitalize()]
+
+
+           config_file_dict = self.segmenter.config_yaml["comboboxes"][
+               combobox_version]
+
+           print('module combobox', config_file_dict)
+
+           label = config_file_dict[comboBoxName]
+           print('label combo', label)
+
+           column_name = self.recreate_column_name(comboBoxName,
+                                                   'comboboxes')
+           print('column_name combobo', column_name)
+           # self.segmenter.comboboxWidgets[comboBoxName].setCurrentText(selected_version_df.at[0, comboBoxName.replace("_", " ").capitalize()])
+           # self.segmenter.comboboxWidgets[comboBoxName].setCurrentText(
+           #     selected_version_df.at[0, column_name])
+           self.segmenter.comboboxWidgets[comboBoxName].setCurrentText(
+                   selected_version_df.at[0, column_name])
+
+
+       # Ensure to save using the correct combobox version if later
+       # classificaitno
+       ConfigPath.set_combobox_version(combobox_version)
+
+
+
+
+       print('now about to do freetextboxes')
+       for i, (freeTextBoxObjectName, label) in enumerate(classif_label['freetextboxes'].items()):
+
+           print('label', label)
+
+           # saved_text = selected_version_df.at[0, label.capitalize()]
+
+
+
+           # config_file_dict = self.segmenter.config_yaml["freetextboxes"]
+           # config_file_dict = classif_label['freetextboxes']
+
+           print('config file dict freetextbox', config_file_dict)
+           print(' freetextboxe object name adding', freeTextBoxObjectName)
+           # print(' saved text', saved_text)
+
+
+
+           # column_name = f'"{{\'{config_file_dict[objectName]}\': \'checkboxes\'}}"'
+           # column_name = f"'{config_file_dict[objectName]}': 'checkboxes'"
+           column_name = self.recreate_column_name(freeTextBoxObjectName,
+                                                   'freetextboxes')
+           print('columns names', list(selected_version_df.columns))
+           print('adding i', i)
+           print('label adding', label)
+           print('label capitalize', label.capitalize())
+           print('module checbokex freetextbox', config_file_dict.items())
+           print('')
+
+           saved_text = selected_version_df.at[0, column_name]
+           print('saved_text', saved_text)
+
            if str(saved_text) != 'nan':
                self.segmenter.freeTextBoxes[freeTextBoxObjectName].setText(saved_text)
            else:
                self.segmenter.freeTextBoxes[freeTextBoxObjectName].setText("")
+
+
 
        self.close()
 
@@ -248,5 +369,11 @@ class LoadClassificationWindow(qt.QWidget):
                i).widget()
            if widget is not None:
                widget.deleteLater()
+
+   @enter_function
+   def recreate_column_name(self, name, type):
+       return f"{{'{name}': '{type}'}}"
+
+
 
 
