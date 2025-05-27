@@ -431,6 +431,11 @@ class SlicerCARTWidget(ScriptedLoadableModuleWidget, VTKObservationMixin):
 
       if classif_label["checkboxes"] != None:
 
+          print('iteratoin dict before', iteration_dict)
+          # iteration_dict["checkboxes"] = sorted(iteration_dict["checkboxes"])
+
+          print('iteration dict sorted', iteration_dict)
+
           # for i, (objectName, label) in enumerate(classif_label["checkboxes"].items()):
           for i, (objectName, label) in enumerate(iteration_dict["checkboxes"].items()):
             #print(objectName, label)
@@ -511,6 +516,8 @@ class SlicerCARTWidget(ScriptedLoadableModuleWidget, VTKObservationMixin):
                   print('items classif label omcoboxes', classif_label[
                       "comboboxes"][combobox_version])
 
+                  # classif_label["comboboxes"][combobox_version] = sorted(classif_label["comboboxes"][combobox_version])
+
                   for comboBoxName, options in classif_label[
                       "comboboxes"][combobox_version].items():
 
@@ -574,6 +581,7 @@ class SlicerCARTWidget(ScriptedLoadableModuleWidget, VTKObservationMixin):
       print('columsn to check setup free text', columns_to_check)
 
       if self.config_yaml["freetextboxes"] != None:
+          # columns_to_check = sorted(columns_to_check)
 
           for i, (freeTextObjectName, freeTextLabel) in enumerate(columns_to_check.items()):
               freeTextQLabel = qt.QLabel(freeTextLabel.capitalize() + " :")
