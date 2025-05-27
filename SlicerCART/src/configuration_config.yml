@@ -24,63 +24,63 @@ KEYBOARD_SHORTCUTS:
   callback: onSaveClassificationButton
   shortcut: c
 checkboxes:
-  jacquescb: Jacquescb
-  maximecb: Maximecb
+  Anoxic_injury_checkbox: Anoxic injury
+  Brain_edema_checkbox: Brain edema
+  Craniectomy_checkbox: Craniectomy
+  Craniotomy_checkbox: Craniotomy
+  EDH_checkbox: EDH
+  EVD_checkbox: EVD
+  ICH_checkbox: ICH
+  IVH_checkbox: IVH
+  Infarct_checkbox: Infarct
+  Intra_axial_tumor_checkbox: Intra-axial tumor
+  Menigioma_checkbox: Meningioma
+  Metal_artifact_checkbox: Metal artifact
+  Midline_shift_checkbox: Midline shift
+  Motion_artifact_checkbox: Motion artifact
+  Multiple_lesions_checkbox: Multiple lesions
+  Normal_checkbox: Normal
+  Pressure_monitor_checkbox: Pressure monitor
+  SAH_checkbox: SAH
+  SDH_checkbox: SDH
+  Tonsillar_herniation_checkbox: Tonsillar herniation
+  testing: Testing
 comboboxes:
   v01:
-    dd_1:
-      a: a
-      b: b
-    dd_2:
-      '3': '3'
-      '4': '4'
-    dd_3:
-      '1': '1'
-      '22': '22'
-      '333': '333'
-      '4444': '4444'
-      '55555': '55555'
+    atrophy:
+      atrophy_mild: Mild
+      atrophy_moderate: Moderate
+      atrophy_none: None
+      atrophy_severe: Severe
+    ventricular_size:
+      ventricular_size_mild: Mild
+      ventricular_size_moderate: Moderate
+      ventricular_size_normal: Normal/proportional
+      ventricular_size_severe: Severe
+    white_matter_changes:
+      wmc_mild: Mild
+      wmc_moderate: Moderate
+      wmc_none: None
+      wmc_severe: Severe
   v02:
-    dd4:
-      e: e
-      r: r
-      t: t
-    dd_1:
-      a: a
-      b: b
-    dd_3:
-      '1': '1'
-      '22': '22'
-      '333': '333'
-      '4444': '4444'
-      '55555': '55555'
-  v03:
-    dd_1:
-      a: a
-      b: b
-    dd_3:
-      '1': '1'
-      '22': '22'
-      '333': '333'
-      '4444': '4444'
-      '55555': '55555'
-  v04:
-    anika:
-      aaa: aaa
-      bbbb: bbbb
-      cccc: cccc
-    dd_1:
-      a: a
-      b: b
+    atrophy:
+      atrophy_mild: Mild
+      atrophy_moderate: Moderate
+      atrophy_none: None
+      atrophy_severe: Severe
+    white_matter_changes:
+      wmc_mild: Mild
+      wmc_moderate: Moderate
+      wmc_none: None
+      wmc_severe: Severe
 ct_window_level: 45
 ct_window_width: 85
 default_segmentation_directory: ''
 default_volume_directory: ''
 enable_debug: true
 freetextboxes:
-  dragon: Dragon
-  tf_2: Tf 2
-  zebra: Zebra
+  number_of_focal_points: Number of focal points
+  other_comments: Comments
 impose_bids_format: false
 input_filetype: '*.nii.gz'
 interpolate_value: 0

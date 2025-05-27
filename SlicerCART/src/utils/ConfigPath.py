@@ -10,6 +10,7 @@ class ConfigPath():
     def __init__(self):
         self.set_config_values(INITIAL_CONFIG_FILE)
 
+        # Essential for classification comboboxes versioning
         self.flag_combobox = True
         self.flag_remove_combobox = True
         self.combobox_version = 'v00'
@@ -57,14 +58,7 @@ class ConfigPath():
                 self.config_yaml = {}
                 self.config_yaml = yaml.safe_load(file)
 
-        # self.all_combobox_version = self.config_yaml['comboboxes'].keys()
-
         return self.config_yaml
-
-
-
-
-
 
     @enter_function
     # Was in the initial code. Kept here for further usage if needed.
@@ -308,56 +302,46 @@ class ConfigPath():
 
         return final_config_file
 
-    @enter_function
-    def set_combobox_flag(self, value=False):
-        self.flag_combobox = value
-
+    ### The following getter and setter relate to comboboxes versioning
     @enter_function
     def get_combobox_flag(self):
         return self.flag_combobox
 
     @enter_function
-    def set_combobox_version(self, value):
-        self.combobox_version = value
+    def set_combobox_flag(self, value=False):
+        self.flag_combobox = value
 
     @enter_function
     def get_combobox_version(self):
         return self.combobox_version
 
     @enter_function
+    def set_combobox_version(self, value):
+        self.combobox_version = value
+
+    @enter_function
     def get_comboboxes_versions(self):
         return self.all_combobox_version
 
-        # appropriate_config = ConfigPath.open_project_config_file()
-        # combobox_versions_initial = appropriate_config['comboboxes'].keys()
-        #
-        # return combobox_versions_initial
-
     @enter_function
     def get_latest_combobox_version(self, config_file):
-        print('config_fle combooxbo null', config_file['comboboxes'])
         if config_file['comboboxes'] != None :
             versions = config_file['comboboxes'].keys()
             self.combobox_version = max(versions, key=lambda k: int(k[1:]))
-            print('latest_version in get latest verison', self.combobox_version)
         return self.combobox_version
 
     @enter_function
-    def set_remove_combobox_flag(self, value=False):
-        print('set remov combobox flag', value)
-        self.flag_remove_combobox = value
+    def set_latest_combobox_version(self, config_file):
+        self.combobox_version = self.get_latest_combobox_version(config_file)
+        return self.combobox_version
 
     @enter_function
     def get_remove_combobox_flag(self):
         return self.flag_remove_combobox
 
     @enter_function
-    def set_latest_combobox_version(self, config_file):
-        print('combobox version before', self.combobox_version)
-        self.combobox_version= self.get_latest_combobox_version(config_file)
-        print('self combobox version after', self.combobox_version)
-        return self.combobox_version
-
+    def set_remove_combobox_flag(self, value=False):
+        self.flag_remove_combobox = value
 
 
 # Creating an instance of ConfigPath. This ensures that all the same

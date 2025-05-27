@@ -121,13 +121,13 @@ class SlicerCARTWidget(ScriptedLoadableModuleWidget, VTKObservationMixin):
     self.color_active = "yellowgreen"
     self.color_inactive = "indianred"
 
+    # To communicate classification version labels when loading classification
     self.classification_version_labels = None
 
     # MB: code below added in the configuration setup since its absence
     # created issues when trying to load cases after selecting a volume folder.
     self.config_yaml = ConfigPath.open_project_config_file()
 
-    #### ATTENTION MB MB ; DANS LE MAIN MAIS MAYBE DELETE THE COMMENTS
     # ATTENTION! self.current_label_index refers to an index, but it is
     # getting its value based on the first label value (assumes it is always
     # 1): so, first index value = 1 -1 == 0
@@ -206,8 +206,11 @@ class SlicerCARTWidget(ScriptedLoadableModuleWidget, VTKObservationMixin):
 
   @enter_function
   def set_classification_version_labels(self, classif_label):
+      """
+      Keep the classification labels depending on the classification version to
+      use and to save.
+      """
       self.classification_version_labels = classif_label
-
 
   @enter_function
   def visibilityModifiedCallback(self, caller, event):
@@ -393,52 +396,22 @@ class SlicerCARTWidget(ScriptedLoadableModuleWidget, VTKObservationMixin):
             self.segmentEditorNode.SetMasterVolumeIntensityMask(True)
       elif ConfigPath.MODALITY == 'MRI':
             self.segmentEditorNode.SetMasterVolumeIntensityMask(False)
-  
-  # def setupCheckboxes(self, number_of_columns):
-  #     self.checkboxWidgets = {}
-  #
-  #     row_index = 0
-  #
-  #     for i, (objectName, label) in enumerate(self.config_yaml["checkboxes"].items()):
-  #       #print(objectName, label)
-  #       checkbox = qt.QCheckBox()
-  #       checkbox.setText(label)
-  #       checkbox.setObjectName(objectName)
-  #
-  #       row_index = i / number_of_columns + 1
-  #       column_index = i % number_of_columns
-  #
-  #       self.ui.ClassificationGridLayout.addWidget(checkbox, row_index, column_index)
-  #       self.checkboxWidgets[objectName] = checkbox
-  #
-  #
-  #     return row_index + 1
+
   @enter_function
   def setupCheckboxes(self, number_of_columns, classif_label,
                       flag_use_csv=False):
       self.checkboxWidgets = {}
 
-      print('classif label, juste les bons:', classif_label)
-
       row_index = 0
 
       if flag_use_csv:
           iteration_dict = self.get_label_iteration_dict(classif_label)
-          print('in setup checkboxes iteration dict', iteration_dict)
-          print('in setup checkboxes classif label checkbo', classif_label["checkboxes"])
       else:
           iteration_dict = classif_label
 
       if classif_label["checkboxes"] != None:
-
-          print('iteratoin dict before', iteration_dict)
-          # iteration_dict["checkboxes"] = sorted(iteration_dict["checkboxes"])
-
-          print('iteration dict sorted', iteration_dict)
-
-          # for i, (objectName, label) in enumerate(classif_label["checkboxes"].items()):
-          for i, (objectName, label) in enumerate(iteration_dict["checkboxes"].items()):
-            #print(objectName, label)
+          for i, (objectName, label) in (
+                  enumerate(iteration_dict["checkboxes"].items())):
             checkbox = qt.QCheckBox()
             checkbox.setText(label)
             checkbox.setObjectName(objectName)
@@ -446,93 +419,42 @@ class SlicerCARTWidget(ScriptedLoadableModuleWidget, VTKObservationMixin):
             row_index = i / number_of_columns + 1
             column_index = i % number_of_columns
 
-            self.ui.ClassificationGridLayout.addWidget(checkbox, row_index, column_index)
+            self.ui.ClassificationGridLayout.addWidget(
+                checkbox, row_index, column_index)
             self.checkboxWidgets[objectName] = checkbox
 
 
       return row_index + 1
-  
-  # def setupComboboxes(self, start_row):
-  #     self.comboboxWidgets = {}
-  #
-  #     row_index = start_row
-  #     for i, (comboBoxName, options) in enumerate(self.config_yaml["comboboxes"].items()):
-  #       comboboxLabel = qt.QLabel(comboBoxName.replace("_", " ").capitalize() + " :")
-  #       comboboxLabel.setStyleSheet("font-weight: bold")
-  #       self.ui.ClassificationGridLayout.addWidget(comboboxLabel, row_index, 0)
-  #
-  #       combobox = qt.QComboBox()
-  #       combobox.setObjectName(comboBoxName)
-  #       for optionKey, optionLabel in options.items():
-  #           combobox.addItem(optionLabel, optionKey)
-  #       self.ui.ClassificationGridLayout.addWidget(combobox, row_index, 1)
-  #       self.comboboxWidgets[comboBoxName] = combobox
-  #       row_index = row_index + 1
-  #     return row_index + 1
+
   @enter_function
   def setupComboboxes(self, start_row, classif_label, combobox_version=None):
       self.comboboxWidgets = {}
-      print('')
-
-      print('combobox_version', combobox_version)
 
       if combobox_version == None:
           combobox_version = ConfigPath.get_latest_combobox_version(
               self.config_yaml)
-          print('latest_version_combobox:', combobox_version)
-
       else:
-          print('classif_label', classif_label)
-          print('combobox_version', combobox_version)
-          print('self.config yamlv ersion', self.config_yaml[
-              'comboboxes'][combobox_version])
           # Means that we need to read the comboboxes from the config yaml
           # Expand the classif_label using the full definitions
           full_definitions = self.config_yaml['comboboxes'][combobox_version]
-          # classif_label["comboboxes"][combobox_version] = {
-          #     key: full_definitions[key] for key in
-          #     classif_label["comboboxes"][combobox_version]
-          # }
           classif_label["comboboxes"][combobox_version] = {
               key: full_definitions[key]
               for key in sorted(classif_label["comboboxes"][combobox_version])
           }
-
-          print('classif label after', classif_label)
-
 
       row_index = start_row
       if self.config_yaml['comboboxes'] != None :
           for i, (version, comboBoxes) in enumerate(
                   self.config_yaml["comboboxes"].items()):
               if version == combobox_version:
-
-                  print('i', i)
-                  print('comboboxName22', version)
-                  print('options',  comboBoxes)
-                  print('classif label before faile', classif_label[
-                      "comboboxes"])
-
-                  print('items classif label omcoboxes', classif_label[
-                      "comboboxes"][combobox_version])
-
-                  # classif_label["comboboxes"][combobox_version] = sorted(classif_label["comboboxes"][combobox_version])
-
                   for comboBoxName, options in classif_label[
                       "comboboxes"][combobox_version].items():
-
-                      print('combobox name:', comboBoxName)
-
-
-
-
-
 
                       comboboxLabel = qt.QLabel(
                           comboBoxName.replace("_", " ").capitalize() + " :")
                       comboboxLabel.setStyleSheet("font-weight: bold")
-                      self.ui.ClassificationGridLayout.addWidget(comboboxLabel, row_index,
-                                                                 0)
+                      self.ui.ClassificationGridLayout.addWidget(
+                          comboboxLabel, row_index, 0)
 
                       combobox = qt.QComboBox()
                       combobox.setObjectName(comboBoxName)
@@ -543,33 +465,6 @@ class SlicerCARTWidget(ScriptedLoadableModuleWidget, VTKObservationMixin):
                       self.ui.ClassificationGridLayout.addWidget(combobox, row_index, 1)
                       self.comboboxWidgets[comboBoxName] = combobox
                       row_index = row_index + 1
-      # if self.config_yaml['comboboxes'] != None :
-      #     for i, (comboBoxName, options) in enumerate(
-      #             classif_label["comboboxes"].items()):
-      #
-      #         print('i', i)
-      #         print('comboboxName22', comboBoxName)
-      #         print('options', options)
-      #         print('items classif label omcoboxes', classif_label["comboboxes"].items())
-      #
-      #
-      #
-      #         comboboxLabel = qt.QLabel(
-      #             comboBoxName.replace("_", " ").capitalize() + " :")
-      #         comboboxLabel.setStyleSheet("font-weight: bold")
-      #         self.ui.ClassificationGridLayout.addWidget(comboboxLabel, row_index,
-      #                                                    0)
-      #
-      #         combobox = qt.QComboBox()
-      #         combobox.setObjectName(comboBoxName)
-      #
-      #         print('combobox name:', comboBoxName)
-      #
-      #         for optionKey, optionLabel in options.items():
-      #             combobox.addItem(optionLabel, optionKey)
-      #         self.ui.ClassificationGridLayout.addWidget(combobox, row_index, 1)
-      #         self.comboboxWidgets[comboBoxName] = combobox
-      #         row_index = row_index + 1
 
       return row_index + 1
   
@@ -578,15 +473,14 @@ class SlicerCARTWidget(ScriptedLoadableModuleWidget, VTKObservationMixin):
 
       row_index = start_row
 
-      print('columsn to check setup free text', columns_to_check)
-
       if self.config_yaml["freetextboxes"] != None:
-          # columns_to_check = sorted(columns_to_check)
 
-          for i, (freeTextObjectName, freeTextLabel) in enumerate(columns_to_check.items()):
+          for i, (freeTextObjectName, freeTextLabel) \
+                  in enumerate(columns_to_check.items()):
               freeTextQLabel = qt.QLabel(freeTextLabel.capitalize() + " :")
               freeTextQLabel.setStyleSheet("font-weight: bold")
-              self.ui.ClassificationGridLayout.addWidget(freeTextQLabel, row_index, 0)
+              self.ui.ClassificationGridLayout.addWidget(
+                  freeTextQLabel, row_index, 0)
               lineEdit = qt.QLineEdit()
               self.freeTextBoxes[freeTextObjectName] = lineEdit
               self.ui.ClassificationGridLayout.addWidget(lineEdit, row_index, 1)
@@ -969,10 +863,6 @@ class SlicerCARTWidget(ScriptedLoadableModuleWidget, VTKObservationMixin):
       self.set_classification_version_labels(None)
       self.set_classification_config_ui()
 
-
-
-
-
   @enter_function
   def newSegmentation(self):
       # Create segment editor widget and node
@@ -1005,11 +895,13 @@ class SlicerCARTWidget(ScriptedLoadableModuleWidget, VTKObservationMixin):
                               self.visibilityModifiedCallback)
 
       # restart the current timer 
-      self.timers[self.current_label_index] = Timer(number=self.current_label_index)
+      self.timers[self.current_label_index] = Timer(
+          number=self.current_label_index)
       # reset tool 
       self.segmentEditorWidget.setActiveEffectByName("No editing")
       
   # Load all segments at once    
+  @enter_function
   def createNewSegments(self):
       for label in self.config_yaml["labels"]:
           self.onNewLabelSegm(label["name"], label["color_r"], label["color_g"], label["color_b"], label["lower_bound_HU"], label["upper_bound_HU"])
@@ -1047,7 +939,8 @@ class SlicerCARTWidget(ScriptedLoadableModuleWidget, VTKObservationMixin):
       segment.SetColor(label_color_r/255,label_color_g/255,label_color_b/255) 
       self.onPushButton_select_label(segment_name, label_LB_HU, label_UB_HU)
    
-  def onPushButton_select_label(self, segment_name, label_LB_HU, label_UB_HU):  
+  @enter_function
+  def onPushButton_select_label(self, segment_name, label_LB_HU, label_UB_HU):
       self.segmentationNode=slicer.util.getNodesByClass('vtkMRMLSegmentationNode')[0]
       Segmentation = self.segmentationNode.GetSegmentation()
       self.SegmentID = Segmentation.GetSegmentIdBySegmentName(segment_name)
@@ -1056,8 +949,10 @@ class SlicerCARTWidget(ScriptedLoadableModuleWidget, VTKObservationMixin):
       self.LB_HU = label_LB_HU
       self.UB_HU = label_UB_HU
   
-      if (self.MostRecentPausedCasePath != self.currentCasePath and self.MostRecentPausedCasePath != ""):
-        self.timers[self.current_label_index] = Timer(number=self.current_label_index) # new path, new timer
+      if (self.MostRecentPausedCasePath != self.currentCasePath
+              and self.MostRecentPausedCasePath != ""):
+        self.timers[self.current_label_index] = Timer(
+            number=self.current_label_index) # new path, new timer
       
       self.timer_router()
 
@@ -1180,6 +1075,7 @@ class SlicerCARTWidget(ScriptedLoadableModuleWidget, VTKObservationMixin):
           self.enableSegmentAndPaintButtons()
 
   # for the timer Class not the LCD one
+  @enter_function
   def timer_router(self):
       self.timers[self.current_label_index].start()
       self.flag = True
@@ -1225,12 +1121,16 @@ class SlicerCARTWidget(ScriptedLoadableModuleWidget, VTKObservationMixin):
         version = ConfigPath.get_combobox_version()
         try :
             self.config_yaml["checkboxes"]
-            for i, (objectName, label) in enumerate(self.config_yaml["checkboxes"].items()):
+            for i, (objectName, label) \
+                    in enumerate(self.config_yaml["checkboxes"].items()):
                 self.checkboxWidgets[objectName].setChecked(False)
-            for i, (comboBoxName, options) in enumerate(self.config_yaml[
-                                                            "comboboxes"][version].items()):
-                self.comboboxWidgets[comboBoxName].currentText = list(options.items())[0][1]
-            for i, (freeTextBoxObjectName, label) in enumerate(self.config_yaml["freetextboxes"].items()):
+            for i, (comboBoxName, options) \
+                    in enumerate(
+                self.config_yaml["comboboxes"][version].items()):
+                self.comboboxWidgets[
+                    comboBoxName].currentText = list(options.items())[0][1]
+            for i, (freeTextBoxObjectName, label) \
+                    in enumerate(self.config_yaml["freetextboxes"].items()):
                 self.freeTextBoxes[freeTextBoxObjectName].setText("")
         except:
             pass
@@ -1243,10 +1143,6 @@ class SlicerCARTWidget(ScriptedLoadableModuleWidget, VTKObservationMixin):
       information available to an updated dataframe.
       return: dataframe with all previous and actual classification labels.
       """
-
-      print('self currentOutputpath', self.currentOutputPath)
-      print('self currentVOlume fIlename', self.currentVolumeFilename)
-
       self.outputClassificationInformationFile = (
           os.path.join(self.currentOutputPath,
                        '{}_ClassificationInformation.csv'.format(
@@ -1334,6 +1230,9 @@ class SlicerCARTWidget(ScriptedLoadableModuleWidget, VTKObservationMixin):
 
   @enter_function
   def get_all_classification_columns_csv(self, classif_label):
+      """
+      Get all classification columns name from csv file.
+      """
 
       # Try except required since this function can be used initially or
       # after output folder has been selected. If initial, the output path is
@@ -1353,49 +1252,36 @@ class SlicerCARTWidget(ScriptedLoadableModuleWidget, VTKObservationMixin):
                   df = pd.read_csv(self.outputClassificationInformationFile)
 
               if df is not None:
-                  # data_dict = {col: df[col].tolist() for col in df.columns}
-                  # print('data_dict from get all classificaion columsn csv', data_dict)
-                  # column_names = list(data_dict.keys())
                   column_names = self.extract_header_from_df(df)
-
-                  print('colmns names in df not none get all clasisficaiont',
-                        column_names)
-                  print('classif label to transforme %%%%%', classif_label)
-
 
                   csv_columns_dict = {'checkboxes': {}, 'freetextboxes': {}}
                   for key, value in column_names.items():
                       if value == 'checkboxes':
-                          print('chasdasd', value)
                           tag = key.split(":")[0][2:-1]
                           if tag in classif_label['checkboxes']:
-                              print('tag', tag)
-
                               temp_dict = {}
-                              temp_dict[tag] = tag.replace("_", " ").capitalize()
-                              # csv_columns_dict['checkboxes'][temp_dict]
-                              csv_columns_dict['checkboxes'][tag] = tag.replace("_", " ").capitalize()
+                              temp_dict[tag] = (
+                                  tag.replace("_", " ").capitalize())
+                              csv_columns_dict[
+                                  'checkboxes'][
+                                  tag] = tag.replace("_", " ").capitalize()
+                      # Not required to rebuild comboboxes here since already
+                      # using a version control system.
                       # if value == 'comboboxes':
                       #     print('comboboxes', value)
                       if value == 'freetextboxes':
-                          print('freetext value', value)
                           tag = key.split(":")[0][2:-1]
-                          # print('tag', tag)
                           if tag in classif_label['freetextboxes']:
-                              print('tag', tag)
                               temp_dict = {}
-                              temp_dict[tag] = tag.replace("_", " ").capitalize()
-                              # csv_columns_dict['freetextboxes'][temp_dict]
-                              csv_columns_dict['freetextboxes'][tag] = tag.replace("_", " ").capitalize()
+                              temp_dict[tag] = (
+                                  tag.replace("_", " ").capitalize())
+                              csv_columns_dict[
+                                  'freetextboxes'][
+                                  tag] = tag.replace("_", " ").capitalize()
 
-                  print('values extracted from df colums names', csv_columns_dict)
-                  print()
-                  print()
-                  print('columns_names,', column_names)
                   return csv_columns_dict
           except:
               pass
-
 
 
   @enter_function
@@ -1409,178 +1295,51 @@ class SlicerCARTWidget(ScriptedLoadableModuleWidget, VTKObservationMixin):
       """
       header_dict = {}
       value_dict = {}
+
+      # Combobox version to use
       version = ConfigPath.get_combobox_version()
 
-      # print('self config yamal classif label', self.config_yaml[classif_label].items())
-      print()
-      print('************')
-      print('classif label in build classificatino labels', classif_label)
-
-      # csv_columns_dict = self.get_all_classification_columns_csv()
-      # if csv_columns_dict != None:
-      #     print('there is a csv file from whicch the columns will be used')
-      #     iteration_dict = csv_columns_dict
-      #     iteration_dict['comboboxes'] = self.config_yaml['comboboxes']
-      #     print('iteration dict,', iteration_dict)
-      # else:
-      #     iteration_dict = self.config_yaml
-
       # Get appropriate labeling and pass it in iteraction_dict
-
-      print('SET BEFORE SET CLASSIFICAONT VERSION LABELS',
-            self.classification_version_labels)
-
       iteration_dict = self.get_label_iteration_dict(
           self.classification_version_labels)
 
-
-      # initial
-      # iteration_dict = self.get_label_iteration_dict()
-      print('iteraction dict extracted', iteration_dict)
-
-
-
-      # for i, (objectName, label) in enumerate(
-      #         self.config_yaml[classif_label].items()):
       for i, (objectName, label) in enumerate(
               iteration_dict[classif_label].items()):
-
-          print('begin foor loop')
-          print('object name', objectName)
-          print('label', label)
 
           local_header_dict = {}
 
           # Adapt the format of label value saving depending of the type
           if classif_label == "checkboxes":
-              print('in classif labelcheckboxes')
-              print('classif label', classif_label)
-              print('label1111', label)
-              print('ibjectname', objectName)
-              # print('item sself config yaml items', self.config_yaml[classif_label].items())
-              # local_header_dict[label] = classif_label
               local_header_dict[objectName] = classif_label
 
               try:
                   data = "No"
                   if self.checkboxWidgets[objectName].isChecked():
                       data = "Yes"
+
               except:
-                  print(f'in except ***** {objectName} freetexbo')
                   data = self.checkboxWidgets[objectName] = "--"
                   pass
-                  # data = objectName
-
-
-
 
           elif classif_label == "comboboxes":
               if objectName == version:
-                  print('i', i)
-                  print('object name', objectName)
-                  print('label', label)
-                  # print('self config yaml classif items', self.config_yaml[classif_label].items())
                   for key, value in label.items():
-                      print('key', key)
-                      print('value,', value)
                       local_header_dict[key] = classif_label
                       data = self.comboboxWidgets[key].currentText
-                      print('local_header_dict', local_header_dict)
-
                       header_dict[f"{local_header_dict}"] = classif_label
                       value_dict[f"{local_header_dict}"] = data
                       local_header_dict = {}
-
               else:
                   continue
 
-              # continue
-          #     if objectName == version:
-          #         objectVersion = self.config_yaml[classif_label][version]
-          #         for key, value in objectVersion.items():
-          #             print('key', key)
-          #             print('value', value)
-          #             local_header_dict[key] = classif_label
-          #             data = self.comboboxWidgets[objectVersion].currentText
-          #             print('data', data)
-
-                  # print('version combobox : ', version)
-                  # print('classif label vesion', classif_label)
-                  # print('object name', objectName)
-                  # print('object version', objectVersion)
-                  # print('local header dict', local_header_dict)
-                  # print('local header dict pversion]', local_header_dict[objectVersion])
-
-                  # local_header_dict[objectName] = classif_label
-                  # local_header_dict[objectVersion] = classif_label
-
-                  # value = self.comboboxWidgets[objectName]
-                  # print('value', value)
-
-                  # data = value.currentText
-
           elif classif_label == "freetextboxes":
-              print('in free textboxe')
-              # local_header_dict[label] = classif_label
-
-              print('i freet', i)
-              print('object name', objectName)
-              print('classif label!!!!', classif_label)
-              print('label', label)
-              print('dict congif yam', self.config_yaml[classif_label].items())
-
               try:
                   local_header_dict[objectName] = classif_label
                   data = self.freeTextBoxes[objectName].text.replace(
                       "\n", " // ")
               except:
-                  print(f'in except {objectName} freetexbo')
                   data = self.freeTextBoxes[objectName] = "--"
                   pass
-                  # data = objectName
-
-
-
-      # for i, (objectName, label) in enumerate(
-      #         self.config_yaml[classif_label].items()):
-      #
-      #     local_header_dict = {}
-      #
-      #     # Adapt the format of label value saving depending of the type
-      #     if classif_label == "checkboxes":
-      #         local_header_dict[label] = classif_label
-      #         data = "No"
-      #         if self.checkboxWidgets[objectName].isChecked():
-      #             data = "Yes"
-      #
-      #     elif classif_label == "comboboxes":
-      #         version = ConfigPath.get_combobox_version()
-      #         objectVersion = self.config_yaml[classif_label][version]
-      #
-      #         print('version combobox : ', version)
-      #         print('classif label vesion', classif_label)
-      #         print('object name', objectName)
-      #         print('object version', objectVersion)
-      #         print('local header dict', local_header_dict)
-      #         print('local header dict pversion]', local_header_dict[objectVersion])
-      #
-      #         # local_header_dict[objectName] = classif_label
-      #         local_header_dict[objectVersion] = classif_label
-      #
-      #
-      #         value = self.comboboxWidgets[objectName]
-      #         print('value', value)
-      #
-      #         data = value.currentText
-      #
-      #     elif classif_label == "freetextboxes":
-      #         local_header_dict[label] = classif_label
-      #         data = self.freeTextBoxes[objectName].text.replace(
-      #             "\n", " // ")
-
-          print('classif label', classif_label)
-          print('data;', data)
-          print('local header dict', local_header_dict)
 
           if not classif_label == "comboboxes":
               header_dict[f"{local_header_dict}"] = classif_label
@@ -1590,17 +1349,18 @@ class SlicerCARTWidget(ScriptedLoadableModuleWidget, VTKObservationMixin):
 
   @enter_function
   def get_label_iteration_dict(self, classif_label=None):
+      """
+      Get the configuration dictionary to iterate through (e.g. in
+      classification ui versioning).
+      """
       csv_columns_dict = self.get_all_classification_columns_csv(classif_label)
       if csv_columns_dict != None:
-          print('there is a csv file from whicch the columns will be used')
           iteration_dict = csv_columns_dict
           iteration_dict['comboboxes'] = self.config_yaml['comboboxes']
-          print('iteration dict,', iteration_dict)
       else:
           iteration_dict = self.config_yaml
 
       return iteration_dict
-
 
   @enter_function
   def add_missing_columns_to_df(self, df, columns_dict):
@@ -2020,8 +1780,6 @@ class SlicerCARTWidget(ScriptedLoadableModuleWidget, VTKObservationMixin):
       else:
           csv_data = pd.read_csv(classificationInformationPath)
           existing_version_strings = csv_data['Classification version'].to_list()
-          print('existing version strings', existing_version_strings)
-
           existing_version_numbers = [(int)(version_string.split("v")[1]) for version_string in existing_version_strings]
           next_version_number =  max(existing_version_numbers) + 1
           version = f'{version}{next_version_number:02d}'
@@ -2045,31 +1803,6 @@ class SlicerCARTWidget(ScriptedLoadableModuleWidget, VTKObservationMixin):
           next_version_number = min(next_version_number, 99)  # max 99 versions
           version = f'{version}{next_version_number:02d}'
       return version
-
-  # @enter_function
-  # def look_for_existing_version(self, list_of_segmentation_filenames):
-  #     """
-  #       Check for all versions in the folder, but avoid to crash if other
-  #       files than segmentatino are in the folder where segmentation
-  #       masks should be saved.
-  #       :param list_of_segmentation_filenames: list of all files in the
-  #       folder where segmentation should be saved.
-  #       :return: list of existing versions for the current file
-  #     """
-  #     existing_versions = []
-  #     for filename in list_of_segmentation_filenames:
-  #         # Check if '_v' exists in the filename
-  #         if '_v' in filename:
-  #             try:
-  #                 # Extract the version number after '_v'
-  #                 version = int(filename.split('_v')[1].split(".")[0])
-  #                 existing_versions.append(version)
-  #             except (IndexError, ValueError):
-  #                 # Handle cases where splitting or conversion to int fails
-  #                 print(f"Skipping invalid filename: {filename}")
-  #         else:
-  #             print(f"No version found in filename: {filename}")
-  #     return existing_versions
 
   def msg2_clicked(self, msg2_button):
       if msg2_button.text == 'OK':
@@ -2233,9 +1966,6 @@ class SlicerCARTWidget(ScriptedLoadableModuleWidget, VTKObservationMixin):
   def onLoadClassification(self):
       classificationInformationPath = f'{self.currentOutputPath}{os.sep}{self.currentVolumeFilename}_ClassificationInformation.csv'
       classificationInformation_df = None
-
-      # self.config_yaml = ConfigPath.open_project_config_file()
-
       if os.path.exists(classificationInformationPath):
           classificationInformation_df = pd.read_csv(classificationInformationPath)
       else:
@@ -2256,13 +1986,7 @@ class SlicerCARTWidget(ScriptedLoadableModuleWidget, VTKObservationMixin):
       self.annotator_degree = self.ui.AnnotatorDegree.currentText
 
       self.combobox_version = ConfigPath.get_combobox_version()
-      print('self combobx version', self.combobox_version)
-
-
       classification_df = self.getClassificationInformation()
-
-      print('classificatino df', classification_df)
-
       
       # Create folders if don't exist
       self.createFolders()
@@ -2847,4 +2571,3 @@ class SlicerCARTWidget(ScriptedLoadableModuleWidget, VTKObservationMixin):
         self.config_yaml["labels"][self.current_label_index]["upper_bound_HU"] = self.UB_HU
       except:
         pass
-
