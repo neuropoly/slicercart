@@ -831,7 +831,7 @@ class ConfigureSegmentationWindow(qt.QWidget):
         self.label_table_view = qt.QTableWidget()
         layout.addWidget(self.label_table_view)
 
-        if len(self.config_yaml['labels']) > 0:
+        if self.config_yaml['labels'] != None:
             number_of_labels = len(self.config_yaml['labels'])
 
             self.label_table_view.setRowCount(number_of_labels)
@@ -1333,12 +1333,15 @@ class ConfigureClassificationWindow(qt.QWidget):
         else:
             self.config_yaml = classification_config_yaml
 
+        # This flag enables to track whether combobox options have been modified
+        self.flag_all_combobox_versions = True
+
         layout = qt.QVBoxLayout()
 
         self.checkbox_table_view = qt.QTableWidget()
         layout.addWidget(self.checkbox_table_view)
 
-        if len(self.config_yaml['checkboxes']) > 0:
+        if self.config_yaml['checkboxes'] != None:
             number_of_checkboxes = len(self.config_yaml['checkboxes'])
 
             self.checkbox_table_view.setRowCount(number_of_checkboxes)
@@ -1384,8 +1387,15 @@ class ConfigureClassificationWindow(qt.QWidget):
         self.combobox_table_view = qt.QTableWidget()
         layout.addWidget(self.combobox_table_view)
 
-        if len(self.config_yaml['comboboxes']) > 0:
-            number_of_comboboxes = len(self.config_yaml['comboboxes'])
+        # Preparing comboboxes versioning
+        dict_of_comboboxes = self.config_yaml['comboboxes']
+        (latest_combobox_version,
+         latest_combobox_dict) = (
+            self.get_latest_combobox_version(dict_of_comboboxes))
+
+        if latest_combobox_dict != None:
+            number_of_comboboxes = len(
+                self.config_yaml['comboboxes'][latest_combobox_version])
 
             self.combobox_table_view.setRowCount(number_of_comboboxes)
             self.combobox_table_view.setColumnCount(3)
@@ -1397,7 +1407,7 @@ class ConfigureClassificationWindow(qt.QWidget):
                 qt.QHeaderView.Stretch)
 
             for index, (combo_box_name, combo_box_options) in enumerate(
-                    self.config_yaml["comboboxes"].items()):
+                    latest_combobox_dict.items()):
                 remove_button = qt.QPushButton('Remove')
                 remove_button.clicked.connect(lambda state,
                                                      combo_box_name=combo_box_name: self.push_remove_combobox_button(
@@ -1448,7 +1458,7 @@ class ConfigureClassificationWindow(qt.QWidget):
         self.freetext_table_view = qt.QTableWidget()
         layout.addWidget(self.freetext_table_view)
 
-        if len(self.config_yaml['freetextboxes']) > 0:
+        if self.config_yaml['freetextboxes'] != None:
             number_of_freetextboxes = len(self.config_yaml['freetextboxes'])
 
             self.freetext_table_view.setRowCount(number_of_freetextboxes)
@@ -1503,15 +1513,60 @@ class ConfigureClassificationWindow(qt.QWidget):
         self.setWindowTitle("Configure Classification")
         self.resize(500, 600)
 
+    @enter_function
+    def get_latest_combobox_version(self, dict_of_comboboxes):
+        """
+        Get the latest combobox version
+        :Param: dict_of_comboboxes: a dictionary that contains all the versions
+        return: latest_combobox_version: string like v08 associated with the
+        latest combobox version; latest_combobox_dict: dictionary that
+        contains the combobox options for the latest version
+        """
+        search_latest_combobox_version = \
+            lambda d: max(d.keys(), key=lambda k: int(k[1:])) if d else None
+
+        latest_combobox_version = search_latest_combobox_version(
+            dict_of_comboboxes)
+        if dict_of_comboboxes != None:
+            latest_combobox_dict = (dict_of_comboboxes[latest_combobox_version])
+        else:
+            latest_combobox_dict = None
+
+        return latest_combobox_version, latest_combobox_dict
+
+    @enter_function
     def push_remove_combobox_button(self, combo_box_name):
         self.close()
 
-        self.config_yaml['comboboxes'].pop(combo_box_name, None)
+        # Flag that indicates that the remove combobox has been selected in
+        # the ui
+        ConfigPath.set_remove_combobox_flag()
+
+        # Preparing comboboxes versioning
+        dict_of_comboboxes = self.config_yaml['comboboxes']
+        (latest_combobox_version,
+         latest_combobox_dict) = (
+            self.get_latest_combobox_version(dict_of_comboboxes))
+
+        if ConfigPath.get_combobox_flag():
+            # Means that a dropdown has not been added
+            version_temp = int(latest_combobox_version[1:]) + 1
+            latest_combobox_version = f"v{version_temp:02d}"
+            # Deep copy to faciliate tracking of labels
+            new_dict = copy.deepcopy(latest_combobox_dict)
+            dict_of_comboboxes[latest_combobox_version] = new_dict
+
+            # Set the flag to indicate that the comboboxes have been modified
+            ConfigPath.set_combobox_flag()
+            ConfigPath.set_remove_combobox_flag()
+
+        dict_of_comboboxes[latest_combobox_version].pop(combo_box_name, None)
 
         configureClassificationWindow = ConfigureClassificationWindow(
             self.segmenter, self.edit_conf, self.config_yaml)
         configureClassificationWindow.show()
 
+    @enter_function
     def push_remove_checkbox_button(self, checkbox_label):
         self.close()
 
@@ -1570,6 +1625,18 @@ class ConfigureClassificationWindow(qt.QWidget):
 
     @enter_function
     def push_save(self):
+
+        # Adjust latest combobox version
+        # Extract the config file combobox latest version
+        latest_combobox_version_file, latest_combobox_dict_file = (
+            self.get_latest_combobox_version(self.config_yaml['comboboxes'])
+        )
+
+        # Reset combobox flag for enabling to track the correct combobox version
+        ConfigPath.set_combobox_flag(True)
+        ConfigPath.set_remove_combobox_flag(True)
+        ConfigPath.set_combobox_version(latest_combobox_version_file)
+
         ConfigPath.write_config_file()
 
         if self.edit_conf:
@@ -1847,21 +1914,27 @@ class ConfigureSingleClassificationItemWindow(qt.QWidget):
 
         if self.item_added == 'checkbox':
             label_found = False
-            for i, (_, label) in enumerate(
-                    self.config_yaml['checkboxes'].items()):
-                if label == current_label_name:
-                    label_found = True
-
+            if self.config_yaml['checkboxes'] != None:
+                for i, (_, label) in enumerate(
+                        self.config_yaml['checkboxes'].items()):
+                    if label == current_label_name:
+                        label_found = True
             if label_found == False:
                 # append
-                self.config_yaml['checkboxes'].update(
-                    {object_name: current_label_name.capitalize()})
+                if self.config_yaml['checkboxes'] == None:
+                    self.config_yaml[
+                        'checkboxes'] = \
+                        {object_name: current_label_name.capitalize()}
+                else:
+                    self.config_yaml['checkboxes'].update(
+                        {object_name: current_label_name.capitalize()})
         elif self.item_added == 'combobox':
             if self.options_combobox.count == 0:
                 msg = qt.QMessageBox()
                 msg.setWindowTitle('ERROR : No Drop Down Options Defined')
                 msg.setText(
-                    'At least one drop down option must be defined. The previous classification configuration will be used. ')
+                    'At least one drop down option must be defined. '
+                    'The previous classification configuration will be used. ')
                 msg.setStandardButtons(
                     qt.QMessageBox.Ok | qt.QMessageBox.Cancel)
                 msg.buttonClicked.connect(
@@ -1875,26 +1948,75 @@ class ConfigureSingleClassificationItemWindow(qt.QWidget):
                     options_dict.update({option.replace(' ', '_'): option})
 
                 item_found = False
-                for i, (combobox_name, _) in enumerate(
-                        self.config_yaml['comboboxes'].items()):
-                    if combobox_name == object_name:
-                        item_found = True
+                if self.config_yaml['comboboxes'] != None:
+                    for i, (combobox_name, _) in enumerate(
+                            self.config_yaml['comboboxes'].items()):
+                        if combobox_name == object_name:
+                            item_found = True
+                else:
+                    self.config_yaml['comboboxes'] = {}
 
-                if item_found == False:
-                    # append
-                    self.config_yaml['comboboxes'].update(
-                        {object_name: options_dict})
+                # Ensure 'comboboxes' key exists
+                if 'comboboxes' not in self.config_yaml:
+                    self.config_yaml['comboboxes'] = {}
+
+                all_combobox_versions = self.config_yaml[
+                    'comboboxes'].keys()
+
+                latest_saved_version = (
+                    self.get_latest_saved_combobox_version(
+                        all_combobox_versions))
+
+                # Get the existing version keys (e.g., v01, v02, ...)
+                existing_versions = self.config_yaml['comboboxes'].keys()
+                version_numbers = [int(k[1:]) for k in existing_versions if
+                                   k.startswith('v') and k[1:].isdigit()]
+
+                if ConfigPath.get_combobox_flag():
+                    new_version_number = int(latest_saved_version) + 1
+                    ConfigPath.set_combobox_flag()
+                    ConfigPath.set_remove_combobox_flag()
+                else:
+                    new_version_number = latest_saved_version
+
+                new_version_key = f"v{new_version_number:02d}"
+
+                # If the latest version exists,
+                # copy it and append new combobox to it
+                if version_numbers:
+                    latest_version_key = f"v{max(version_numbers):02d}"
+                    new_version_data = self.config_yaml['comboboxes'][
+                        latest_version_key].copy()
+                else:
+                    new_version_data = {}
+
+                # Add the new combobox if not already present
+                if object_name not in new_version_data:
+                    new_version_data[object_name] = options_dict
+
+                # Save the updated versioned comboboxes
+                self.config_yaml['comboboxes'][
+                    new_version_key] = new_version_data
+
         elif self.item_added == 'freetextbox':
             label_found = False
-            for i, (_, label) in enumerate(
-                    self.config_yaml['freetextboxes'].items()):
-                if label == current_label_name:
-                    label_found = True
+
+            if self.config_yaml['freetextboxes'] != None:
+                for i, (_, label) in enumerate(
+                        self.config_yaml['freetextboxes'].items()):
+                    if label == current_label_name:
+                        label_found = True
 
             if label_found == False:
                 # append
-                self.config_yaml['freetextboxes'].update(
-                    {object_name: current_label_name.capitalize()})
+                if self.config_yaml['freetextboxes'] == None:
+                    self.config_yaml[
+                        'freetextboxes'] = \
+                        {object_name: current_label_name.capitalize()}
+
+                else:
+                    self.config_yaml['freetextboxes'].update(
+                        {object_name: current_label_name.capitalize()})
 
         configureClassificationWindow = ConfigureClassificationWindow(
             self.segmenter, self.edit_conf, self.config_yaml)
@@ -1906,3 +2028,21 @@ class ConfigureSingleClassificationItemWindow(qt.QWidget):
 
     def push_cancel(self):
         self.close()
+
+    @enter_function
+    def get_latest_saved_combobox_version(self, all_combobox_versions):
+        """
+        Get the latest saved (in configuration yaml file) version of combobox.
+        :Param: all_combobox_version = dictionary that contains all combobox
+        :return: integer indicating the version ex 8 (if 8 versions)
+        """
+
+        if (len(all_combobox_versions) > 0):
+
+            existing_versions = all_combobox_versions
+            version_numbers = max([int(k[1:]) for k in existing_versions if
+                               k.startswith('v') and k[1:].isdigit()])
+        else:
+            version_numbers = 0
+
+        return version_numbers
