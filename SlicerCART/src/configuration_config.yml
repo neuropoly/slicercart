@@ -24,8 +24,8 @@ KEYBOARD_SHORTCUTS:
   callback: onSaveClassificationButton
   shortcut: c
 checkboxes:
-  cb_1: Cb 1
-  cb_2: Cb 2
+  jacquescb: Jacquescb
+  maximecb: Maximecb
 comboboxes:
   v01:
     dd_1:
@@ -54,15 +54,33 @@ comboboxes:
       '333': '333'
       '4444': '4444'
       '55555': '55555'
+  v03:
+    dd_1:
+      a: a
+      b: b
+    dd_3:
+      '1': '1'
+      '22': '22'
+      '333': '333'
+      '4444': '4444'
+      '55555': '55555'
+  v04:
+    anika:
+      aaa: aaa
+      bbbb: bbbb
+      cccc: cccc
+    dd_1:
+      a: a
+      b: b
 ct_window_level: 45
 ct_window_width: 85
 default_segmentation_directory: ''
 default_volume_directory: ''
 enable_debug: true
 freetextboxes:
-  tf_1: Tf 1
+  dragon: Dragon
   tf_2: Tf 2
-  tt_3: Tt 3
+  zebra: Zebra
 impose_bids_format: false
 input_filetype: '*.nii.gz'
 interpolate_value: 0

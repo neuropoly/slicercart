@@ -351,6 +351,13 @@ class ConfigPath():
     def get_remove_combobox_flag(self):
         return self.flag_remove_combobox
 
+    @enter_function
+    def set_latest_combobox_version(self, config_file):
+        print('combobox version before', self.combobox_version)
+        self.combobox_version= self.get_latest_combobox_version(config_file)
+        print('self combobox version after', self.combobox_version)
+        return self.combobox_version
+
 
 
 # Creating an instance of ConfigPath. This ensures that all the same

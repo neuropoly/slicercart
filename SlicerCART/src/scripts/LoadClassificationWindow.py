@@ -1,3 +1,5 @@
+import copy
+
 from utils import *
 class LoadClassificationWindow(qt.QWidget):
    @enter_function
@@ -76,6 +78,8 @@ class LoadClassificationWindow(qt.QWidget):
        print('selected_version', selected_version)
        print('self classif df', self.classificationInformation_df)
 
+
+
        selected_version_df = (
            self.classificationInformation_df[
                self.classificationInformation_df[
@@ -110,79 +114,51 @@ class LoadClassificationWindow(qt.QWidget):
 
        self.clean_classification_grid(self.segmenter)
 
-       comboboxesStartRow = self.segmenter.setupCheckboxes(3, classif_label)
+
+
+       comboboxesStartRow = self.segmenter.setupCheckboxes(3, classif_label,
+                                                           flag_use_csv=True)
        print('checkboxes added')
 
-       print('selectd version df is the combobox version column present')
-       print('column selected', selected_version_df['Combobox version'])
        combobox_version = selected_version_df['Combobox version'].iloc[0]
-       print('combobox version', combobox_version)
-
        version_combobox_label_dict = {}
        version_combobox_label_dict[combobox_version] = classif_label[
            'comboboxes']
        total_dict_combobox = {}
        total_dict_combobox['comboboxes'] = version_combobox_label_dict
-
-       print('total_dict_combobox', total_dict_combobox)
-       print('classif label', classif_label)
-
-
        # self.segmenter.setupComboboxes(comboboxesStartRow, classif_label, combobox_version)
        start_row = self.segmenter.setupComboboxes(comboboxesStartRow,
                                        total_dict_combobox, combobox_version)
-
        print('comboboxes added')
 
-       # Set up free text boxes
-
-       # print('in set up free text rebuilding')
-       # print('freeTextboxc name', freeTextObjectName)
-       # print('free text label', freeTextLabel)
-       # if freeTextLabel == '--':
-       #     continue
-       # else:
 
        print('classif label freetextbozxese', classif_label['freetextboxes'])
-
        self.segmenter.setupFreeText(start_row, classif_label['freetextboxes'])
 
-
-
-       ### RENDU ICI ; AJOUTER LES COMBOBOX! ATTENTON IL NY EN A PAS DANS LE
-       # SET CREER CLASSIF_LABEL 1RE ETAPE= LES AJOUTER
-       # QUAND CREER 1ER LABEL = ALLER DANS CONFIGURAITON?
-       # SI COMBOBXOX =  = CREER SOUS -DICTIONARIARE DE PLUS!
-
-       # classif_labels = {}
-       # classif_labels["checkboxes"] = {}
-       # classif_labels
-       # for name in columns_names:
-       #
-       #     print('name', name)
-       #     label_type = columns_names[name]
-       #     print('label_type', label_type)
-       #     if label_type in classif_labels:
-       #         classif_labels[label_type] =
-           # if label_type in classif_labels.keys():
-           #     classif_labels[label_type][name]
+       # Attribute the correct classification labels to the SlicerCART widget
+       export_to_slicercart = copy.deepcopy(classif_label)
+       self.segmenter.set_classification_version_labels(export_to_slicercart)
+       print('export to slicer cart')
 
 
 
 
+       iteration_dict = self.segmenter.get_label_iteration_dict()
+       print('iteration_dict%%%%%*******', iteration_dict)
 
-       # On prend le fichier csv et pas le config yaml pour
-
-       print('in adding checboexes')
-       for i, (objectName, label) in enumerate(self.segmenter.config_yaml["checkboxes"].items()):
+       # for i, (objectName, label) in enumerate(self.segmenter.config_yaml["checkboxes"].items()):
+       # for i, (objectName, label) in enumerate(iteration_dict["checkboxes"].items()):
+       for i, (objectName, label) in enumerate(classif_label["checkboxes"].items()):
 
            print('columns names', list(selected_version_df.columns))
            print('adding i', i)
            print(' objectName adding', objectName)
            print('label adding', label)
-           print('module checbokex', self.segmenter.config_yaml["checkboxes"].items())
+           print('module checbokex', iteration_dict["checkboxes"].items())
 
-           config_file_dict = self.segmenter.config_yaml["checkboxes"]
+           # config_file_dict = self.segmenter.config_yaml["checkboxes"]
+           config_file_dict = classif_label['checkboxes']
+
            # column_name = f'"{{\'{config_file_dict[objectName]}\': \'checkboxes\'}}"'
            # column_name = f"'{config_file_dict[objectName]}': 'checkboxes'"
 
@@ -195,10 +171,18 @@ class LoadClassificationWindow(qt.QWidget):
 
            print('column name', column_name)
 
-           if selected_version_df.at[0, column_name] == 'Yes':
-               self.segmenter.checkboxWidgets[objectName].setChecked(True)
-           elif selected_version_df.at[0, column_name] == 'No' or str(selected_version_df.at[0, column_name]) == 'nan':
-               self.segmenter.checkboxWidgets[objectName].setChecked(False)
+           try:
+               print('in try column')
+
+               if selected_version_df.at[0, column_name] == 'Yes':
+                   self.segmenter.checkboxWidgets[objectName].setChecked(True)
+               elif selected_version_df.at[0, column_name] == 'No' or str(selected_version_df.at[0, column_name]) == 'nan':
+                   self.segmenter.checkboxWidgets[objectName].setChecked(False)
+
+           except:
+               print(' means that the column name does not exist in the '
+                     f'loaded classificatoin version {column_name}')
+               pass
 
        for i, (comboBoxName, options) in enumerate(
                self.segmenter.config_yaml["comboboxes"][
@@ -236,6 +220,10 @@ class LoadClassificationWindow(qt.QWidget):
 
 
        print('now about to do freetextboxes')
+
+       print('iteration dict before free textbox', iteration_dict)
+       print('classif label free textboxes', classif_label)
+
        for i, (freeTextBoxObjectName, label) in enumerate(classif_label['freetextboxes'].items()):
 
            print('label', label)
@@ -264,13 +252,22 @@ class LoadClassificationWindow(qt.QWidget):
            print('module checbokex freetextbox', config_file_dict.items())
            print('')
 
-           saved_text = selected_version_df.at[0, column_name]
-           print('saved_text', saved_text)
 
-           if str(saved_text) != 'nan':
-               self.segmenter.freeTextBoxes[freeTextBoxObjectName].setText(saved_text)
-           else:
-               self.segmenter.freeTextBoxes[freeTextBoxObjectName].setText("")
+           try:
+               print(' in try column freetext')
+
+               saved_text = selected_version_df.at[0, column_name]
+               print('saved_text', saved_text)
+
+               if str(saved_text) != 'nan':
+                   self.segmenter.freeTextBoxes[freeTextBoxObjectName].setText(saved_text)
+               else:
+                   self.segmenter.freeTextBoxes[freeTextBoxObjectName].setText("")
+
+           except:
+               print(' means that the column name does not exist in the '
+                     'current version ')
+               pass
 
 
 
@@ -360,6 +357,7 @@ class LoadClassificationWindow(qt.QWidget):
        return classif_label
 
 
+   @enter_function
    def clean_classification_grid(self, segmenter):
        # Loop through all items in the layout and remove them
        for i in reversed(range(segmenter.ui.ClassificationGridLayout.count(
@@ -373,6 +371,15 @@ class LoadClassificationWindow(qt.QWidget):
    @enter_function
    def recreate_column_name(self, name, type):
        return f"{{'{name}': '{type}'}}"
+
+   @enter_function
+   def valiate_classification_ui_config(self, segmenter):
+       for i in reversed(range(segmenter.ui.ClassificationGridLayout.count(
+
+       ))):
+           widget = segmenter.ui.ClassificationGridLayout.itemAt(
+               i).widget()
+           print('widget', widget)
 
 
 
