@@ -131,8 +131,8 @@ class SlicerCARTWidget(ScriptedLoadableModuleWidget, VTKObservationMixin):
     # ATTENTION! self.current_label_index refers to an index, but it is
     # getting its value based on the first label value (assumes it is always
     # 1): so, first index value = 1 -1 == 0
-    # self.current_label_index = (self.config_yaml['labels'][0]['value']-1)
-    self.current_label_index = self.config_yaml['labels'][0]['value']
+    self.current_label_index = (self.config_yaml['labels'][0]['value']-1)
+    # self.current_label_index = self.config_yaml['labels'][0]['value']
   
     self.ui.PauseTimerButton.setText('Pause')
     self.ui.SelectVolumeFolder.connect('clicked(bool)', self.onSelectVolumesFolderButton)
@@ -206,6 +206,8 @@ class SlicerCARTWidget(ScriptedLoadableModuleWidget, VTKObservationMixin):
 
     # Ensure keyboard shortcut (at least from the last configuration) work
     # at startup
+    self.shortcut_objects = {}  # Maps shortcut key to QShortcut object
+    self.shortcut_callbacks = {}
     self.set_keyboard_shortcuts()
 
   @enter_function
@@ -332,16 +334,33 @@ class SlicerCARTWidget(ScriptedLoadableModuleWidget, VTKObservationMixin):
 
   @enter_function
   def set_keyboard_shortcuts(self):
-      if self.config_yaml['is_keyboard_shortcuts_requested']:
-          for i in self.config_yaml["KEYBOARD_SHORTCUTS"]:
-              shortcutKey = i.get("shortcut")
-              callback_name = i.get("callback")
-              button_name = i.get("button")
+      # Initialize dictionaries if they don’t exist yet
+      if hasattr(self, 'shortcut_objects'):
+          # Disconnect and delete all existing shortcuts
+          for key, shortcut in self.shortcut_objects.items():
+              print('deleitngshortcut key:', key, shortcut)
+              shortcut.setParent(None)  # This will delete the shortcut
+          self.shortcut_objects.clear()
+          self.shortcut_callbacks.clear()
+      else:
+          self.shortcut_objects = {}
+          self.shortcut_callbacks = {}
+
+      if self.config_yaml.get('is_keyboard_shortcuts_requested', False):
+          for entry in self.config_yaml.get("KEYBOARD_SHORTCUTS", []):
+              shortcutKey = entry.get("shortcut")
+              callback_name = entry.get("callback")
+              button_name = entry.get("button")
 
               button = getattr(self.ui, button_name)
               callback = getattr(self, callback_name)
 
-              self.connectShortcut(shortcutKey, button, callback)
+              # Create new shortcut and connect it
+              shortcut = qt.QShortcut(qt.QKeySequence(shortcutKey), button)
+              shortcut.connect("activated()", callback)
+
+              self.shortcut_objects[shortcutKey] = shortcut
+              self.shortcut_callbacks[shortcutKey] = callback
 
   @enter_function
   def set_segmentation_config_ui(self):
@@ -2358,11 +2377,13 @@ class SlicerCARTWidget(ScriptedLoadableModuleWidget, VTKObservationMixin):
             list_of_segment_names.append(segment.GetName())
         return list_of_segment_names
 
+  @enter_function
   def onPushDefaultMin(self):
       fresh_config = ConfigPath.open_project_config_file()
       self.config_yaml["labels"][self.current_label_index]["lower_bound_HU"] = fresh_config["labels"][self.current_label_index]["lower_bound_HU"]
       self.setUpperAndLowerBoundHU(self.config_yaml["labels"][self.current_label_index]["lower_bound_HU"], self.config_yaml["labels"][self.current_label_index]["upper_bound_HU"])
 
+  @enter_function
   def onPushDefaultMax(self):
       fresh_config = ConfigPath.open_project_config_file()
       self.config_yaml["labels"][self.current_label_index]["upper_bound_HU"] = fresh_config["labels"][self.current_label_index]["upper_bound_HU"]
