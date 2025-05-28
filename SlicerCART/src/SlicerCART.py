@@ -824,7 +824,7 @@ class SlicerCARTWidget(ScriptedLoadableModuleWidget, VTKObservationMixin):
       self.newSegments()
 
   def on_annotator_name_changed(self):
-      self.update_case_list_colors()
+      # self.update_case_list_colors()
       self.ui.SlicerDirectoryListView.setCurrentItem(self.ui.SlicerDirectoryListView.item(self.currentCase_index))
       self.update_current_segmentation_status()
   
@@ -1559,7 +1559,7 @@ class SlicerCARTWidget(ScriptedLoadableModuleWidget, VTKObservationMixin):
 
       self.cast_segmentation_to_uint8()
 
-      self.update_case_list_colors()
+      # self.update_case_list_colors()
 
       # One segment has been saved, which allows to load the next case from now.
       self.saved_selected = True
@@ -1897,7 +1897,7 @@ class SlicerCARTWidget(ScriptedLoadableModuleWidget, VTKObservationMixin):
           if self.CurrentFolder is not None:
               self.updateCurrentOutputPathAndCurrentVolumeFilename()
 
-              self.update_case_list_colors()
+              # self.update_case_list_colors()
 
               self.ui.SlicerDirectoryListView.setCurrentItem(
                   self.ui.SlicerDirectoryListView.item(self.currentCase_index))
@@ -1908,21 +1908,23 @@ class SlicerCARTWidget(ScriptedLoadableModuleWidget, VTKObservationMixin):
       else:
           Debug.print(self, 'No output folder selected.')
 
+  ### N.B. MB: All calling of the function belows have been disabled because
+  # if there is a large UI case list (ex 1000 cases), the module becomes very
+  # slow since it looks for the whole list each time. Function kept here to
+  # addrees in the future in a more effective way of update UI case list color.
   @enter_function
   def update_case_list_colors(self):
       if self.outputFolder is None or self.CurrentFolder is None:
           return
-      
-      segmentation_information_path = f'{self.currentOutputPath}{os.sep}{self.currentVolumeFilename}_SegmentationInformation.csv'
-      segmentation_information_df = None
-      if os.path.exists(segmentation_information_path):
-          segmentation_information_df = pd.read_csv(segmentation_information_path)
 
-          self.ui.SlicerDirectoryListView.clear()
-          for case in self.Cases:
-            case_id = case.split('.')[0]
-            item = qt.QListWidgetItem(case_id)
- 
+      self.ui.SlicerDirectoryListView.clear()
+      for case in self.Cases:
+        case_id = case.split('.')[0]
+        item = qt.QListWidgetItem(case_id)
+        segmentation_information_path = f'{self.currentOutputPath}{os.sep}{case_id}_SegmentationInformation.csv'
+        segmentation_information_df = None
+        if os.path.exists(segmentation_information_path):
+            segmentation_information_df = pd.read_csv(segmentation_information_path)
             currentCaseSegmentationStatus = self.get_segmentation_status(case, segmentation_information_df)
             if currentCaseSegmentationStatus == 0:
                 item.setForeground(qt.QColor(self.foreground))
@@ -1930,11 +1932,12 @@ class SlicerCARTWidget(ScriptedLoadableModuleWidget, VTKObservationMixin):
                 item.setForeground(qt.QColor('orange'))
             elif currentCaseSegmentationStatus == 2:
                 item.setForeground(qt.QColor('green'))
-            
-            self.ui.SlicerDirectoryListView.addItem(item)
+
+        self.ui.SlicerDirectoryListView.addItem(item)
       else:
           return
   
+  @enter_function
   def get_segmentation_status(self, case, segmentation_information_df):
       self.annotator_name = self.ui.Annotator_name.text
 
@@ -1948,7 +1951,7 @@ class SlicerCARTWidget(ScriptedLoadableModuleWidget, VTKObservationMixin):
             msg.exec()
 
       else:
-            for _, row in segmentation_information_df.iterrows():
+          for _, row in segmentation_information_df.iterrows():
                 if row['Volume filename'] == case and row['Annotator Name'] == self.annotator_name:
                     return 2
                 elif row['Volume filename'] == case:
