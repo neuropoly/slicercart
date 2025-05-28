@@ -206,13 +206,9 @@ class SlicerCARTWidget(ScriptedLoadableModuleWidget, VTKObservationMixin):
 
     # Ensure keyboard shortcut (at least from the last configuration) work
     # at startup
-    print('about to define keyboard shortcuts\n\n\n *******')
     self.shortcut_objects = {}  # Maps shortcut key to QShortcut object
     self.shortcut_callbacks = {}
     self.set_keyboard_shortcuts()
-
-    print('labels config yanl', self.config_yaml['labels'])
-
 
   @enter_function
   def set_classification_version_labels(self, classif_label):
@@ -337,42 +333,6 @@ class SlicerCARTWidget(ScriptedLoadableModuleWidget, VTKObservationMixin):
 
 
   @enter_function
-  # def set_keyboard_shortcuts(self):
-  #     if self.config_yaml['is_keyboard_shortcuts_requested']:
-  #         for i in self.config_yaml["KEYBOARD_SHORTCUTS"]:
-  #             shortcutKey = i.get("shortcut")
-  #             callback_name = i.get("callback")
-  #             button_name = i.get("button")
-  #
-  #             button = getattr(self.ui, button_name)
-  #             callback = getattr(self, callback_name)
-  #
-  #             self.connectShortcut(shortcutKey, button, callback)
-  # def set_keyboard_shortcuts(self):
-  #     # self.shortcut_objects = {}  # Maps shortcut key to QShortcut object
-  #
-  #     if self.config_yaml.get('is_keyboard_shortcuts_requested', False):
-  #         for entry in self.config_yaml.get("KEYBOARD_SHORTCUTS", []):
-  #             shortcutKey = entry.get("shortcut")
-  #             callback_name = entry.get("callback")
-  #             button_name = entry.get("button")
-  #
-  #             button = getattr(self.ui, button_name)
-  #             callback = getattr(self, callback_name)
-  #
-  #             # Remove any existing shortcut with the same key
-  #             if shortcutKey in self.shortcut_objects:
-  #                 print('self.shortcut object', self.shortcut_objects)
-  #                 print('shortcut key:', shortcutKey)
-  #                 old_shortcut = self.shortcut_objects[shortcutKey]
-  #                 old_shortcut.disconnect()
-  #                 old_shortcut.setParent(None)
-  #                 del self.shortcut_objects[shortcutKey]
-  #
-  #             # Create new shortcut and connect it
-  #             shortcut = qt.QShortcut(qt.QKeySequence(shortcutKey), button)
-  #             shortcut.connect("activated()", callback)
-  #             self.shortcut_objects[shortcutKey] = shortcut
   def set_keyboard_shortcuts(self):
       # Initialize dictionaries if they don’t exist yet
       if hasattr(self, 'shortcut_objects'):
@@ -391,8 +351,6 @@ class SlicerCARTWidget(ScriptedLoadableModuleWidget, VTKObservationMixin):
               shortcutKey = entry.get("shortcut")
               callback_name = entry.get("callback")
               button_name = entry.get("button")
-
-              print('shortcut key', shortcutKey)
 
               button = getattr(self.ui, button_name)
               callback = getattr(self, callback_name)
@@ -1145,12 +1103,6 @@ class SlicerCARTWidget(ScriptedLoadableModuleWidget, VTKObservationMixin):
   # for the timer Class not the LCD one
   @enter_function
   def timer_router(self):
-
-      print('self current label index', self.current_label_index)
-      print('current labels', self.config_yaml["labels"])
-      print('self . timers', self.timers)
-
-
       self.timers[self.current_label_index].start()
       self.flag = True
       
