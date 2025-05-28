@@ -2418,9 +2418,7 @@ class SlicerCARTWidget(ScriptedLoadableModuleWidget, VTKObservationMixin):
   def onPushLassoPaint(self):
         self.startTimerForActions()
         self.previousAction = 'segmentation'
-
         self.ensure_active_segment_is_selected()
-
         self.segmentEditorWidget.setActiveEffectByName("Scissors")
         self.segmentEditorNode.SetMasterVolumeIntensityMask(False)
         effect = self.segmentEditorWidget.activeEffect()
@@ -2431,12 +2429,7 @@ class SlicerCARTWidget(ScriptedLoadableModuleWidget, VTKObservationMixin):
   def onPushButton_Paint(self):
         self.startTimerForActions()
         self.previousAction = 'segmentation'
-
-        # selected_segment_id = self.segmentationNode.GetSegmentation().GetSegmentIdBySegmentName(self.config_yaml["labels"][self.current_label_index]['name'])
-        # self.segmentEditorNode.SetSelectedSegmentID(selected_segment_id)
-
         self.ensure_active_segment_is_selected()
-
         self.segmentEditorWidget.setActiveEffectByName("Paint")
         # Note it seems that sometimes you need to activate the effect first with :
         # Assign effect to the segmentEditorWidget using the active effect
@@ -2451,13 +2444,13 @@ class SlicerCARTWidget(ScriptedLoadableModuleWidget, VTKObservationMixin):
         self.segmentEditorNode.SetSourceVolumeIntensityMaskRange(self.LB_HU, self.UB_HU)
         self.segmentEditorNode.SetOverwriteMode(slicer.vtkMRMLSegmentEditorNode.OverwriteAllSegments)
 
+  @enter_function
   def ensure_active_segment_is_selected(self):
       # Make sure a valid segment is selected
       selected_segment_id = self.segmentationNode.GetSegmentation().GetSegmentIdBySegmentName(
           self.config_yaml["labels"][self.current_label_index]['name']
       )
       self.segmentEditorNode.SetSelectedSegmentID(selected_segment_id)
-
 
   def toggleFillButton(self):
       self.startTimerForActions()
@@ -2507,20 +2500,13 @@ class SlicerCARTWidget(ScriptedLoadableModuleWidget, VTKObservationMixin):
       self.startTimerForActions()
       self.previousAction = 'segmentation'
 
-      # # Make sure a valid segment is selected
-      # selected_segment_id = self.segmentationNode.GetSegmentation().GetSegmentIdBySegmentName(
-      #     self.config_yaml["labels"][self.current_label_index]['name']
-      # )
-      # self.segmentEditorNode.SetSelectedSegmentID(selected_segment_id)
+      # Make sure a valid segment is selected
       self.ensure_active_segment_is_selected()
-
 
       self.segmentEditorWidget.setActiveEffectByName("Erase")
       # Note it seems that sometimes you need to activate the effect first with :
       # Assign effect to the segmentEditorWidget using the active effect
       self.effect = self.segmentEditorWidget.activeEffect()
-      # self.effect.setParameter("EraseAllSegments", "1") #erase all visible active segments
-
       # Seems that you need to activate the effect to see it in Slicer
       self.effect.activate()
       self.segmentEditorNode.SetMasterVolumeIntensityMask(False)
@@ -2530,9 +2516,7 @@ class SlicerCARTWidget(ScriptedLoadableModuleWidget, VTKObservationMixin):
       # Smoothing
       self.startTimerForActions()
       self.previousAction = 'segmentation'
-
       self.ensure_active_segment_is_selected()
-
       self.segmentEditorWidget = slicer.modules.segmenteditor.widgetRepresentation().self().editor
       self.segmentEditorWidget.setActiveEffectByName("Smoothing")
       effect = self.segmentEditorWidget.activeEffect()
