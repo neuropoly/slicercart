@@ -88,13 +88,6 @@ labels:
   name: ICH
   upper_bound_HU: 90
   value: 1
-- color_b: 70
-  color_g: 230
-  color_r: 230
-  lower_bound_HU: 30
-  name: IVH
-  upper_bound_HU: 90
-  value: 2
 modality: MRI
 remaining_list_filename: remaining_list.yaml
 require_empty: false
