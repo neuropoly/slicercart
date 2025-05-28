@@ -201,8 +201,12 @@ class SlicerCARTWidget(ScriptedLoadableModuleWidget, VTKObservationMixin):
     self.ui.ToggleSegmentation.setStyleSheet(f"background-color : {self.color_inactive}")
 
     self.ui.lcdNumber.setStyleSheet("background-color : black")
-    
+
     self.MostRecentPausedCasePath = ""
+
+    # Ensure keyboard shortcut (at least from the last configuration) work
+    # at startup
+    self.set_keyboard_shortcuts()
 
   @enter_function
   def set_classification_version_labels(self, classif_label):
@@ -307,17 +311,7 @@ class SlicerCARTWidget(ScriptedLoadableModuleWidget, VTKObservationMixin):
         self.ui.pushDefaultMin.setVisible(False)
         self.ui.pushDefaultMax.setVisible(False)
 
-    if self.config_yaml['is_keyboard_shortcuts_requested']:
-        for i in self.config_yaml["KEYBOARD_SHORTCUTS"]:
-
-            shortcutKey = i.get("shortcut")
-            callback_name = i.get("callback")
-            button_name = i.get("button")
-
-            button = getattr(self.ui, button_name)
-            callback = getattr(self, callback_name)
-
-            self.connectShortcut(shortcutKey, button, callback)
+    self.set_keyboard_shortcuts()
 
     if self.config_yaml['is_display_timer_requested']:
         self.ui.lcdNumber.setStyleSheet("background-color : black")
@@ -335,6 +329,19 @@ class SlicerCARTWidget(ScriptedLoadableModuleWidget, VTKObservationMixin):
         slicer.app.layoutManager().setLayout(
             slicer.vtkMRMLLayoutNode.SlicerLayoutOneUpGreenSliceView)
 
+
+  @enter_function
+  def set_keyboard_shortcuts(self):
+      if self.config_yaml['is_keyboard_shortcuts_requested']:
+          for i in self.config_yaml["KEYBOARD_SHORTCUTS"]:
+              shortcutKey = i.get("shortcut")
+              callback_name = i.get("callback")
+              button_name = i.get("button")
+
+              button = getattr(self.ui, button_name)
+              callback = getattr(self, callback_name)
+
+              self.connectShortcut(shortcutKey, button, callback)
 
   @enter_function
   def set_segmentation_config_ui(self):
