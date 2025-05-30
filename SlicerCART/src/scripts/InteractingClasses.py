@@ -699,6 +699,8 @@ class SlicerCARTConfigurationInitialWindow(qt.QWidget):
             msg.buttonClicked.connect(self.select_template_folder_clicked)
             msg.exec()
         elif self.reuse_configuration_selected_option == self.new_config_radio_button.text:
+            print('in self reuse configuration selected options')
+
             slicerCARTConfigurationSetupWindow = SlicerCARTConfigurationSetupWindow(
                 self.segmenter)
             slicerCARTConfigurationSetupWindow.show()
@@ -954,6 +956,7 @@ class ConfigureSegmentationWindow(qt.QWidget):
         self.setWindowTitle("Configure Segmentation")
         self.resize(500, 600)
 
+    @enter_function
     def push_add_label(self):
         self.close()
         configureSingleLabelWindow = ConfigureSingleLabelWindow(self.segmenter,
@@ -962,6 +965,7 @@ class ConfigureSegmentationWindow(qt.QWidget):
                                                                 self.config_yaml)
         configureSingleLabelWindow.show()
 
+    @enter_function
     def push_edit_button(self, label):
         self.close()
 
@@ -972,8 +976,9 @@ class ConfigureSegmentationWindow(qt.QWidget):
                                                                 label)
         configureSingleLabelWindow.show()
 
+    @enter_function
     def push_remove_button(self, label):
-        self.close()
+        # self.close()
 
         value_removed = -1
         for l in self.config_yaml['labels']:
@@ -985,11 +990,23 @@ class ConfigureSegmentationWindow(qt.QWidget):
             if l['value'] > value_removed and value_removed != -1:
                 l['value'] = l['value'] - 1
 
-        ConfigPath.write_config_file()
+        if len(self.config_yaml['labels']) == 0:
+            print('len of labels == 0 in if')
+            msg = qt.QMessageBox()
+            msg.setWindowTitle('ERROR : Label list is empty')
+            msg.setText(
+                'The label list cannot be empty. Using the previous label configuration. ')
+            # msg.setStandardButtons(qt.QMessageBox.Ok | qt.QMessageBox.Cancel)
+            msg.setStandardButtons(qt.QMessageBox.Ok)
+            # msg.buttonClicked.connect(self.push_error_label_list_empty)
+            msg.exec()
+        else:
+            ConfigPath.write_config_file()
+            self.close()
 
-        configureSegmentationWindow = ConfigureSegmentationWindow(
-            self.segmenter, self.modality, self.edit_conf, self.config_yaml)
-        configureSegmentationWindow.show()
+            configureSegmentationWindow = ConfigureSegmentationWindow(
+                self.segmenter, self.modality, self.edit_conf, self.config_yaml)
+            configureSegmentationWindow.show()
 
     def set_default_values(self):
         self.config_yaml[
@@ -1009,27 +1026,44 @@ class ConfigureSegmentationWindow(qt.QWidget):
         self.config_yaml[
             'is_display_timer_requested'] = self.display_timer_checkbox.isChecked()
 
-        if len(self.config_yaml['labels']) == 0:
-            msg = qt.QMessageBox()
-            msg.setWindowTitle('ERROR : Label list is empty')
-            msg.setText(
-                'The label list cannot be empty. Using the previous label configuration. ')
-            msg.setStandardButtons(qt.QMessageBox.Ok | qt.QMessageBox.Cancel)
-            msg.buttonClicked.connect(self.push_error_label_list_empty)
-            msg.exec()
-        else:
-            Debug.print(self, 'in else push_apply in '
-                              'ConfigureSegmentationWindow')
-            ConfigPath.write_config_file()
+        # if len(self.config_yaml['labels']) == 0:
+        #     print('len of labels == 0 in if')
+        #     msg = qt.QMessageBox()
+        #     msg.setWindowTitle('ERROR : Label list is empty')
+        #     msg.setText(
+        #         'The label list cannot be empty. Using the previous label configuration. ')
+        #     # msg.setStandardButtons(qt.QMessageBox.Ok | qt.QMessageBox.Cancel)
+        #     msg.setStandardButtons(qt.QMessageBox.Ok)
+        #     msg.buttonClicked.connect(self.push_error_label_list_empty)
+        #     msg.exec()
+        #     return
+            # self.close()
+            # SlicerCARTConfigurationSetupWindow(
+            #     self.segmenter).close()
+            # SlicerCARTConfigurationSetupWindow(
+            #     self.segmenter).push_configure_segmentation()
+            # print('after button exit')
+            # self.show()
+            # SlicerCARTConfigurationSetupWindow(
+            #     self.segmenter).close()
+        #     return
+        # else:
+        Debug.print(self, 'in else push_apply in '
+                          'ConfigureSegmentationWindow')
+        ConfigPath.write_config_file()
 
+        print('after if statmeent butotn exist')
         slicerCARTConfigurationSetupWindow = SlicerCARTConfigurationSetupWindow(
             self.segmenter)
         slicerCARTConfigurationSetupWindow.show()
+        print('before closing')
         self.close()
 
+    @enter_function
     def push_error_label_list_empty(self):
         self.push_cancel()
 
+    @enter_function
     def push_cancel(self):
         slicerCARTConfigurationSetupWindow = SlicerCARTConfigurationSetupWindow(
             self.segmenter)
