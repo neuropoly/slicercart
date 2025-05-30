@@ -81,18 +81,18 @@ is_segmentation_requested: true
 is_semi_automatic_phe_tool_requested: true
 keep_working_list: true
 labels:
-- color_b: 80
-  color_g: 46
-  color_r: 23
+- color_b: 10
+  color_g: 10
+  color_r: 255
   lower_bound_HU: 30
-  name: dragon
+  name: ICH
   upper_bound_HU: 90
   value: 1
-- color_b: 22
-  color_g: 222
-  color_r: 1
+- color_b: 70
+  color_g: 230
+  color_r: 230
   lower_bound_HU: 30
-  name: tornade
+  name: IVH
   upper_bound_HU: 90
   value: 2
 modality: MRI
