@@ -1715,55 +1715,28 @@ class SlicerCARTWidget(ScriptedLoadableModuleWidget, VTKObservationMixin):
           msg2.exec()
   
   @enter_function
-  # def saveNiiSegmentation(self, currentSegmentationVersion):
-  #       # Export segmentation to a labelmap volume
-  #       # Note to save to nifti you need to convert to labelmapVolumeNode
-  #       self.labelmapVolumeNode = slicer.mrmlScene.AddNewNodeByClass('vtkMRMLLabelMapVolumeNode')
-  #       slicer.modules.segmentations.logic().ExportVisibleSegmentsToLabelmapNode(self.segmentationNode,
-  #                                                                               self.labelmapVolumeNode,
-  #                                                                               self.VolumeNode)
-  #
-  #
-  #
-  #
-  #
-  #       self.outputSegmFileNifti = os.path.join(self.currentOutputPath,
-  #                                               "{}_{}.nii.gz".format(self.currentVolumeFilename, currentSegmentationVersion))
-  #
-  #       if not os.path.isfile(self.outputSegmFileNifti):
-  #           slicer.util.saveNode(self.labelmapVolumeNode, self.outputSegmFileNifti)
-  #       else:
-  #           msg3 = qt.QMessageBox()
-  #           msg3.setWindowTitle('Save As')
-  #           msg3.setText(
-  #               f'The file {self.currentCase}_{self.annotator_name}_{self.revision_step[0]}.nii.gz already exists \n Do you want to replace the existing file?')
-  #           msg3.setIcon(qt.QMessageBox.Warning)
-  #           msg3.setStandardButtons(qt.QMessageBox.Ok | qt.QMessageBox.Cancel)
-  #           msg3.buttonClicked.connect(self.msg3_clicked)
-  #           msg3.exec()
   def saveNiiSegmentation(self, currentSegmentationVersion):
       """
-      Note that NRRD segmentation save in uint8 by default in contrast to
+      Note that NRRD segmentations save in uint8 by default in contrast to
       .nii.gz format that saves by default in INT16. In that context,
       the flag SAVE_UINT8 (set to true by default in the config file),
-      determines the format of the segmentation files.
+      determines the type of the .nii.gz segmentation files.
       """
-      # Step 1: Export segmentation to labelmap
+      # Export segmentation to labelmap (required step for .nii.gz files)
       self.labelmapVolumeNode = slicer.mrmlScene.AddNewNodeByClass(
           'vtkMRMLLabelMapVolumeNode')
       slicer.modules.segmentations.logic().ExportVisibleSegmentsToLabelmapNode(
           self.segmentationNode, self.labelmapVolumeNode, self.VolumeNode
       )
 
-      print('save uint8 about to')
-      # Step 4: Save to final path
+      # Save to final path
       self.outputSegmFileNifti = os.path.join(
           self.currentOutputPath,
           f"{self.currentVolumeFilename}_{currentSegmentationVersion}.nii.gz"
       )
       if ConfigPath.SAVE_UINT8:
           Debug.print(self, "Save segmentation to UINT8.")
-          # Step 2: Save to a temporary file
+          # Save to a temporary file (optimal for uint8 type)
           temp_path = os.path.join(slicer.app.temporaryPath, "temp_seg.nii.gz")
           slicer.util.saveNode(self.labelmapVolumeNode, temp_path)
 
@@ -1773,78 +1746,22 @@ class SlicerCARTWidget(ScriptedLoadableModuleWidget, VTKObservationMixin):
           new_nii = nib.Nifti1Image(data, affine=nii.affine, header=nii.header)
           new_nii.set_data_dtype(np.uint8)
 
-          # # Step 4: Save to final path
-          # self.outputSegmFileNifti = os.path.join(
-          #     self.currentOutputPath,
-          #     f"{self.currentVolumeFilename}_{currentSegmentationVersion}.nii.gz"
-          # )
           if not os.path.isfile(self.outputSegmFileNifti):
               nib.save(new_nii, self.outputSegmFileNifti)
-              print(f"Saved UINT8 segmentation to: {self.outputSegmFileNifti}")
+              Debug.print(self, f"Saved UINT8 segmentation to:"
+                      f" {self.outputSegmFileNifti}")
 
-          # Step 5: Remove temp file
+          # Remove temp file
           if os.path.exists(temp_path):
               os.remove(temp_path)
-              print(f"Temporary file removed: {temp_path}")
+
       else:
           Debug.print(self, "Save segmentation to UINT16.")
-          print()
           if not os.path.isfile(self.outputSegmFileNifti):
               slicer.util.saveNode(self.labelmapVolumeNode,
                                    self.outputSegmFileNifti)
-              print(f"Saved INT16 segmentation to: {self.outputSegmFileNifti}")
-
-  ### working
-  # def saveNiiSegmentation(self, currentSegmentationVersion):
-  #     # Step 1: Export segmentation to labelmap
-  #     self.labelmapVolumeNode = slicer.mrmlScene.AddNewNodeByClass(
-  #         'vtkMRMLLabelMapVolumeNode')
-  #     slicer.modules.segmentations.logic().ExportVisibleSegmentsToLabelmapNode(
-  #         self.segmentationNode, self.labelmapVolumeNode, self.VolumeNode
-  #     )
-  #
-  #     print('save uint8 about to')
-  #     if ConfigPath.SAVE_UINT8:
-  #         Debug.print(self, "Save segmentation to UINT8.")
-  #         # Step 2: Save to a temporary file
-  #         temp_path = os.path.join(slicer.app.temporaryPath, "temp_seg.nii.gz")
-  #         slicer.util.saveNode(self.labelmapVolumeNode, temp_path)
-  #
-  #         # Step 3: Load and cast to UINT8 with nibabel
-  #         nii = nib.load(temp_path)
-  #         data = nii.get_fdata().astype(np.uint8)
-  #         new_nii = nib.Nifti1Image(data, affine=nii.affine, header=nii.header)
-  #         new_nii.set_data_dtype(np.uint8)
-  #
-  #         # Step 4: Save to final path
-  #         self.outputSegmFileNifti = os.path.join(
-  #             self.currentOutputPath,
-  #             f"{self.currentVolumeFilename}_{currentSegmentationVersion}.nii.gz"
-  #         )
-  #     else:
-  #         Debug.print(self, "Save segmentation to UINT16.")
-  #         print()
-  #
-  #
-  #
-  #     if not os.path.isfile(self.outputSegmFileNifti):
-  #         nib.save(new_nii, self.outputSegmFileNifti)
-  #         print(f"Saved UINT8 segmentation to: {self.outputSegmFileNifti}")
-  #     else:
-  #         msg3 = qt.QMessageBox()
-  #         msg3.setWindowTitle('Save As')
-  #         msg3.setText(
-  #             f'The file {self.currentCase}_{self.annotator_name}_{self.revision_step[0]}.nii.gz already exists.\nDo you want to replace the existing file?'
-  #         )
-  #         msg3.setIcon(qt.QMessageBox.Warning)
-  #         msg3.setStandardButtons(qt.QMessageBox.Ok | qt.QMessageBox.Cancel)
-  #         msg3.buttonClicked.connect(self.msg3_clicked)
-  #         msg3.exec()
-  #
-  #     # Step 5: Remove temp file
-  #     if os.path.exists(temp_path):
-  #         os.remove(temp_path)
-  #         print(f"Temporary file removed: {temp_path}")
+              Debug.print(self, f"Saved INT16 segmentation to:"
+                      f" {self.outputSegmFileNifti}")
   
   @enter_function
   def saveSegmentationInformation(self, currentSegmentationVersion):
