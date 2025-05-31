@@ -1,6 +1,5 @@
 from utils import *
 
-
 class LoadSegmentationsWindow(qt.QWidget):
     def __init__(self, segmenter, segmentationInformation_df, parent=None):
         super(LoadSegmentationsWindow, self).__init__(parent)

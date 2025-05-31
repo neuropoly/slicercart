@@ -1,6 +1,5 @@
 from utils import *
 
-
 class ShowSegmentVersionLegendWindow(qt.QWidget):
     def __init__(self, segmenter, segmentationInformation_df, parent=None):
         super(ShowSegmentVersionLegendWindow, self).__init__(parent)

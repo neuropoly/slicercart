@@ -1,6 +1,5 @@
 from utils import *
 
-
 class SlicerCARTLogic(ScriptedLoadableModuleLogic):
     """This class should implement all the actual
     computation done by your module.  The interface
