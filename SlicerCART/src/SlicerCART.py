@@ -189,7 +189,9 @@ class SlicerCARTWidget(ScriptedLoadableModuleWidget, VTKObservationMixin):
     self.ui.UB_HU.setMaximum(29000)
     self.ui.LB_HU.setMaximum(29000)
 
-    self.ui.pushButton_ToggleFill.setStyleSheet("background-color : indianred")
+    self.ui.pushButton_ToggleFill.setStyleSheet(f"background-color : {self.color_active}")
+    self.ui.pushButton_ToggleFill.setText('Fill: ON')
+    self.ui.pushButton_ToggleFill.setChecked(True)
 
     # By default, segments are visibles. So, the Segments visibles button is
     # setted to True and active.
@@ -2491,17 +2493,24 @@ class SlicerCARTWidget(ScriptedLoadableModuleWidget, VTKObservationMixin):
       )
       self.segmentEditorNode.SetSelectedSegmentID(selected_segment_id)
 
+  @enter_function
   def toggleFillButton(self):
       self.startTimerForActions()
       self.previousAction = 'segmentation'
       if self.ui.pushButton_ToggleFill.isChecked():
-          self.ui.pushButton_ToggleFill.setStyleSheet("background-color : yellowgreen")
+          print('in if pushbutton toggle fill is checked', self.ui.pushButton_ToggleFill.isChecked())
+          self.ui.pushButton_ToggleFill.setStyleSheet(f"background-color : "
+                                                      f"{self.color_active}")
           self.ui.pushButton_ToggleFill.setText('Fill: ON')
-          self.segmentationNode.GetDisplayNode().SetOpacity2DFill(0)
-      else:
-          self.ui.pushButton_ToggleFill.setStyleSheet("background-color : indianred")
-          self.ui.pushButton_ToggleFill.setText('Fill: OFF')
           self.segmentationNode.GetDisplayNode().SetOpacity2DFill(100)
+      else:
+          print('in else pushbutton toggle fill is checked',
+                self.ui.pushButton_ToggleFill.isChecked())
+
+          self.ui.pushButton_ToggleFill.setStyleSheet(f"background-color : "
+                                                      f"{self.color_inactive}")
+          self.ui.pushButton_ToggleFill.setText('Fill: OFF')
+          self.segmentationNode.GetDisplayNode().SetOpacity2DFill(0)
 
   @enter_function
   def onPushButton_ToggleVisibility(self):
