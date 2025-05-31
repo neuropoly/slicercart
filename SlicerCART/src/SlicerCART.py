@@ -1690,22 +1690,29 @@ class SlicerCARTWidget(ScriptedLoadableModuleWidget, VTKObservationMixin):
   
   @enter_function
   def saveNrrdSegmentation(self, currentSegmentationVersion):
-        # Save .seg.nrrd file
-        self.outputSegmFile = os.path.join(self.currentOutputPath,
-                                                "{}_{}.seg.nrrd".format(self.currentVolumeFilename, currentSegmentationVersion))
-
-        if not os.path.isfile(self.outputSegmFile):
-            slicer.util.saveNode(self.segmentationNode, self.outputSegmFile)
-
-        else:
-            msg2 = qt.QMessageBox()
-            msg2.setWindowTitle('Save As')
-            msg2.setText(
-                f'The file {self.currentCase}_{self.annotator_name}_{self.revision_step[0]}.seg.nrrd already exists \n Do you want to replace the existing file?')
-            msg2.setIcon(qt.QMessageBox.Warning)
-            msg2.setStandardButtons(qt.QMessageBox.Ok | qt.QMessageBox.Cancel)
-            msg2.buttonClicked.connect(self.msg2_clicked)
-            msg2.exec()
+      """
+      Note that NRRD segmentation save in uint8 by default in contrast to
+      .nii.gz format.
+      """
+      # Save .seg.nrrd file
+      self.outputSegmFile = os.path.join(
+          self.currentOutputPath,
+          "{}_{}.seg.nrrd".format(
+              self.currentVolumeFilename, currentSegmentationVersion))
+      if not os.path.isfile(self.outputSegmFile):
+          slicer.util.saveNode(self.segmentationNode, self.outputSegmFile)
+      else:
+          msg2 = qt.QMessageBox()
+          msg2.setWindowTitle('Save As')
+          msg2.setText(
+              f'The file '
+              f'{self.currentCase}_{self.annotator_name}_'
+              f'{self.revision_step[0]}.seg.nrrd already exists '
+              f'\n Do you want to replace the existing file?')
+          msg2.setIcon(qt.QMessageBox.Warning)
+          msg2.setStandardButtons(qt.QMessageBox.Ok | qt.QMessageBox.Cancel)
+          msg2.buttonClicked.connect(self.msg2_clicked)
+          msg2.exec()
   
   @enter_function
   # def saveNiiSegmentation(self, currentSegmentationVersion):
@@ -1735,6 +1742,12 @@ class SlicerCARTWidget(ScriptedLoadableModuleWidget, VTKObservationMixin):
   #           msg3.buttonClicked.connect(self.msg3_clicked)
   #           msg3.exec()
   def saveNiiSegmentation(self, currentSegmentationVersion):
+      """
+      Note that NRRD segmentation save in uint8 by default in contrast to
+      .nii.gz format that saves by default in INT16. In that context,
+      the flag SAVE_UINT8 (set to true by default in the config file),
+      determines the format of the segmentation files.
+      """
       # Step 1: Export segmentation to labelmap
       self.labelmapVolumeNode = slicer.mrmlScene.AddNewNodeByClass(
           'vtkMRMLLabelMapVolumeNode')
