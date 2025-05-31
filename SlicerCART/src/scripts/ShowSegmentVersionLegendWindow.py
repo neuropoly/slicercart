@@ -33,7 +33,7 @@ class ShowSegmentVersionLegendWindow(qt.QWidget):
             for index, row in segmentationInformation_df.iterrows():
                 currentColor = None
                 for (segment_name, color) \
-                    in (self.segmenter.
+                        in (self.segmenter.
                         colorsSelectedVersionFilePathsForCompareSegmentVersions.
                         items()):
                     if row['Segmentation version'] in segment_name:
