@@ -1500,31 +1500,6 @@ class SlicerCARTWidget(ScriptedLoadableModuleWidget, VTKObservationMixin):
 
       return info_dict
 
-  @enter_function
-  def cast_segmentation_to_uint8(self):
-      for case in self.predictions_paths:
-          # Load the segmentation
-          input_path = os.path.basename(case)
-          if input_path.endswith('.nii') or input_path.endswith('.nii.gz'):
-              segm = nib.load(case)
-              segm_data_dtype = segm.dataobj.dtype
-              print(f'infile: {input_path}, dtype: {segm_data.dtype}')
-              if segm_data_dtype != np.uint8:
-                  segm_data = segm_data.astype(np.uint8)
-                  segm.header.set_data_dtype(np.uint8)
-                  segm_nii = nib.Nifti1Image(segm_data, segm.affine, segm.header)
-                  nib.save(segm_nii, case)
-                  print(f'converted file {input_path} to uint8')
-          elif input_path.endswith('seg.nrrd'):
-              segm_data, header = nrrd.read(case)
-              print(f'infile: {input_path}, dtype: {segm_data.dtype}')
-              if segm_data.dtype != np.uint8:
-                  segm_data = segm_data.astype(np.uint8)
-                  header['type'] = 'unsigned char'
-                  nrrd.write(case, segm_data, header = header)
-                  print(f'converted file {input_path} to uint8')
-          else:
-              raise ValueError('The input segmentation file must be in nii, nii.gz or nrrd format.')
   
   @enter_function
   def onSaveSegmentationButton(self):
@@ -1578,12 +1553,11 @@ class SlicerCARTWidget(ScriptedLoadableModuleWidget, VTKObservationMixin):
       else:
           if not self.annotator_name:
               msgboxtime = qt.QMessageBox()
-              msgboxtime.setText("Segmentation not saved : no annotator name !  \n Please save again with your name!")
+              msgboxtime.setText("Segmentation not saved : no annotator name !  "
+                                 "\n Please save again with your name!")
               msgboxtime.exec()
           elif self.time is None:
               print("Error: timer is not started for some unknown reason.")
-
-      self.cast_segmentation_to_uint8()
 
       # self.update_case_list_colors()
 
