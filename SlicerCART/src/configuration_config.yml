@@ -98,5 +98,6 @@ labels:
 modality: MRI
 remaining_list_filename: remaining_list.yaml
 require_empty: false
+save_uint8: true
 slice_view_color: Yellow
 working_list_filename: working_list.yaml

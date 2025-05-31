@@ -1501,32 +1501,6 @@ class SlicerCARTWidget(ScriptedLoadableModuleWidget, VTKObservationMixin):
       return info_dict
 
   @enter_function
-  def cast_segmentation_to_uint8(self):
-      for case in self.predictions_paths:
-          # Load the segmentation
-          input_path = os.path.basename(case)
-          if input_path.endswith('.nii') or input_path.endswith('.nii.gz'):
-              segm = nib.load(case)
-              segm_data_dtype = segm.dataobj.dtype
-              print(f'infile: {input_path}, dtype: {segm_data.dtype}')
-              if segm_data_dtype != np.uint8:
-                  segm_data = segm_data.astype(np.uint8)
-                  segm.header.set_data_dtype(np.uint8)
-                  segm_nii = nib.Nifti1Image(segm_data, segm.affine, segm.header)
-                  nib.save(segm_nii, case)
-                  print(f'converted file {input_path} to uint8')
-          elif input_path.endswith('seg.nrrd'):
-              segm_data, header = nrrd.read(case)
-              print(f'infile: {input_path}, dtype: {segm_data.dtype}')
-              if segm_data.dtype != np.uint8:
-                  segm_data = segm_data.astype(np.uint8)
-                  header['type'] = 'unsigned char'
-                  nrrd.write(case, segm_data, header = header)
-                  print(f'converted file {input_path} to uint8')
-          else:
-              raise ValueError('The input segmentation file must be in nii, nii.gz or nrrd format.')
-  
-  @enter_function
   def onSaveSegmentationButton(self):
       # By default creates a new folder in the volume directory 
       # Stop the timer when the button is pressed
@@ -1578,12 +1552,11 @@ class SlicerCARTWidget(ScriptedLoadableModuleWidget, VTKObservationMixin):
       else:
           if not self.annotator_name:
               msgboxtime = qt.QMessageBox()
-              msgboxtime.setText("Segmentation not saved : no annotator name !  \n Please save again with your name!")
+              msgboxtime.setText("Segmentation not saved : no annotator name !  "
+                                 "\n Please save again with your name!")
               msgboxtime.exec()
           elif self.time is None:
               print("Error: timer is not started for some unknown reason.")
-
-      self.cast_segmentation_to_uint8()
 
       # self.update_case_list_colors()
 
@@ -1688,47 +1661,82 @@ class SlicerCARTWidget(ScriptedLoadableModuleWidget, VTKObservationMixin):
               return False
       return is_valid
   
+  @enter_function
   def saveNrrdSegmentation(self, currentSegmentationVersion):
-        # Save .seg.nrrd file
-        self.outputSegmFile = os.path.join(self.currentOutputPath,
-                                                "{}_{}.seg.nrrd".format(self.currentVolumeFilename, currentSegmentationVersion))
-
-        if not os.path.isfile(self.outputSegmFile):
-            slicer.util.saveNode(self.segmentationNode, self.outputSegmFile)
-
-        else:
-            msg2 = qt.QMessageBox()
-            msg2.setWindowTitle('Save As')
-            msg2.setText(
-                f'The file {self.currentCase}_{self.annotator_name}_{self.revision_step[0]}.seg.nrrd already exists \n Do you want to replace the existing file?')
-            msg2.setIcon(qt.QMessageBox.Warning)
-            msg2.setStandardButtons(qt.QMessageBox.Ok | qt.QMessageBox.Cancel)
-            msg2.buttonClicked.connect(self.msg2_clicked)
-            msg2.exec()
+      """
+      Note that NRRD segmentation save in uint8 by default in contrast to
+      .nii.gz format.
+      """
+      # Save .seg.nrrd file
+      self.outputSegmFile = os.path.join(
+          self.currentOutputPath,
+          "{}_{}.seg.nrrd".format(
+              self.currentVolumeFilename, currentSegmentationVersion))
+      if not os.path.isfile(self.outputSegmFile):
+          slicer.util.saveNode(self.segmentationNode, self.outputSegmFile)
+      else:
+          msg2 = qt.QMessageBox()
+          msg2.setWindowTitle('Save As')
+          msg2.setText(
+              f'The file '
+              f'{self.currentCase}_{self.annotator_name}_'
+              f'{self.revision_step[0]}.seg.nrrd already exists '
+              f'\n Do you want to replace the existing file?')
+          msg2.setIcon(qt.QMessageBox.Warning)
+          msg2.setStandardButtons(qt.QMessageBox.Ok | qt.QMessageBox.Cancel)
+          msg2.buttonClicked.connect(self.msg2_clicked)
+          msg2.exec()
   
+  @enter_function
   def saveNiiSegmentation(self, currentSegmentationVersion):
-        # Export segmentation to a labelmap volume
-        # Note to save to nifti you need to convert to labelmapVolumeNode
-        self.labelmapVolumeNode = slicer.mrmlScene.AddNewNodeByClass('vtkMRMLLabelMapVolumeNode')
-        slicer.modules.segmentations.logic().ExportVisibleSegmentsToLabelmapNode(self.segmentationNode,
-                                                                                self.labelmapVolumeNode,
-                                                                                self.VolumeNode)
+      """
+      Note that NRRD segmentations save in uint8 by default in contrast to
+      .nii.gz format that saves by default in INT16. In that context,
+      the flag SAVE_UINT8 (set to true by default in the config file),
+      determines the type of the .nii.gz segmentation files.
+      """
+      # Export segmentation to labelmap (required step for .nii.gz files)
+      self.labelmapVolumeNode = slicer.mrmlScene.AddNewNodeByClass(
+          'vtkMRMLLabelMapVolumeNode')
+      slicer.modules.segmentations.logic().ExportVisibleSegmentsToLabelmapNode(
+          self.segmentationNode, self.labelmapVolumeNode, self.VolumeNode
+      )
 
-        self.outputSegmFileNifti = os.path.join(self.currentOutputPath,
-                                                "{}_{}.nii.gz".format(self.currentVolumeFilename, currentSegmentationVersion))
+      # Save to final path
+      self.outputSegmFileNifti = os.path.join(
+          self.currentOutputPath,
+          f"{self.currentVolumeFilename}_{currentSegmentationVersion}.nii.gz"
+      )
+      if ConfigPath.SAVE_UINT8:
+          Debug.print(self, "Save segmentation to UINT8.")
+          # Save to a temporary file (optimal for uint8 type)
+          temp_path = os.path.join(slicer.app.temporaryPath, "temp_seg.nii.gz")
+          slicer.util.saveNode(self.labelmapVolumeNode, temp_path)
 
-        if not os.path.isfile(self.outputSegmFileNifti):
-            slicer.util.saveNode(self.labelmapVolumeNode, self.outputSegmFileNifti)
-        else:
-            msg3 = qt.QMessageBox()
-            msg3.setWindowTitle('Save As')
-            msg3.setText(
-                f'The file {self.currentCase}_{self.annotator_name}_{self.revision_step[0]}.nii.gz already exists \n Do you want to replace the existing file?')
-            msg3.setIcon(qt.QMessageBox.Warning)
-            msg3.setStandardButtons(qt.QMessageBox.Ok | qt.QMessageBox.Cancel)
-            msg3.buttonClicked.connect(self.msg3_clicked)
-            msg3.exec()
+          # Step 3: Load and cast to UINT8 with nibabel
+          nii = nib.load(temp_path)
+          data = nii.get_fdata().astype(np.uint8)
+          new_nii = nib.Nifti1Image(data, affine=nii.affine, header=nii.header)
+          new_nii.set_data_dtype(np.uint8)
+
+          if not os.path.isfile(self.outputSegmFileNifti):
+              nib.save(new_nii, self.outputSegmFileNifti)
+              Debug.print(self, f"Saved UINT8 segmentation to:"
+                      f" {self.outputSegmFileNifti}")
+
+          # Remove temp file
+          if os.path.exists(temp_path):
+              os.remove(temp_path)
+
+      else:
+          Debug.print(self, "Save segmentation to UINT16.")
+          if not os.path.isfile(self.outputSegmFileNifti):
+              slicer.util.saveNode(self.labelmapVolumeNode,
+                                   self.outputSegmFileNifti)
+              Debug.print(self, f"Saved INT16 segmentation to:"
+                      f" {self.outputSegmFileNifti}")
   
+  @enter_function
   def saveSegmentationInformation(self, currentSegmentationVersion):
     # Header row
     self.previousAction = None

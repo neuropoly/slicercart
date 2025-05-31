@@ -226,6 +226,7 @@ class ConfigPath():
             "impose_bids_format"]
 
         self.KEEP_WORKING_LIST = config["keep_working_list"]
+        self.SAVE_UINT8 = config["save_uint8"]
 
         if self.MODALITY == 'CT':
             # then BIDS not mandatory because it is not yet supported
