@@ -289,8 +289,9 @@ class ConfigPath():
         initial_config_file_dict = (
             ConfigPath.extract_config_classification(final_config_file))
 
+        # Use list() to avoid RuntimeError
         for key in list(
-                initial_config_file_dict.keys()):  # Use list() to avoid RuntimeError
+                initial_config_file_dict.keys()):
             if key not in temp_dict:
                 del initial_config_file_dict[key]
 

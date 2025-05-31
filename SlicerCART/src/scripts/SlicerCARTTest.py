@@ -1,64 +1,72 @@
 from utils import *
 class SlicerCARTTest(ScriptedLoadableModuleTest):
-  """
-  This is the test case for your scripted module.
-  Uses ScriptedLoadableModuleTest base class, available at:
-  https://github.com/Slicer/Slicer/blob/master/Base/Python/slicer/ScriptedLoadableModule.py
-  """
-
-  def setUp(self):
-    """ Do whatever is needed to reset the state - typically a scene clear will be enough.
     """
-    slicer.mrmlScene.Clear()
-
-  def runTest(self):
-    """Run as few or as many tests as needed here.
-    """
-    self.setUp()
-    self.test_SlicerCART1()
-
-  def test_SlicerCART1(self):
-    """ Ideally you should have several levels of tests.  At the lowest level
-    tests should exercise the functionality of the logic with different inputs
-    (both valid and invalid).  At higher levels your tests should emulate the
-    way the user would interact with your code and confirm that it still works
-    the way you intended.
-    One of the most important features of the tests is that it should alert other
-    developers when their changes will have an impact on the behavior of your
-    module.  For example, if a developer removes a feature that you depend on,
-    your test should break so they know that the feature is needed.
+    This is the test case for your scripted module.
+    Uses ScriptedLoadableModuleTest base class, available at:
+    https://github.com/Slicer/Slicer/blob/master/Base/
+    Python/slicer/ScriptedLoadableModule.py
     """
 
-    self.delayDisplay("Starting the test")
+    def setUp(self):
+        """ Do whatever is needed to reset the state -
+        typically a scene clear will be enough.
+        """
+        slicer.mrmlScene.Clear()
 
-    # Get/create input data
+    def runTest(self):
+        """Run as few or as many tests as needed here.
+        """
+        self.setUp()
+        self.test_SlicerCART1()
 
-    import SampleData
-    registerSampleData()
-    inputVolume = SampleData.downloadSample('SlicerCART1')
-    self.delayDisplay('Loaded test data set')
+    def test_SlicerCART1(self):
+        """ Ideally you should have several levels of tests.  At the lowest
+        level
+        tests should exercise the functionality of the logic with different
+        inputs
+        (both valid and invalid).  At higher levels your tests should emulate
+        the
+        way the user would interact with your code and confirm that it still
+        works
+        the way you intended. One of the most important features of the tests is
+        that it should alert other developers when their changes will have an
+        impact on the behavior of your module.  For example, if a developer
+        removes a feature that you depend on, your test should break so they
+        know
+        that the feature is needed.
+        """
 
-    inputScalarRange = inputVolume.GetImageData().GetScalarRange()
-    self.assertEqual(inputScalarRange[0], 0)
-    self.assertEqual(inputScalarRange[1], 695)
+        self.delayDisplay("Starting the test")
 
-    outputVolume = slicer.mrmlScene.AddNewNodeByClass("vtkMRMLScalarVolumeNode")
-    threshold = 100
+        # Get/create input data
 
-    # Test the module logic
+        import SampleData
+        registerSampleData()
+        inputVolume = SampleData.downloadSample('SlicerCART1')
+        self.delayDisplay('Loaded test data set')
 
-    logic = SlicerCARTLogic()
+        inputScalarRange = inputVolume.GetImageData().GetScalarRange()
+        self.assertEqual(inputScalarRange[0], 0)
+        self.assertEqual(inputScalarRange[1], 695)
 
-    # Test algorithm with non-inverted threshold
-    logic.process(inputVolume, outputVolume, threshold, True)
-    outputScalarRange = outputVolume.GetImageData().GetScalarRange()
-    self.assertEqual(outputScalarRange[0], inputScalarRange[0])
-    self.assertEqual(outputScalarRange[1], threshold)
+        outputVolume = slicer.mrmlScene.AddNewNodeByClass(
+            "vtkMRMLScalarVolumeNode")
+        threshold = 100
 
-    # Test algorithm with inverted threshold
-    logic.process(inputVolume, outputVolume, threshold, False)
-    outputScalarRange = outputVolume.GetImageData().GetScalarRange()
-    self.assertEqual(outputScalarRange[0], inputScalarRange[0])
-    self.assertEqual(outputScalarRange[1], inputScalarRange[1])
+        # Test the module logic
 
-    self.delayDisplay('Test passed')
+        logic = SlicerCARTLogic()
+
+        # Test algorithm with non-inverted threshold
+        logic.process(inputVolume, outputVolume, threshold, True)
+        outputScalarRange = outputVolume.GetImageData().GetScalarRange()
+        self.assertEqual(outputScalarRange[0], inputScalarRange[0])
+        self.assertEqual(outputScalarRange[1], threshold)
+
+        # Test algorithm with inverted threshold
+        logic.process(inputVolume, outputVolume, threshold, False)
+        outputScalarRange = outputVolume.GetImageData().GetScalarRange()
+        self.assertEqual(outputScalarRange[0], inputScalarRange[0])
+        self.assertEqual(outputScalarRange[1], inputScalarRange[1])
+
+        self.delayDisplay('Test passed')

@@ -6,7 +6,8 @@ class Timer():
             self.total_time = 0
             self.inter_time = 0
             # counting flag to allow to PAUSE the time
-            self.flag = False  # False = not counting, True = counting (for pause button)
+            # False = not counting, True = counting (for pause button)
+            self.flag = False
 
     def start(self):
         with TIMER_MUTEX:
