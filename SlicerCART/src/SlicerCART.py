@@ -2498,15 +2498,11 @@ class SlicerCARTWidget(ScriptedLoadableModuleWidget, VTKObservationMixin):
       self.startTimerForActions()
       self.previousAction = 'segmentation'
       if self.ui.pushButton_ToggleFill.isChecked():
-          print('in if pushbutton toggle fill is checked', self.ui.pushButton_ToggleFill.isChecked())
           self.ui.pushButton_ToggleFill.setStyleSheet(f"background-color : "
                                                       f"{self.color_active}")
           self.ui.pushButton_ToggleFill.setText('Fill: ON')
           self.segmentationNode.GetDisplayNode().SetOpacity2DFill(100)
       else:
-          print('in else pushbutton toggle fill is checked',
-                self.ui.pushButton_ToggleFill.isChecked())
-
           self.ui.pushButton_ToggleFill.setStyleSheet(f"background-color : "
                                                       f"{self.color_inactive}")
           self.ui.pushButton_ToggleFill.setText('Fill: OFF')
