@@ -1500,7 +1500,6 @@ class SlicerCARTWidget(ScriptedLoadableModuleWidget, VTKObservationMixin):
 
       return info_dict
 
-  
   @enter_function
   def onSaveSegmentationButton(self):
       # By default creates a new folder in the volume directory 
