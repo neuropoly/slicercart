@@ -254,9 +254,11 @@ class SlicerCARTWidget(ScriptedLoadableModuleWidget, VTKObservationMixin):
         # setted to True and active.
         self.ui.pushButton_ToggleVisibility.setChecked(True)
         self.ui.pushButton_ToggleVisibility.setStyleSheet(
-            f"background-color : {self.rsion button appears not selected.
-                                                          self.ui.ToggleSegmentation.setStyleSheet(
-                                                          f"background-color : {self.color_inactive}")
+            f"background-color : {self.color_active}")
+        
+        # By default, load latest masks version button appears not selected.
+        self.ui.ToggleSegmentation.setStyleSheet(
+            f"background-color : {self.color_inactive}")
 
         self.ui.lcdNumber.setStyleSheet("background-color : black")
 
@@ -266,15 +268,13 @@ class SlicerCARTWidget(ScriptedLoadableModuleWidget, VTKObservationMixin):
         # at startup
         self.shortcut_objects = {}  # Maps shortcut key to QShortcut object
         self.shortcut_callbacks = {}
-        self.set_keyboard_shortcuts() \
- \
-        @ enter_function
+        self.set_keyboard_shortcuts()
 
+    @enter_function
     def set_classification_version_labels(self, classif_label):
         """
         Keep the classification labels depending on the classification 
-        version to
-        use and to save.
+        version to use and to save.
         """
         self.classification_version_labels = classif_label
 
@@ -299,16 +299,16 @@ class SlicerCARTWidget(ScriptedLoadableModuleWidget, VTKObservationMixin):
         for i in range(segmentIDs.GetNumberOfValues()):
             segmentID = segmentIDs.GetValue(i)
             isVisible = caller.GetSegmentVisibility(segmentID)
-            Debug.print(self, f"Segment '{segmentID}' visibility: {isVisible}")
+            Debug.print(self,
+                        f"Segment '{segmentID}' visibility: {isVisible}")
 
             if isVisible:
                 self.ui.pushButton_ToggleVisibility.setStyleSheet(
-                    f"background-color : "
-                    f"{self.color_active}")
+                    f"background-color : {self.color_active}")
                 toggle_to_set = True
 
-        Debug.print(self,
-                    f'Final state of toggle segments visibility button: '
+        Debug.print(
+            self,f'Final state of toggle segments visibility button: '
                     f'{toggle_to_set}')
 
         self.ui.pushButton_ToggleVisibility.setChecked(toggle_to_set)
@@ -474,7 +474,8 @@ class SlicerCARTWidget(ScriptedLoadableModuleWidget, VTKObservationMixin):
                 self.ui.ClassificationGridLayout.itemAt(i).widget().setParent(
                     None)
 
-        comboboxesStartRow = self.setupCheckboxes(3, self.config_yaml)
+        comboboxesStartRow = (
+            self.setupCheckboxes(3, self.config_yaml))
         freetextStartRow = self.setupComboboxes(comboboxesStartRow,
                                                 self.config_yaml)
         self.setupFreeText(freetextStartRow, self.config_yaml["freetextboxes"])
@@ -860,7 +861,8 @@ class SlicerCARTWidget(ScriptedLoadableModuleWidget, VTKObservationMixin):
     def updateCaseIndex(self, index):
         # ----- ANW Modification ----- : Numerator on UI should start at 1
         # instead of 0 for coherence
-        self.ui.FileIndex.setText('{} / {}'.format(index + 1, len(self.Cases)))
+        self.ui.FileIndex.setText('{} / {}'.format(
+            index + 1, len(self.Cases)))
 
     def updateCurrentPatient(self):
         self.updateCaseIndex(self.currentCase_index)
@@ -932,9 +934,8 @@ class SlicerCARTWidget(ScriptedLoadableModuleWidget, VTKObservationMixin):
     # - Not sure if this is really useful here.
     @property
     def segmentationNodeName(self):
-        return (f""
-                f"{os.path.split(self.currentCasePath)[1].split('.')[
-                    0]}_segmentation")
+        return (f"{os.path.split(self.currentCasePath)[1].split('.')[0]}"
+            "_segmentation")
 
     def newSegments(self):
         pass
@@ -1315,13 +1316,15 @@ class SlicerCARTWidget(ScriptedLoadableModuleWidget, VTKObservationMixin):
 
         if df is not None:
             # Means that classification csv file already exists.
-            Debug.print(self, 'Classification csv file already exists. To '
+            Debug.print(
+                self, 'Classification csv file already exists. To '
                               'update.')
 
             # Get Slicer Classification data only
             label_string_slicer, data_string_slicer = (
                 self.get_classif_config_data())
-            Debug.print(self, 'Got classification details from Slicer.')
+            Debug.print(self,
+                        'Got classification details from Slicer.')
 
             # Add Slicer Classification data header to csv df
             df = self.add_missing_columns_to_df(df, label_string_slicer)
@@ -1965,21 +1968,21 @@ class SlicerCARTWidget(ScriptedLoadableModuleWidget, VTKObservationMixin):
     def getClassificationInformationVersion(self):
         version = "v"
         classificationInformationPath = (f'{self.currentOutputPath}{os.sep}'
-                                         tionInformation.csv')
+                                         f'{self.currentVolumeFilename}'
+                                         f'_ClassificationInformation.csv')
 
-                                         if os.path.exists(
-                                         classificationInformationPath) ==
-                                        False:
-        version = version + "01"
+        if os.path.exists(classificationInformationPath) == False:
+            version = version + "01"
+
         else:
-        csv_data = pd.read_csv(classificationInformationPath)
-        existing_version_strings = csv_data[
-            'Classification version'].to_list()
-        existing_version_numbers = [(int)(version_string.split("v")[1]) for
-                                    version_string in
-                                    existing_version_strings]
-        next_version_number = max(existing_version_numbers) + 1
-        version = f'{version}{next_version_number:02d}'
+            csv_data = pd.read_csv(classificationInformationPath)
+            existing_version_strings = csv_data[
+                'Classification version'].to_list()
+            existing_version_numbers = [(int)(version_string.split("v")[1]) for
+                                        version_string in
+                                        existing_version_strings]
+            next_version_number = max(existing_version_numbers) + 1
+            version = f'{version}{next_version_number:02d}'
 
         return version
 
@@ -2123,869 +2126,864 @@ class SlicerCARTWidget(ScriptedLoadableModuleWidget, VTKObservationMixin):
         for case in self.Cases:
             case_id = case.split('.')[0]
             item = qt.QListWidgetItem(case_id)
-            segmentation_information_path = (f'{self.currentOutputPath}'
-                                             f'{os.sep}'
-                                             f'{se_id}_SegmentationInformation.csv')
+            segmentation_information_path = (f'{self.currentOutputPath}{os.sep}'
+                                             f'{case_id}'
+                                             f'_SegmentationInformation.csv')
+            segmentation_information_df = None
+            if os.path.exists(segmentation_information_path):
+                segmentation_information_df = pd.read_csv(
+                    segmentation_information_path)
+                currentCaseSegmentationStatus = self.get_segmentation_status(
+                    case, segmentation_information_df)
+                if currentCaseSegmentationStatus == 0:
+                    item.setForeground(qt.QColor(self.foreground))
+                elif currentCaseSegmentationStatus == 1:
+                    item.setForeground(qt.QColor('orange'))
+                elif currentCaseSegmentationStatus == 2:
+                    item.setForeground(qt.QColor('green'))
 
-}
-segmentation_information_df = None
-if os.path.exists(segmentation_information_path):
-    segmentation_information_df = pd.read_csv(
-segmentation_information_path)
-currentCaseSegmentationStatus = self.get_segmentation_status(
-case, segmentation_information_df)
-if currentCaseSegmentationStatus == 0:
-    item.setForeground(qt.QColor(self.foreground))
-elif currentCaseSegmentationStatus == 1:
-    item.setForeground(qt.QColor('orange'))
-elif currentCaseSegmentationStatus == 2:
-    item.setForeground(qt.QColor('green'))
+            self.ui.SlicerDirectoryListView.addItem(item)
+        else:
+            return
 
-self.ui.SlicerDirectoryListView.addItem(item)
-else:
-return
+    @enter_function
+    def get_segmentation_status(self, case, segmentation_information_df):
+        self.annotator_name = self.ui.Annotator_name.text
 
+        found_case = 0
+        if self.annotator_name is None:
+            msg = qt.QMessageBox()
+            msg.setIcon(qt.QMessageBox.Warning)
+            msg.setText("No annotator name defined")
+            msg.setInformativeText(
+                'The annotator name is empty, therefore, the case list colors '
+                'are not updated. ')
+            msg.setWindowTitle("No annotator name defined")
+            msg.exec()
 
-@enter_function
-def get_segmentation_status(self, case, segmentation_information_df):
-    self.annotator_name = self.ui.Annotator_name.text
+        else:
+            for _, row in segmentation_information_df.iterrows():
+                if row['Volume filename'] == case and row[
+                    'Annotator Name'] == self.annotator_name:
+                    return 2
+                elif row['Volume filename'] == case:
+                    found_case = 1
 
-    found_case = 0
-    if self.annotator_name is None:
-        msg = qt.QMessageBox()
-        msg.setIcon(qt.QMessageBox.Warning)
-        msg.setText("No annotator name defined")
-        msg.setInformativeText(
-            'The annotator name is empty, therefore, the case list colors '
-            'are not updated. ')
-        msg.setWindowTitle("No annotator name defined")
-        msg.exec()
+        return found_case
 
-    else:
-        for _, row in segmentation_information_df.iterrows():
-            if row['Volume filename'] == case and row[
-                'Annotator Name'] == self.annotator_name:
-                return 2
-            elif row['Volume filename'] == case:
-                found_case = 1
+    def msg_warnig_delete_segm_node_clicked(self,
+                                            msg_warnig_delete_segm_node_button):
+        if msg_warnig_delete_segm_node_button.text == 'OK':
+            srcNode = slicer.util.getNodesByClass('vtkMRMLSegmentationNode')[0]
+            slicer.mrmlScene.RemoveNode(srcNode)
+        else:
+            return
 
-    return found_case
+    @enter_function
+    def onLoadClassification(self):
+        classificationInformationPath = (f'{self.currentOutputPath}{os.sep}'
+                                         f'{self.currentVolumeFilename}'
+                                         f'_ClassificationInformation.csv')
 
+        classificationInformation_df = None
+        if os.path.exists(classificationInformationPath):
+            classificationInformation_df = (
+                pd.read_csv(classificationInformationPath))
+        else:
+            msg = qt.QMessageBox()
+            msg.setIcon(qt.QMessageBox.Information)
+            msg.setText("No saved classifications")
+            msg.setInformativeText(
+                'There are no classifications saved in the '
+                'ClassificationInformation.csv.')
+            msg.setWindowTitle("No saved classifications")
+            msg.exec()
+            return
 
-def msg_warnig_delete_segm_node_clicked(self,
-                                        msg_warnig_delete_segm_node_button):
-    if msg_warnig_delete_segm_node_button.text == 'OK':
-        srcNode = slicer.util.getNodesByClass('vtkMRMLSegmentationNode')[0]
-        slicer.mrmlScene.RemoveNode(srcNode)
-    else:
-        return
-
-
-@enter_function
-def onLoadClassification(self):
-    classificationInformationPath = (f'{self.currentOutputPath}{os.sep}'
-                                     f'{lf.currentVolumeFilename}_ClassificationInformation.csv')
-
-}
-classificationInformation_df = None
-if os.path.exists(classificationInformationPath):
-    classificationInformation_df = pd.read_csv(
-classificationInformationPath)
-else:
-msg = qt.QMessageBox()
-msg.setIcon(qt.QMessageBox.Information)
-msg.setText("No saved classifications")
-msg.setInformativeText(
-'There are no classifications saved in the '
-'ClassificationInformation.csv.')
-msg.setWindowTitle("No saved classifications")
-msg.exec()
-return
-
-loadClassificationWindow = LoadClassificationWindow(self,
-                                                    classificationInformation_df)
-loadClassificationWindow.show()
+        loadClassificationWindow = LoadClassificationWindow(
+            self, classificationInformation_df)
+        loadClassificationWindow.show()
 
 
-@enter_function
+    @enter_function
+    def onSaveClassificationButton(self):
+        self.annotator_name = self.ui.Annotator_name.text
+        self.annotator_degree = self.ui.AnnotatorDegree.currentText
+
+        self.combobox_version = ConfigPath.get_combobox_version()
+        classification_df = self.getClassificationInformation()
+
+        # Create folders if don't exist
+        self.createFolders()
+
+        if self.annotator_name is not None:
+            self.saveClassificationInformation(classification_df)
+            # Those lines can be re-activated if wanted to display a success
+            # message when saved.
+            # msg_box = qt.QMessageBox()
+            # msg_box.setWindowTitle("Success")
+            # msg_box.setIcon(qt.QMessageBox.Information)
+            # msg_box.setText("Classification saved successfully!")
+            # msg_box.exec()
+
+            # Go automatically to the next case in the UI list when
+            # classification has been saved (if it<s the last case, it stays on
+            # it)
+            self.onNextButton()
+
+        else:
+            msgboxtime = qt.QMessageBox()
+            msgboxtime.setText(
+                "Classification not saved : no annotator name !  \n Please "
+                "save again with your name!")
+            msgboxtime.exec()
 
 
-def onSaveClassificationButton(self):
-    self.annotator_name = self.ui.Annotator_name.text
-    self.annotator_degree = self.ui.AnnotatorDegree.currentText
+    def onCompareSegmentVersions(self):
+        if 'Clear' in self.ui.CompareSegmentVersions.text:
+            self.onClearCompareSegmentVersions()
+        else:
+            msg_warnig_delete_segm_node = (
+                self.warnAgainstDeletingCurrentSegmentation())
+            msg_warnig_delete_segm_node.buttonClicked.connect(
+                self.onCompareSegmentVersionsWillEraseCurrentSegmentsWarningClicked)
+            msg_warnig_delete_segm_node.exec()
 
-    self.combobox_version = ConfigPath.get_combobox_version()
-    classification_df = self.getClassificationInformation()
+    def onCompareSegmentVersionsWillEraseCurrentSegmentsWarningClicked(
+            self, msg_warnig_delete_segm_node_button):
+        if msg_warnig_delete_segm_node_button.text == 'OK':
+            srcNode = slicer.util.getNodesByClass('vtkMRMLSegmentationNode')[0]
+            slicer.mrmlScene.RemoveNode(srcNode)
 
-    # Create folders if don't exist
-    self.createFolders()
-
-    if self.annotator_name is not None:
-        self.saveClassificationInformation(classification_df)
-        # Those lines can be re-activated if wanted to display a success
-        # message when saved.
-        # msg_box = qt.QMessageBox()
-        # msg_box.setWindowTitle("Success")
-        # msg_box.setIcon(qt.QMessageBox.Information)
-        # msg_box.setText("Classification saved successfully!")
-        # msg_box.exec()
-
-        # Go automatically to the next case in the UI list when
-        # classification has been saved (if it<s the last case, it stays on
-        # it)
-        self.onNextButton()
-
-    else:
-        msgboxtime = qt.QMessageBox()
-        msgboxtime.setText(
-            "Classification not saved : no annotator name !  \n Please "
-            "save again with your name!")
-        msgboxtime.exec()
+            self.openCompareSegmentVersionsWindow()
+        else:
+            return
 
 
-def onCompareSegmentVersions(self):
-    if 'Clear' in self.ui.CompareSegmentVersions.text:
-        self.onClearCompareSegmentVersions()
-    else:
+    def warnAgainstDeletingCurrentSegmentation(self):
+        msg_warnig_delete_segm_node = qt.QMessageBox()
+        msg_warnig_delete_segm_node.setText(
+            'This will delete the current segmentation. Do you want to '
+            'continue?')
+        msg_warnig_delete_segm_node.setIcon(qt.QMessageBox.Warning)
+        msg_warnig_delete_segm_node.setStandardButtons(
+            qt.QMessageBox.Ok | qt.QMessageBox.Cancel)
+
+        return msg_warnig_delete_segm_node
+
+
+    def onLoadSegmentation(self):
         msg_warnig_delete_segm_node = (
             self.warnAgainstDeletingCurrentSegmentation())
         msg_warnig_delete_segm_node.buttonClicked.connect(
-            self.onCompareSegmentVersionsWillEraseCurrentSegmentsWarningClicked)
+            self.onLoadSegmentationWillEraseCurrentSegmentsWarningClicked)
         msg_warnig_delete_segm_node.exec()
 
 
-def onCompareSegmentVersionsWillEraseCurrentSegmentsWarningClicked(self,
-                                                                   msg_warnig_delete_segm_node_button):
-    if msg_warnig_delete_segm_node_button.text == 'OK':
-        srcNode = slicer.util.getNodesByClass('vtkMRMLSegmentationNode')[0]
-        slicer.mrmlScene.RemoveNode(srcNode)
-
-        self.openCompareSegmentVersionsWindow()
-    else:
-        return
-
-
-def warnAgainstDeletingCurrentSegmentation(self):
-    msg_warnig_delete_segm_node = qt.QMessageBox()
-    msg_warnig_delete_segm_node.setText(
-        'This will delete the current segmentation. Do you want to '
-        'continue?')
-    msg_warnig_delete_segm_node.setIcon(qt.QMessageBox.Warning)
-    msg_warnig_delete_segm_node.setStandardButtons(
-        qt.QMessageBox.Ok | qt.QMessageBox.Cancel)
-
-    return msg_warnig_delete_segm_node
-
-
-def onLoadSegmentation(self):
-    msg_warnig_delete_segm_node = (
-        self.warnAgainstDeletingCurrentSegmentation())
-    msg_warnig_delete_segm_node.buttonClicked.connect(
-        self.onLoadSegmentationWillEraseCurrentSegmentsWarningClicked)
-    msg_warnig_delete_segm_node.exec()
-
-
-def onLoadSegmentationWillEraseCurrentSegmentsWarningClicked(self,
-                                                             msg_warnig_delete_segm_node_button):
-    if msg_warnig_delete_segm_node_button.text == 'OK':
-        srcNode = slicer.util.getNodesByClass('vtkMRMLSegmentationNode')[0]
-        slicer.mrmlScene.RemoveNode(srcNode)
-        self.openLoadSegmentationWindow()
-    else:
-        return
-
-
-@enter_function
-def toggle_segmentation_masks(self):
-    """
-    Load latest version of segmentation from output folder if available.
-    """
-    self.startTimerForActions()
-    self.previousAction = 'segmentation'
-
-    if self.ui.ToggleSegmentation.isChecked():
-
-        self.ui.ToggleSegmentation.setStyleSheet(
-            f"background-color : {self.color_active}")
-
-        self.segmentationNode.GetDisplayNode().SetAllSegmentsVisibility(
-            True)
-
-        latest_version_path = self.get_latest_path()
-
-        Debug.print(self, f'latest_version_path: {latest_version_path}')
-
-        if latest_version_path is None:
-            Debug.print(self, 'Noo segmentation found. Nothing to do.')
+    def onLoadSegmentationWillEraseCurrentSegmentsWarningClicked(
+            self, msg_warnig_delete_segm_node_button):
+        if msg_warnig_delete_segm_node_button.text == 'OK':
+            srcNode = slicer.util.getNodesByClass('vtkMRMLSegmentationNode')[0]
+            slicer.mrmlScene.RemoveNode(srcNode)
+            self.openLoadSegmentationWindow()
+        else:
             return
 
-        # Replace current segments in the segmentation node so they can be
-        # edited
-        self.replace_segments(latest_version_path)
+    @enter_function
+    def toggle_segmentation_masks(self):
+        """
+        Load latest version of segmentation from output folder if available.
+        """
+        self.startTimerForActions()
+        self.previousAction = 'segmentation'
 
-    else:
-        self.ui.ToggleSegmentation.setStyleSheet(
-            f"background-color : {self.color_inactive}")
-        self.segmentationNode.GetDisplayNode().SetAllSegmentsVisibility(
-            False)
+        if self.ui.ToggleSegmentation.isChecked():
 
-        segmentation_node = Dev.get_segmentation_node(self)
-        segmentation = segmentation_node.GetSegmentation()
-        segmentation.RemoveAllSegments()
+            self.ui.ToggleSegmentation.setStyleSheet(
+                f"background-color : {self.color_active}")
 
+            self.segmentationNode.GetDisplayNode().SetAllSegmentsVisibility(
+                True)
+
+            latest_version_path = self.get_latest_path()
+
+            Debug.print(self, f'latest_version_path: {latest_version_path}')
+
+            if latest_version_path is None:
+                Debug.print(self, 'No segmentation found. Nothing to do.')
+                return
+
+            # Replace current segments in the segmentation node so they can be
+            # edited
+            self.replace_segments(latest_version_path)
+
+        else:
+            self.ui.ToggleSegmentation.setStyleSheet(
+                f"background-color : {self.color_inactive}")
+            self.segmentationNode.GetDisplayNode().SetAllSegmentsVisibility(
+                False)
+
+            segmentation_node = Dev.get_segmentation_node(self)
+            segmentation = segmentation_node.GetSegmentation()
+            segmentation.RemoveAllSegments()
+
+            self.loadPatient()
+
+
+    @enter_function
+    def get_latest_path(self):
+        """
+        Get the latest path of most recent segmentation version if available.
+        """
+        latest_version = self.get_latest_existing_version()
+        latest_path = os.path.join(
+            self.currentOutputPath,
+            "{}_{}"f"{ConfigPath.INPUT_FILE_EXTENSION[1:]}".format(
+                self.currentVolumeFilename, latest_version))
+
+        if os.path.exists(latest_path):
+            return latest_path
+
+
+    @enter_function
+    def get_latest_existing_version(self):
+        """
+        Get the latest version available as a string.
+        """
+        version = self.getCurrentSegmentationVersion()
+        version_int = self.parse_version_to_int(version)
+        version_int -= 1
+        if version_int == 0:
+            version = version
+        else:
+            version = self.parse_version_int_to_str(version_int)
+        Debug.print(self, f'version: {version}')
+        return version
+
+
+    @enter_function
+    def parse_version_to_int(self, version_string):
+        """
+        Parse version as a string to corresponding integer.
+        """
+        version_formatted = version_string[1:]
+        version = int(version_formatted)
+        return version
+
+
+    @enter_function
+    def parse_version_int_to_str(self, version_int):
+        """
+        Parse an integer version to a string format
+        """
+        return f"v{version_int:02d}"
+
+
+    def openLoadSegmentationWindow(self):
+        segmentationInformationPath = (f'{self.currentOutputPath}{os.sep}'
+                                       f'{self.currentVolumeFilename}'
+                                       f'_SegmentationInformation.csv')
+
+        segmentationInformation_df = None
+        if os.path.exists(segmentationInformationPath):
+            segmentationInformation_df = pd.read_csv(
+                segmentationInformationPath)
+        else:
+            msg = qt.QMessageBox()
+            msg.setIcon(qt.QMessageBox.Information)
+            msg.setText("No saved segmentations")
+            msg.setInformativeText(
+                'There are no segmentations saved in '
+                'the SegmentationInformation.csv.')
+            msg.setWindowTitle("No saved segmentations")
+            msg.exec()
+            return
+
+        loadSegmentationWindow = LoadSegmentationsWindow(
+            self, segmentationInformation_df)
+        loadSegmentationWindow.show()
+
+
+    @enter_function
+    def openCompareSegmentVersionsWindow(self):
+        segmentationInformationPath = (f'{self.currentOutputPath}{os.sep}'
+                                       f'{self.currentVolumeFilename}'
+                                       f'_SegmentationInformation.csv')
+
+        segmentationInformation_df = None
+        if os.path.exists(segmentationInformationPath):
+            segmentationInformation_df = pd.read_csv(
+                segmentationInformationPath)
+        else:
+            msg = qt.QMessageBox()
+            msg.setIcon(qt.QMessageBox.Information)
+            msg.setText("No saved segmentations")
+            msg.setInformativeText(
+                'There are no segmentations saved in '
+                'the SegmentationInformation.csv.')
+            msg.setWindowTitle("No saved segmentations")
+            msg.exec()
+            return
+
+        compareSegmentVersionsWindow = CompareSegmentVersionsWindow(
+            self, segmentationInformation_df)
+        compareSegmentVersionsWindow.show()
+
+
+    @enter_function
+    def compareSegmentVersions(self,
+                               selected_label,
+                               selected_version_file_paths):
+
+        self.labelOfCompareSegmentVersions = selected_label
+        self.colorsSelectedVersionFilePathsForCompareSegmentVersions = {}
+
+        selected_label_value = 0
+        for label in self.config_yaml['labels']:
+            if selected_label == label['name']:
+                selected_label_value = label['value']
+
+        slicer.mrmlScene.Clear()
+        slicer.util.loadVolume(self.currentCasePath)
+        self.VolumeNode = \
+            slicer.util.getNodesByClass('vtkMRMLScalarVolumeNode')[0]
+
+        Vol_displayNode = self.VolumeNode.GetDisplayNode()
+        Vol_displayNode.AutoWindowLevelOff()
+        if ConfigPath.MODALITY == 'CT':
+            Debug.print(self, 'MODALITY==CT')
+            Vol_displayNode.SetWindow(ConfigPath.CT_WINDOW_WIDTH)
+            Vol_displayNode.SetLevel(ConfigPath.CT_WINDOW_LEVEL)
+        Vol_displayNode.SetInterpolate(INTERPOLATE_VALUE)
+
+        self.segmentEditorWidget = (
+            slicer.modules.segmenteditor.widgetRepresentation().self().editor)
+        self.segmentEditorWidget.setActiveEffectByName("No editing")
+
+        self.resetTimer()
+
+        for (
+                segment_name,
+                version_file_path) in selected_version_file_paths.items():
+            if 'nrrd' in ConfigPath.INPUT_FILE_EXTENSION:
+                slicer.util.loadSegmentation(version_file_path)
+                currentSegmentationNode = \
+                    slicer.util.getNodesByClass('vtkMRMLSegmentationNode')[0]
+            elif 'nii' in ConfigPath.INPUT_FILE_EXTENSION:
+                labelmapVolumeNode = slicer.util.loadLabelVolume(
+                    version_file_path)
+                currentSegmentationNode = slicer.mrmlScene.AddNewNodeByClass(
+                    "vtkMRMLSegmentationNode")
+                slicer.modules.segmentations.logic(
+
+                ).ImportLabelmapToSegmentationNode(
+                    labelmapVolumeNode, currentSegmentationNode)
+
+            self.segmentEditorWidget = (
+                slicer.modules.segmenteditor.widgetRepresentation().self(
+
+                ).editor)
+            self.segmentEditorNode = (
+                self.segmentEditorWidget.mrmlSegmentEditorNode())
+            self.segmentEditorWidget.setSegmentationNode(
+                currentSegmentationNode)
+            self.segmentEditorWidget.setSourceVolumeNode(self.VolumeNode)
+            (currentSegmentationNode
+            .SetReferenceImageGeometryParameterFromVolumeNode(
+                self.VolumeNode))
+            segmentationDisplayNode = currentSegmentationNode.GetDisplayNode()
+            segmentationDisplayNode.SetAllSegmentsVisibility(False)
+
+            currentSegmentationNode.SetName(
+                os.path.split(version_file_path)[1].split('.')[0])
+
+            segment = currentSegmentationNode.GetSegmentation().GetSegment(
+                str(selected_label_value))
+
+            if segment is not None:
+                segment.SetName(segment_name)
+
+                # OBTAIN RANDOM BRIGHT COLOR :
+                # https://stackoverflow.com/questions/43437309/get-a-bright
+                # -random-colour-python
+                h, s, l = (random.random(), 0.5 + random.random() / 2.0,
+                           0.4 + random.random() / 5.0)
+                r, g, b = [int(256 * i) for i in colorsys.hls_to_rgb(h, l, s)]
+                self.colorsSelectedVersionFilePathsForCompareSegmentVersions[
+                    segment_name] = [r, g, b]
+                segment.SetColor(r / 255, g / 255, b / 255)
+
+                segmentationDisplayNode.SetSegmentVisibility(
+                    str(selected_label_value), True)
+
+        self.disableSegmentAndPaintButtons()
+        self.disablePauseTimerButton()
+        self.ui.StartTimerButton.setEnabled(False)
+        self.ui.StartTimerButton.setStyleSheet("background-color : light gray")
+        self.ui.CompareSegmentVersions.setText(
+            'Clear Read Only Segment Versions')
+        self.ui.CompareSegmentVersions.setStyleSheet(
+            "background-color : yellowgreen")
+        self.ui.SaveSegmentationButton.setEnabled(False)
+
+        self.ui.ShowSegmentVersionLegendButton.setVisible(True)
+
+
+    def onClearCompareSegmentVersions(self):
         self.loadPatient()
 
+        self.enableStartTimerButton()
 
-@enter_function
-def get_latest_path(self):
-    """
-    Get the latest path of most recent segmentation version if available.
-    """
-    latest_version = self.get_latest_existing_version()
-    latest_path = os.path.join(
-        self.currentOutputPath,
-        "{}_{}"f"{ConfigPath.INPUT_FILE_EXTENSION[1:]}".format(
-            self.currentVolumeFilename, latest_version))
+        self.ui.CompareSegmentVersions.setText('Compare segment versions')
+        self.ui.CompareSegmentVersions.setStyleSheet(
+            "background-color : light gray")
 
-    if os.path.exists(latest_path):
-        return latest_path
+        self.ui.SaveSegmentationButton.setEnabled(True)
+
+        self.ui.ShowSegmentVersionLegendButton.setVisible(False)
 
 
-@enter_function
-def get_latest_existing_version(self):
-    """
-    Get the latest version available as a string.
-    """
-    version = self.getCurrentSegmentationVersion()
-    version_int = self.parse_version_to_int(version)
-    version_int -= 1
-    if version_int == 0:
-        version = version
-    else:
-        version = self.parse_version_int_to_str(version_int)
-    Debug.print(self, f'version: {version}')
-    return version
-
-
-@enter_function
-def parse_version_to_int(self, version_string):
-    """
-    Parse version as a string to corresponding integer.
-    """
-    version_formatted = version_string[1:]
-    version = int(version_formatted)
-    return version
-
-
-@enter_function
-def parse_version_int_to_str(self, version_int):
-    """
-    Parse an integer version to a string format
-    """
-    return f"v{version_int:02d}"
-
-
-def openLoadSegmentationWindow(self):
-    segmentationInformationPath = (f'{self.currentOutputPath}{os.sep}'
-                                   f'{lf.currentVolumeFilename}_SegmentationInformation.csv')
-
-}
-segmentationInformation_df = None
-if os.path.exists(segmentationInformationPath):
-    segmentationInformation_df = pd.read_csv(
-segmentationInformationPath)
-else:
-msg = qt.QMessageBox()
-msg.setIcon(qt.QMessageBox.Information)
-msg.setText("No saved segmentations")
-msg.setInformativeText(
-'There are no segmentations saved in the '
-'SegmentationInformation.csv.')
-msg.setWindowTitle("No saved segmentations")
-msg.exec()
-return
-
-loadSegmentationWindow = LoadSegmentationsWindow(self,
-                                                 segmentationInformation_df)
-loadSegmentationWindow.show()
-
-
-def openCompareSegmentVersionsWindow(self):
-    segmentationInformationPath = (f'{self.currentOutputPath}{os.sep}'
-                                   f'{}nformation_df = None
-                                   if os.path.exists(
-                                   segmentationInformationPath):
-    segmentationInformation_df = pd.read_csv(
-        segmentationInformationPath)
-    else:
-    msg = qt.QMessageBox()
-    msg.setIcon(qt.QMessageBox.Information)
-    msg.setText("No saved segmentations")
-    msg.setInformativeText(
-        'There are no segmentations saved in the '
-        'SegmentationInformation.csv.')
-    msg.setWindowTitle("No saved segmentations")
-    msg.exec()
-    return
-
-    compareSegmentVersionsWindow = CompareSegmentVersionsWindow(self,
-                                                                segmentationInformation_df)
-    compareSegmentVersionsWindow.show()
-
-
-@enter_function
-
-
-def compareSegmentVersions(self, selected_label,
-                           selected_version_file_paths):
-    self.labelOfCompareSegmentVersions = selected_label
-    self.colorsSelectedVersionFilePathsForCompareSegmentVersions = {}
-
-    selected_label_value = 0
-    for label in self.config_yaml['labels']:
-        if selected_label == label['name']:
-            selected_label_value = label['value']
-
-    slicer.mrmlScene.Clear()
-    slicer.util.loadVolume(self.currentCasePath)
-    self.VolumeNode = \
-        slicer.util.getNodesByClass('vtkMRMLScalarVolumeNode')[0]
-
-    Vol_displayNode = self.VolumeNode.GetDisplayNode()
-    Vol_displayNode.AutoWindowLevelOff()
-    if ConfigPath.MODALITY == 'CT':
-        Debug.print(self, 'MODALITY==CT')
-        Vol_displayNode.SetWindow(ConfigPath.CT_WINDOW_WIDTH)
-        Vol_displayNode.SetLevel(ConfigPath.CT_WINDOW_LEVEL)
-    Vol_displayNode.SetInterpolate(INTERPOLATE_VALUE)
-
-    self.segmentEditorWidget = (
-        slicer.modules.segmenteditor.widgetRepresentation().self().editor)
-    self.segmentEditorWidget.setActiveEffectByName("No editing")
-
-    self.resetTimer()
-
-    for (
-            segment_name,
-            version_file_path) in selected_version_file_paths.items():
+    def loadSegmentation(self, absolute_path_to_segmentation_file):
         if 'nrrd' in ConfigPath.INPUT_FILE_EXTENSION:
-            slicer.util.loadSegmentation(version_file_path)
-            currentSegmentationNode = \
+            slicer.util.loadSegmentation(absolute_path_to_segmentation_file)
+            self.segmentationNode = \
                 slicer.util.getNodesByClass('vtkMRMLSegmentationNode')[0]
         elif 'nii' in ConfigPath.INPUT_FILE_EXTENSION:
             labelmapVolumeNode = slicer.util.loadLabelVolume(
-                version_file_path)
-            currentSegmentationNode = slicer.mrmlScene.AddNewNodeByClass(
+                absolute_path_to_segmentation_file)
+            self.segmentationNode = slicer.mrmlScene.AddNewNodeByClass(
                 "vtkMRMLSegmentationNode")
             slicer.modules.segmentations.logic(
 
             ).ImportLabelmapToSegmentationNode(
-                labelmapVolumeNode, currentSegmentationNode)
+                labelmapVolumeNode, self.segmentationNode)
 
         self.segmentEditorWidget = (
-            slicer.modules.segmenteditor.widgetRepresentation().self(
+            slicer.modules.segmenteditor.widgetRepresentation().self().editor)
 
-            ).editor)
         self.segmentEditorNode = (
             self.segmentEditorWidget.mrmlSegmentEditorNode())
-        self.segmentEditorWidget.setSegmentationNode(
-            currentSegmentationNode)
+
+        self.segmentEditorWidget.setSegmentationNode(self.segmentationNode)
         self.segmentEditorWidget.setSourceVolumeNode(self.VolumeNode)
-        (currentSegmentationNode
-        .SetReferenceImageGeometryParameterFromVolumeNode(
-            self.VolumeNode))
-        segmentationDisplayNode = currentSegmentationNode.GetDisplayNode()
-        segmentationDisplayNode.SetAllSegmentsVisibility(False)
 
-        currentSegmentationNode.SetName(
-            os.path.split(version_file_path)[1].split('.')[0])
+        # set refenrence geometry to Volume node
+        self.segmentationNode.SetReferenceImageGeometryParameterFromVolumeNode(
+            self.VolumeNode)
 
-        segment = currentSegmentationNode.GetSegmentation().GetSegment(
-            str(selected_label_value))
+        nn = self.segmentationNode.GetDisplayNode()
 
-        if segment is not None:
-            segment.SetName(segment_name)
+        # set Segmentation visible:
+        nn.SetAllSegmentsVisibility(True)
 
-            # OBTAIN RANDOM BRIGHT COLOR :
-            # https://stackoverflow.com/questions/43437309/get-a-bright
-            # -random-colour-python
-            h, s, l = (random.random(), 0.5 + random.random() / 2.0,
-                       0.4 + random.random() / 5.0)
-            r, g, b = [int(256 * i) for i in colorsys.hls_to_rgb(h, l, s)]
-            self.colorsSelectedVersionFilePathsForCompareSegmentVersions[
-                segment_name] = [r, g, b]
-            segment.SetColor(r / 255, g / 255, b / 255)
+        loaded_segment_ids = (
+            self.segmentationNode.GetSegmentation().GetSegmentIDs())
 
-            segmentationDisplayNode.SetSegmentVisibility(
-                str(selected_label_value), True)
+        for i, segment_id in enumerate(loaded_segment_ids):
+            for label in self.config_yaml["labels"]:
+                if str(label['value']) == str(segment_id):
+                    segment = (
+                        self.segmentationNode.GetSegmentation().GetSegment(
+                        segment_id))
+                    segment.SetName(label["name"])
+                    segment.SetColor(label["color_r"] / 255,
+                                     label["color_g"] / 255,
+                                     label["color_b"] / 255)
 
-    self.disableSegmentAndPaintButtons()
-    self.disablePauseTimerButton()
-    self.ui.StartTimerButton.setEnabled(False)
-    self.ui.StartTimerButton.setStyleSheet("background-color : light gray")
-    self.ui.CompareSegmentVersions.setText(
-        'Clear Read Only Segment Versions')
-    self.ui.CompareSegmentVersions.setStyleSheet(
-        "background-color : yellowgreen")
-    self.ui.SaveSegmentationButton.setEnabled(False)
-
-    self.ui.ShowSegmentVersionLegendButton.setVisible(True)
-
-
-def onClearCompareSegmentVersions(self):
-    self.loadPatient()
-
-    self.enableStartTimerButton()
-
-    self.ui.CompareSegmentVersions.setText('Compare segment versions')
-    self.ui.CompareSegmentVersions.setStyleSheet(
-        "background-color : light gray")
-
-    self.ui.SaveSegmentationButton.setEnabled(True)
-
-    self.ui.ShowSegmentVersionLegendButton.setVisible(False)
-
-
-def loadSegmentation(self, absolute_path_to_segmentation_file):
-    if 'nrrd' in ConfigPath.INPUT_FILE_EXTENSION:
-        slicer.util.loadSegmentation(absolute_path_to_segmentation_file)
-        self.segmentationNode = \
-            slicer.util.getNodesByClass('vtkMRMLSegmentationNode')[0]
-    elif 'nii' in ConfigPath.INPUT_FILE_EXTENSION:
-        labelmapVolumeNode = slicer.util.loadLabelVolume(
-            absolute_path_to_segmentation_file)
-        self.segmentationNode = slicer.mrmlScene.AddNewNodeByClass(
-            "vtkMRMLSegmentationNode")
-        slicer.modules.segmentations.logic(
-
-        ).ImportLabelmapToSegmentationNode(
-            labelmapVolumeNode, self.segmentationNode)
-
-    self.segmentEditorWidget = (
-        slicer.modules.segmenteditor.widgetRepresentation().self().editor)
-    self.segmentEditorNode = (
-        self.segmentEditorWidget.mrmlSegmentEditorNode())
-    self.segmentEditorWidget.setSegmentationNode(self.segmentationNode)
-    self.segmentEditorWidget.setSourceVolumeNode(self.VolumeNode)
-    # set refenrence geometry to Volume node
-    self.segmentationNode.SetReferenceImageGeometryParameterFromVolumeNode(
-        self.VolumeNode)
-    nn = self.segmentationNode.GetDisplayNode()
-    # set Segmentation visible:
-    nn.SetAllSegmentsVisibility(True)
-
-    loaded_segment_ids = self.segmentationNode.GetSegmentation(
-
-    ).GetSegmentIDs()
-    for i, segment_id in enumerate(loaded_segment_ids):
+        list_of_segment_names = self.getAllSegmentNames()
         for label in self.config_yaml["labels"]:
-            if str(label['value']) == str(segment_id):
-                segment = self.segmentationNode.GetSegmentation(
+            if label['name'] not in list_of_segment_names:
+                self.onNewLabelSegm(label["name"], label["color_r"],
+                                    label["color_g"], label["color_b"],
+                                    label["lower_bound_HU"],
+                                    label["upper_bound_HU"])
 
-                ).GetSegment(
-                    segment_id)
-                segment.SetName(label["name"])
-                segment.SetColor(label["color_r"] / 255,
-                                 label["color_g"] / 255,
-                                 label["color_b"] / 255)
-
-    list_of_segment_names = self.getAllSegmentNames()
-    for label in self.config_yaml["labels"]:
-        if label['name'] not in list_of_segment_names:
-            self.onNewLabelSegm(label["name"], label["color_r"],
-                                label["color_g"], label["color_b"],
-                                label["lower_bound_HU"],
-                                label["upper_bound_HU"])
-
-    for segment_id in loaded_segment_ids:
-        for label in self.config_yaml["labels"]:
-            if str(segment_id) == str(label['value']) or str(
-                    segment_id) == str(label['name']):
-                self.segmentationNode.GetSegmentation().SetSegmentIndex(
-                    str(segment_id), label['value'] - 1)
+        for segment_id in loaded_segment_ids:
+            for label in self.config_yaml["labels"]:
+                if str(segment_id) == str(label['value']) or str(
+                        segment_id) == str(label['name']):
+                    self.segmentationNode.GetSegmentation().SetSegmentIndex(
+                        str(segment_id), label['value'] - 1)
 
 
-@enter_function
-def replace_segments(self, latest_version_path):
-    """
-    Set segments loaded from latest_version_available to current segment,
-    enabling edition.
-    :param latest_version_path: path of latest version available.
-    """
-    segmentation_node = Dev.get_segmentation_node(self)
+    @enter_function
+    def replace_segments(self, latest_version_path):
+        """
+        Set segments loaded from latest_version_available to current segment,
+        enabling edition.
+        :param latest_version_path: path of latest version available.
+        """
+        segmentation_node = Dev.get_segmentation_node(self)
 
-    # Load the segmentation into a temporary node
-    temporary_segmentation_node = slicer.mrmlScene.AddNewNodeByClass(
-        "vtkMRMLSegmentationNode", "TemporarySegmentation"
-    )
+        # Load the segmentation into a temporary node
+        temporary_segmentation_node = slicer.mrmlScene.AddNewNodeByClass(
+            "vtkMRMLSegmentationNode", "TemporarySegmentation")
 
-    if latest_version_path.endswith(".nrrd"):
-        slicer.util.loadSegmentation(latest_version_path,
-                                     temporary_segmentation_node)
+        if latest_version_path.endswith(".nrrd"):
+            slicer.util.loadSegmentation(latest_version_path,
+                                         temporary_segmentation_node)
 
-    elif latest_version_path.endswith(
-            ".nii") or latest_version_path.endswith(
-        ".nii.gz"):
-        labelmap_volume_node = slicer.util.loadLabelVolume(
-            latest_version_path)
-        slicer.modules.segmentations.logic(
+        elif (latest_version_path.endswith(".nii")
+              or latest_version_path.endswith(".nii.gz")):
+            labelmap_volume_node = (
+                slicer.util.loadLabelVolume(latest_version_path))
 
-        ).ImportLabelmapToSegmentationNode(
-            labelmap_volume_node, temporary_segmentation_node
-        )
-        slicer.mrmlScene.RemoveNode(
-            labelmap_volume_node)  # Remove labelmap after import
+            slicer.modules.segmentations.logic(
 
-    # Get the segmentation object from the nodes
-    temp_segmentation = temporary_segmentation_node.GetSegmentation()
-    target_segmentation = segmentation_node.GetSegmentation()
+            ).ImportLabelmapToSegmentationNode(
+                labelmap_volume_node, temporary_segmentation_node
+            )
 
-    # Clear existing segments in the target node
-    segment_ids = [target_segmentation.GetNthSegmentID(i) for i in
-                   range(target_segmentation.GetNumberOfSegments())]
-    for segment_id in segment_ids:
-        target_segmentation.RemoveSegment(segment_id)
-
-    # Copy segments from the temporary node to the target node
-    for i in range(temp_segmentation.GetNumberOfSegments()):
-        segment = temp_segmentation.GetNthSegment(i)
-        target_segmentation.AddSegment(segment)
-        for label in self.config_yaml["labels"]:
-            # Ensure that you compare the label value to the segment's
-            # name correctly
-            if str(label["value"]) == str(segment.GetName()):
-                # Get the segment ID using the segment's name
-                segment.SetName(label["name"])
-                rgb_r = label["color_r"] / 255
-                rgb_g = label["color_g"] / 255
-                rgb_b = label["color_b"] / 255
-                segment.SetColor(rgb_r, rgb_g, rgb_b)
-
-    # Remove the temporary node
-    slicer.mrmlScene.RemoveNode(temporary_segmentation_node)
-
-
-def getAllSegmentNames(self):
-    list_of_segment_ids = self.segmentationNode.GetSegmentation(
-
-    ).GetSegmentIDs()
-    list_of_segment_names = []
-    for segment_id in list_of_segment_ids:
-        segment = self.segmentationNode.GetSegmentation().GetSegment(
-            segment_id)
-        list_of_segment_names.append(segment.GetName())
-    return list_of_segment_names
-
-
-@enter_function
-def onPushDefaultMin(self):
-    fresh_config = ConfigPath.open_project_config_file()
-    self.config_yaml["labels"][self.current_label_index][
-        "lower_bound_HU"] = \
-        fresh_config["labels"][self.current_label_index]["lower_bound_HU"]
-    self.setUpperAndLowerBoundHU(
-        self.config_yaml["labels"][self.current_label_index][
-            "lower_bound_HU"],
-        self.config_yaml["labels"][self.current_label_index][
-            "upper_bound_HU"])
-
-
-@enter_function
-def onPushDefaultMax(self):
-    fresh_config = ConfigPath.open_project_config_file()
-    self.config_yaml["labels"][self.current_label_index][
-        "upper_bound_HU"] = \
-        fresh_config["labels"][self.current_label_index]["upper_bound_HU"]
-    self.setUpperAndLowerBoundHU(
-        self.config_yaml["labels"][self.current_label_index][
-            "lower_bound_HU"],
-        self.config_yaml["labels"][self.current_label_index][
-            "upper_bound_HU"])
-
-
-def onPush_ShowSegmentVersionLegendButton(self):
-    segmentationInformationPath = (f'{self.currentOutputPath}{os.sep}'
-                                   f'{self.currentVolumeFilename}_SegmentationInformation.csv')
-    segmentationInformation_df = None
-    if os.path.exists(segmentationInformationPath):
-        segmentationInformation_df = pd.read_csv(
-            segmentationInformationPath)
-    else:
-        msg = qt.QMessageBox()
-        msg.setIcon(qt.QMessageBox.Information)
-        msg.setText("No saved segmentations")
-        msg.setInformativeText(
-            'There are no segmentations saved in the '
-            'SegmentationInformation.csv.')
-        msg.setWindowTitle("No saved segmentations")
-        msg.exec()
-        return
-
-    showSegmentVersionLegendWindow = ShowSegmentVersionLegendWindow(self,
-                                                                    segmentationInformation_df)
-    showSegmentVersionLegendWindow.show()
-
-
-def onPushButton_undo(self):
-    if self.previousAction == 'segmentation':
-        self.segmentEditorWidget.undo()
-
-    elif self.previousAction == 'markups':
-        # Get the last added markup node (or customize based on specific
-        # markup type)
-        markupsNodeList = slicer.mrmlScene.GetNodesByClass(
-            "vtkMRMLMarkupsNode")
-        markupsNodeList.InitTraversal()
-
-        lastMarkupNode = None
-        while True:
-            markupNode = markupsNodeList.GetNextItemAsObject()
-            if markupNode:
-                lastMarkupNode = markupNode  # Keep track of the last
-                # markup node
-            else:
-                break
-
-        # Remove the last control point from the markup node (or remove the
-        # whole node if needed)
-        if lastMarkupNode and lastMarkupNode.GetNumberOfControlPoints() > 0:
-            lastMarkupNode.RemoveNthControlPoint(
-                lastMarkupNode.GetNumberOfControlPoints() - 1)
-        else:
             slicer.mrmlScene.RemoveNode(
-                lastMarkupNode)  # Remove the whole markup node if no
-            # points remain
+                labelmap_volume_node)  # Remove labelmap after import
 
-        removedNode = self.lineDetails.pop(lastMarkupNode.GetName())
+        # Get the segmentation object from the nodes
+        temp_segmentation = temporary_segmentation_node.GetSegmentation()
+        target_segmentation = segmentation_node.GetSegmentation()
 
+        # Clear existing segments in the target node
+        segment_ids = [target_segmentation.GetNthSegmentID(i) for i in
+                       range(target_segmentation.GetNumberOfSegments())]
+        for segment_id in segment_ids:
+            target_segmentation.RemoveSegment(segment_id)
 
-@enter_function
-def onDropDownButton_label_select(self, value):
-    self.current_label_index = value
-    label = self.config_yaml["labels"][value]
-    self.setUpperAndLowerBoundHU(label["lower_bound_HU"],
-                                 label["upper_bound_HU"])
+        # Copy segments from the temporary node to the target node
+        for i in range(temp_segmentation.GetNumberOfSegments()):
+            segment = temp_segmentation.GetNthSegment(i)
+            target_segmentation.AddSegment(segment)
+            for label in self.config_yaml["labels"]:
+                # Ensure that you compare the label value to the segment's
+                # name correctly
+                if str(label["value"]) == str(segment.GetName()):
+                    # Get the segment ID using the segment's name
+                    segment.SetName(label["name"])
+                    rgb_r = label["color_r"] / 255
+                    rgb_g = label["color_g"] / 255
+                    rgb_b = label["color_b"] / 255
+                    segment.SetColor(rgb_r, rgb_g, rgb_b)
 
-    label_name = label["name"]
-    try:
-        segment_name = label_name
-        self.onPushButton_select_label(segment_name,
-                                       label["lower_bound_HU"],
-                                       label["upper_bound_HU"])
-    except:
-        pass
-
-
-def onPushLassoPaint(self):
-    self.startTimerForActions()
-    self.previousAction = 'segmentation'
-    self.ensure_active_segment_is_selected()
-    self.segmentEditorWidget.setActiveEffectByName("Scissors")
-    self.segmentEditorNode.SetMasterVolumeIntensityMask(False)
-    effect = self.segmentEditorWidget.activeEffect()
-    effect.setParameter("Operation", "FillInside")
-    effect.setParameter("Shape", "FreeForm")
-    effect.setSliceCutMode(3)
+        # Remove the temporary node
+        slicer.mrmlScene.RemoveNode(temporary_segmentation_node)
 
 
-def onPushButton_Paint(self):
-    self.startTimerForActions()
-    self.previousAction = 'segmentation'
-    self.ensure_active_segment_is_selected()
-    self.segmentEditorWidget.setActiveEffectByName("Paint")
-    # Note it seems that sometimes you need to activate the effect first
-    # with :
-    # Assign effect to the segmentEditorWidget using the active effect
-    self.effect = self.segmentEditorWidget.activeEffect()
-    self.effect.activate()
-    self.effect.setParameter('BrushSphere', 1)
-    # Seems that you need to activate the effect to see it in Slicer
-    # Set up the mask parameters (note that PaintAllowed...was changed to
-    # EditAllowed)
-    self.segmentEditorNode.SetMaskMode(
-        slicer.vtkMRMLSegmentationNode.EditAllowedEverywhere)
-    # Set if using Editable intensity range (the range is defined below
-    # using object.setParameter)
-    self.set_master_volume_intensity_mask_according_to_modality()
-    self.segmentEditorNode.SetSourceVolumeIntensityMaskRange(self.LB_HU,
-                                                             self.UB_HU)
-    self.segmentEditorNode.SetOverwriteMode(
-        slicer.vtkMRMLSegmentEditorNode.OverwriteAllSegments)
+    def getAllSegmentNames(self):
+        list_of_segment_ids = (
+            self.segmentationNode.GetSegmentation().GetSegmentIDs())
+        list_of_segment_names = []
+        for segment_id in list_of_segment_ids:
+            segment = self.segmentationNode.GetSegmentation().GetSegment(
+                segment_id)
+            list_of_segment_names.append(segment.GetName())
+        return list_of_segment_names
 
 
-@enter_function
-def ensure_active_segment_is_selected(self):
-    # Make sure a valid segment is selected
-    selected_segment_id = self.segmentationNode.GetSegmentation(
-
-    ).GetSegmentIdBySegmentName(
-        self.config_yaml["labels"][self.current_label_index]['name']
-    )
-    self.segmentEditorNode.SetSelectedSegmentID(selected_segment_id)
-
-
-@enter_function
-def toggleFillButton(self):
-    self.startTimerForActions()
-    self.previousAction = 'segmentation'
-    if self.ui.pushButton_ToggleFill.isChecked():
-        self.ui.pushButton_ToggleFill.setStyleSheet(f"background-color : "
-                                                    f"{self.color_active}")
-        self.ui.pushButton_ToggleFill.setText('Fill: ON')
-        self.segmentationNode.GetDisplayNode().SetOpacity2DFill(100)
-    else:
-        self.ui.pushButton_ToggleFill.setStyleSheet(f"background-color : "
-                                                    f"{lf.color_inactive}")
-
-}
-self.ui.pushButton_ToggleFill.setText('Fill: OFF')
-self.segmentationNode.GetDisplayNode().SetOpacity2DFill(0) \
-
-@ enter_function
+    @enter_function
+    def onPushDefaultMin(self):
+        fresh_config = ConfigPath.open_project_config_file()
+        self.config_yaml["labels"][self.current_label_index][
+            "lower_bound_HU"] = \
+            fresh_config["labels"][self.current_label_index]["lower_bound_HU"]
+        self.setUpperAndLowerBoundHU(
+            self.config_yaml["labels"][self.current_label_index][
+                "lower_bound_HU"],
+            self.config_yaml["labels"][self.current_label_index][
+                "upper_bound_HU"])
 
 
-def onPushButton_ToggleVisibility(self):
-    """
-    Toggle visibility of segments in the slicer viewer.
-    """
+    @enter_function
+    def onPushDefaultMax(self):
+        fresh_config = ConfigPath.open_project_config_file()
+        self.config_yaml["labels"][self.current_label_index][
+            "upper_bound_HU"] = \
+            fresh_config["labels"][self.current_label_index]["upper_bound_HU"]
+        self.setUpperAndLowerBoundHU(
+            self.config_yaml["labels"][self.current_label_index][
+                "lower_bound_HU"],
+            self.config_yaml["labels"][self.current_label_index][
+                "upper_bound_HU"])
 
-    Debug.print(self, f'ToggleVisibility: '
-                      f' {self.ui.pushButton_ToggleVisibility.isChecked()}')
+    def onPush_ShowSegmentVersionLegendButton(self):
+        segmentationInformationPath = (f'{self.currentOutputPath}{os.sep}'
+                                       f'{self.currentVolumeFilename}'
+                                       f'_SegmentationInformation.csv')
 
-    if self.ui.pushButton_ToggleVisibility.isChecked():
-        self.segmentationNode.GetDisplayNode().SetAllSegmentsVisibility(
-            True)
-        self.ui.pushButton_ToggleVisibility.setStyleSheet(
-            f"background-color : "
-            f"{self.color_active}")
+        segmentationInformation_df = None
+        if os.path.exists(segmentationInformationPath):
+            segmentationInformation_df = pd.read_csv(
+                segmentationInformationPath)
+        else:
+            msg = qt.QMessageBox()
+            msg.setIcon(qt.QMessageBox.Information)
+            msg.setText("No saved segmentations")
+            msg.setInformativeText(
+                'There are no segmentations saved in the '
+                'SegmentationInformation.csv.')
+            msg.setWindowTitle("No saved segmentations")
+            msg.exec()
+            return
 
-    else:
-        self.segmentationNode.GetDisplayNode().SetAllSegmentsVisibility(
-            False)
-        self.ui.pushButton_ToggleVisibility.setStyleSheet(
-            f"background-color : {self.color_inactive}")
-        self.mask_visible_flag_level2 = False
+        showSegmentVersionLegendWindow = (
+            ShowSegmentVersionLegendWindow(self, segmentationInformation_df))
+        showSegmentVersionLegendWindow.show()
+
+    def onPushButton_undo(self):
+        if self.previousAction == 'segmentation':
+            self.segmentEditorWidget.undo()
+
+        elif self.previousAction == 'markups':
+            # Get the last added markup node (or customize based on specific
+            # markup type)
+            markupsNodeList = slicer.mrmlScene.GetNodesByClass(
+                "vtkMRMLMarkupsNode")
+            markupsNodeList.InitTraversal()
+
+            lastMarkupNode = None
+
+            while True:
+                markupNode = markupsNodeList.GetNextItemAsObject()
+                if markupNode:
+                    lastMarkupNode = markupNode  # Keep track of the last
+                    # markup node
+                else:
+                    break
+
+            # Remove the last control point from the markup node (or remove the
+            # whole node if needed)
+            if lastMarkupNode and lastMarkupNode.GetNumberOfControlPoints() > 0:
+                lastMarkupNode.RemoveNthControlPoint(
+                    lastMarkupNode.GetNumberOfControlPoints() - 1)
+            else:
+                slicer.mrmlScene.RemoveNode(
+                    lastMarkupNode)  # Remove the whole markup node if no
+                # points remain
+
+            removedNode = self.lineDetails.pop(lastMarkupNode.GetName())
 
 
-def togglePaintMask(self):
-    if self.ui.pushButton_TogglePaintMask.isChecked():
-        self.ui.pushButton_TogglePaintMask.setStyleSheet(
-            "background-color : yellowgreen")
-        self.ui.pushButton_TogglePaintMask.setText('Paint Mask ON')
+    @enter_function
+    def onDropDownButton_label_select(self, value):
+        self.current_label_index = value
+        label = self.config_yaml["labels"][value]
+        self.setUpperAndLowerBoundHU(label["lower_bound_HU"],
+                                     label["upper_bound_HU"])
+
+        label_name = label["name"]
+        try:
+            segment_name = label_name
+            self.onPushButton_select_label(segment_name,
+                                           label["lower_bound_HU"],
+                                           label["upper_bound_HU"])
+        except:
+            pass
+
+
+    def onPushLassoPaint(self):
+        self.startTimerForActions()
+        self.previousAction = 'segmentation'
+        self.ensure_active_segment_is_selected()
+        self.segmentEditorWidget.setActiveEffectByName("Scissors")
+        self.segmentEditorNode.SetMasterVolumeIntensityMask(False)
+        effect = self.segmentEditorWidget.activeEffect()
+        effect.setParameter("Operation", "FillInside")
+        effect.setParameter("Shape", "FreeForm")
+        effect.setSliceCutMode(3)
+
+    def onPushButton_Paint(self):
+        self.startTimerForActions()
+        self.previousAction = 'segmentation'
+        self.ensure_active_segment_is_selected()
+        self.segmentEditorWidget.setActiveEffectByName("Paint")
+        # Note it seems that sometimes you need to activate the effect first
+        # with :
+        # Assign effect to the segmentEditorWidget using the active effect
+        self.effect = self.segmentEditorWidget.activeEffect()
+        self.effect.activate()
+        self.effect.setParameter('BrushSphere', 1)
+        # Seems that you need to activate the effect to see it in Slicer
+        # Set up the mask parameters (note that PaintAllowed...was changed to
+        # EditAllowed)
         self.segmentEditorNode.SetMaskMode(
             slicer.vtkMRMLSegmentationNode.EditAllowedEverywhere)
-
-
-def onPushButton_segmeditor(self):
-    self.startTimerForActions()
-    slicer.util.selectModule("SegmentEditor")
-
-
-def onPushButton_Erase(self):
-    self.startTimerForActions()
-    self.previousAction = 'segmentation'
-
-    # Make sure a valid segment is selected
-    self.ensure_active_segment_is_selected()
-
-    self.segmentEditorWidget.setActiveEffectByName("Erase")
-    # Note it seems that sometimes you need to activate the effect first
-    # with :
-    # Assign effect to the segmentEditorWidget using the active effect
-    self.effect = self.segmentEditorWidget.activeEffect()
-    # Seems that you need to activate the effect to see it in Slicer
-    self.effect.activate()
-    self.segmentEditorNode.SetMasterVolumeIntensityMask(False)
-
-
-def onPushButton_Smooth(self):
-    # pass
-    # Smoothing
-    self.startTimerForActions()
-    self.previousAction = 'segmentation'
-    self.ensure_active_segment_is_selected()
-    self.segmentEditorWidget = (
-        slicer.modules.segmenteditor.widgetRepresentation().self().editor)
-    self.segmentEditorWidget.setActiveEffectByName("Smoothing")
-    effect = self.segmentEditorWidget.activeEffect()
-    effect.setParameter("SmoothingMethod", "MEDIAN")
-    effect.setParameter("KernelSizeMm", 3)
-    effect.self().onApply()
-
-
-def onPlacePointsAndConnect(self):
-    self.startTimerForActions()
-    self.previousAction = 'markups'
-    self.lineNode = slicer.mrmlScene.AddNewNodeByClass(
-        "vtkMRMLMarkupsLineNode")
-
-    lineName = (f"Line_"
-                f"{slicer.mrmlScene.GetNumberOfNodesByClass(
-                    'vtkMRMLMarkupsLineNode')}")
-    self.lineNode.SetName(lineName)
-
-    slicer.modules.markups.logic().SetActiveListID(self.lineNode)
-    interactionNode = slicer.mrmlScene.GetNodeByID(
-        "vtkMRMLInteractionNodeSingleton")
-    interactionNode.SetCurrentInteractionMode(interactionNode.Place)
-
-    self.lineNode.AddObserver(self.lineNode.PointModifiedEvent,
-                              self.onLinePlaced)
-
-
-def onLinePlaced(self, caller, event):
-    if caller.GetNumberOfControlPoints() < 2:
-        return
-
-    # Retrieve the control point coordinates after the user places the
-    # points
-    p1 = [0, 0, 0]
-    p2 = [0, 0, 0]
-    caller.GetNthControlPointPosition(0, p1)  # First control point
-    caller.GetNthControlPointPosition(1, p2)  # Second control point
-
-    lineLength = caller.GetLineLengthWorld()
-    lineName = caller.GetName()
-
-    self.lineDetails[lineName] = {
-        "ControlPoint1": p1,
-        "ControlPoint2": p2,
-        "Length": lineLength
-    }
-
-
-def onPushButton_Small_holes(self):
-    # pass
-    # Fill holes smoothing
-    self.startTimerForActions()
-    self.segmentEditorWidget = (
-        slicer.modules.segmenteditor.widgetRepresentation().self().editor)
-    self.segmentEditorWidget.setActiveEffectByName("Smoothing")
-    effect = self.segmentEditorWidget.activeEffect()
-    effect.setParameter("SmoothingMethod", "MORPHOLOGICAL_CLOSING")
-    effect.setParameter("KernelSizeMm", 3)
-    effect.self().onApply()
-
-
-def onLB_HU(self):
-    try:
-        self.LB_HU = self.ui.LB_HU.value
+        # Set if using Editable intensity range (the range is defined below
+        # using object.setParameter)
         self.set_master_volume_intensity_mask_according_to_modality()
         self.segmentEditorNode.SetSourceVolumeIntensityMaskRange(self.LB_HU,
                                                                  self.UB_HU)
-        self.config_yaml["labels"][self.current_label_index][
-            "lower_bound_HU"] = self.LB_HU
-    except:
-        pass
+        self.segmentEditorNode.SetOverwriteMode(
+            slicer.vtkMRMLSegmentEditorNode.OverwriteAllSegments)
 
 
-def onUB_HU(self):
-    try:
-        self.UB_HU = self.ui.UB_HU.value
-        self.set_master_volume_intensity_mask_according_to_modality()
-        self.segmentEditorNode.SetSourceVolumeIntensityMaskRange(self.LB_HU,
-                                                                 self.UB_HU)
-        self.config_yaml["labels"][self.current_label_index][
-            "upper_bound_HU"] = self.UB_HU
-    except:
-        pass
+    @enter_function
+    def ensure_active_segment_is_selected(self):
+        # Make sure a valid segment is selected
+        selected_segment_id = self.segmentationNode.GetSegmentation(
+
+        ).GetSegmentIdBySegmentName(
+            self.config_yaml["labels"][self.current_label_index]['name']
+        )
+        self.segmentEditorNode.SetSelectedSegmentID(selected_segment_id)
+
+
+    @enter_function
+    def toggleFillButton(self):
+        self.startTimerForActions()
+        self.previousAction = 'segmentation'
+        if self.ui.pushButton_ToggleFill.isChecked():
+            self.ui.pushButton_ToggleFill.setStyleSheet(
+                f"background-color : {self.color_active}")
+            self.ui.pushButton_ToggleFill.setText('Fill: ON')
+            self.segmentationNode.GetDisplayNode().SetOpacity2DFill(100)
+        else:
+            self.ui.pushButton_ToggleFill.setStyleSheet(
+                f"background-color : {self.color_inactive}")
+            self.ui.pushButton_ToggleFill.setText('Fill: OFF')
+            self.segmentationNode.GetDisplayNode().SetOpacity2DFill(0)
+
+    @ enter_function
+    def onPushButton_ToggleVisibility(self):
+        """
+        Toggle visibility of segments in the slicer viewer.
+        """
+
+        Debug.print(self, f'ToggleVisibility: '
+                          f' {self.ui.pushButton_ToggleVisibility.isChecked()}')
+
+        if self.ui.pushButton_ToggleVisibility.isChecked():
+            self.segmentationNode.GetDisplayNode(
+
+            ).SetAllSegmentsVisibility(True)
+            self.ui.pushButton_ToggleVisibility.setStyleSheet(
+                f"background-color : {self.color_active}")
+
+        else:
+            self.segmentationNode.GetDisplayNode(
+
+            ).SetAllSegmentsVisibility(False)
+            self.ui.pushButton_ToggleVisibility.setStyleSheet(
+                f"background-color : {self.color_inactive}")
+            self.mask_visible_flag_level2 = False
+
+
+    def togglePaintMask(self):
+        if self.ui.pushButton_TogglePaintMask.isChecked():
+            self.ui.pushButton_TogglePaintMask.setStyleSheet(
+                f"background-color : {self.color_active}")
+            self.ui.pushButton_TogglePaintMask.setText('Paint Mask ON')
+            self.segmentEditorNode.SetMaskMode(
+                slicer.vtkMRMLSegmentationNode.EditAllowedEverywhere)
+
+
+    def onPushButton_segmeditor(self):
+        self.startTimerForActions()
+        slicer.util.selectModule("SegmentEditor")
+
+
+    def onPushButton_Erase(self):
+        self.startTimerForActions()
+        self.previousAction = 'segmentation'
+
+        # Make sure a valid segment is selected
+        self.ensure_active_segment_is_selected()
+
+        self.segmentEditorWidget.setActiveEffectByName("Erase")
+        # Note it seems that sometimes you need to activate the effect first
+        # with : Assign effect to the segmentEditorWidget using the active
+        # effect
+        self.effect = self.segmentEditorWidget.activeEffect()
+        # Seems that you need to activate the effect to see it in Slicer
+        self.effect.activate()
+        self.segmentEditorNode.SetMasterVolumeIntensityMask(False)
+
+
+    def onPushButton_Smooth(self):
+        # pass
+        # Smoothing
+        self.startTimerForActions()
+        self.previousAction = 'segmentation'
+        self.ensure_active_segment_is_selected()
+        self.segmentEditorWidget = (
+            slicer.modules.segmenteditor.widgetRepresentation().self().editor)
+        self.segmentEditorWidget.setActiveEffectByName("Smoothing")
+        effect = self.segmentEditorWidget.activeEffect()
+        effect.setParameter("SmoothingMethod", "MEDIAN")
+        effect.setParameter("KernelSizeMm", 3)
+        effect.self().onApply()
+
+
+    @enter_function
+    def onPlacePointsAndConnect(self):
+        self.startTimerForActions()
+        self.previousAction = 'markups'
+        self.lineNode = slicer.mrmlScene.AddNewNodeByClass(
+            "vtkMRMLMarkupsLineNode")
+
+        sht = slicer.mrmlScene.GetNumberOfNodesByClass('vtkMRMLMarkupsLineNode')
+
+        lineName = f"Line_{sht}"
+        self.lineNode.SetName(lineName)
+
+        slicer.modules.markups.logic().SetActiveListID(self.lineNode)
+
+        interactionNode = slicer.mrmlScene.GetNodeByID(
+            "vtkMRMLInteractionNodeSingleton")
+        interactionNode.SetCurrentInteractionMode(interactionNode.Place)
+
+        self.lineNode.AddObserver(self.lineNode.PointModifiedEvent,
+                                  self.onLinePlaced)
+
+
+    def onLinePlaced(self, caller, event):
+        if caller.GetNumberOfControlPoints() < 2:
+            return
+
+        # Retrieve the control point coordinates after the user places the
+        # points
+        p1 = [0, 0, 0]
+        p2 = [0, 0, 0]
+        caller.GetNthControlPointPosition(0, p1)  # First control point
+        caller.GetNthControlPointPosition(1, p2)  # Second control point
+
+        lineLength = caller.GetLineLengthWorld()
+        lineName = caller.GetName()
+
+        self.lineDetails[lineName] = {
+            "ControlPoint1": p1,
+            "ControlPoint2": p2,
+            "Length": lineLength
+        }
+
+    def onPushButton_Small_holes(self):
+        # pass
+        # Fill holes smoothing
+        self.startTimerForActions()
+        self.segmentEditorWidget = (
+            slicer.modules.segmenteditor.widgetRepresentation().self().editor)
+        self.segmentEditorWidget.setActiveEffectByName("Smoothing")
+        effect = self.segmentEditorWidget.activeEffect()
+        effect.setParameter("SmoothingMethod", "MORPHOLOGICAL_CLOSING")
+        effect.setParameter("KernelSizeMm", 3)
+        effect.self().onApply()
+
+
+    def onLB_HU(self):
+        try:
+            self.LB_HU = self.ui.LB_HU.value
+            self.set_master_volume_intensity_mask_according_to_modality()
+            self.segmentEditorNode.SetSourceVolumeIntensityMaskRange(self.LB_HU,
+                                                                     self.UB_HU)
+            self.config_yaml["labels"][self.current_label_index][
+                "lower_bound_HU"] = self.LB_HU
+        except:
+            pass
+
+
+    def onUB_HU(self):
+        try:
+            self.UB_HU = self.ui.UB_HU.value
+            self.set_master_volume_intensity_mask_according_to_modality()
+            self.segmentEditorNode.SetSourceVolumeIntensityMaskRange(self.LB_HU,
+                                                                     self.UB_HU)
+            self.config_yaml["labels"][self.current_label_index][
+                "upper_bound_HU"] = self.UB_HU
+        except:
+            pass
