@@ -10,10 +10,10 @@ class WorkFiles():
     def __init__(self, currentFolder, outputFolder):
         self.CurrentFolder = currentFolder
         self.outputFolder = outputFolder
-        self.working_list_filepath = os.path.join(self.outputFolder,
-                                             ConfigPath.WORKING_LIST_FILENAME)
-        self.remaining_list_filepath = os.path.join(self.outputFolder,
-                                               ConfigPath.REMAINING_LIST_FILENAME)
+        self.working_list_filepath = os.path.join(
+            self.outputFolder, ConfigPath.WORKING_LIST_FILENAME)
+        self.remaining_list_filepath = os.path.join(
+            self.outputFolder, ConfigPath.REMAINING_LIST_FILENAME)
 
         self.output_folder_files = os.listdir(self.outputFolder)
 
@@ -124,8 +124,10 @@ class WorkFiles():
         """
         Get all files that have the correct file extension from volumes folder.
         """
-        self.CasesPaths = sorted(glob(f'{self.CurrentFolder}{os.sep}*'
-                                           f'*{os.sep}{ConfigPath.INPUT_FILE_EXTENSION}',
+        self.CasesPaths = sorted(glob(f'{self.CurrentFolder}'
+                                      f'{os.sep}*'
+                                      f'*{os.sep}'
+                                      f'{ConfigPath.INPUT_FILE_EXTENSION}',
                                            recursive=True))
         return self.CasesPaths
 
@@ -210,10 +212,12 @@ class WorkFiles():
             message = (
                 f"WORKING_LIST AND VOLUMES FOLDER ARE INCONSISTENT.\n"
                 f"PLEASE DOUBLE CHECK:\n\n"
-                f"{ConfigPath.WORKING_LIST_FILENAME} misses cases from volumes folder\n"
+                f"{ConfigPath.WORKING_LIST_FILENAME} "
+                f"misses cases from volumes folder\n"
                 f"that should be included in the working list:\n\n"
                 f"{print_message(missing_in_elements)}\n\n"
-                f"Cases that should not be included in {ConfigPath.WORKING_LIST_FILENAME}\n"
+                f"Cases that should not be included in "
+                f"{ConfigPath.WORKING_LIST_FILENAME}\n"
                 f"according to configuration:\n\n"
                 f"{print_message(missing_in_all_cases)}"
             )

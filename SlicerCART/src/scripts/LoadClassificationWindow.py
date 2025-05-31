@@ -24,39 +24,50 @@ class LoadClassificationWindow(qt.QWidget):
       layout.addLayout(buttonLayout)
 
       if classificationInformation_df.shape[0] > 0:
-          available_versions = classificationInformation_df['Classification version'].to_list()
+          available_versions = (
+              classificationInformation_df['Classification version'].to_list())
           for v in available_versions:
               self.versionDropdown.addItem(v)
 
           self.versionTableView.setRowCount(len(available_versions))
           self.versionTableView.setColumnCount(4)
           self.versionTableView.horizontalHeader().setStretchLastSection(True)
-          self.versionTableView.horizontalHeader().setSectionResizeMode(qt.QHeaderView.Stretch)
+          self.versionTableView.horizontalHeader(
+
+          ).setSectionResizeMode(qt.QHeaderView.Stretch)
 
           for index, row in classificationInformation_df.iterrows():
                 cell = qt.QTableWidgetItem(row['Classification version'])
                 cell.setFlags(qt.Qt.NoItemFlags)
-                cell.setForeground(qt.QBrush(qt.QColor(self.segmenter.foreground)))
+                cell.setForeground(qt.QBrush(qt.QColor(
+                    self.segmenter.foreground)))
                 self.versionTableView.setItem(index, 0, cell)
-                self.versionTableView.setHorizontalHeaderItem(0, qt.QTableWidgetItem('Version'))
+                self.versionTableView.setHorizontalHeaderItem(
+                    0, qt.QTableWidgetItem('Version'))
 
                 cell = qt.QTableWidgetItem(row['Annotator Name'])
                 cell.setFlags(qt.Qt.NoItemFlags)
-                cell.setForeground(qt.QBrush(qt.QColor(self.segmenter.foreground)))
+                cell.setForeground(qt.QBrush(qt.QColor(
+                    self.segmenter.foreground)))
                 self.versionTableView.setItem(index, 1, cell)
-                self.versionTableView.setHorizontalHeaderItem(1, qt.QTableWidgetItem('Annotator'))
+                self.versionTableView.setHorizontalHeaderItem(
+                    1, qt.QTableWidgetItem('Annotator'))
 
                 cell = qt.QTableWidgetItem(row['Annotator degree'])
                 cell.setFlags(qt.Qt.NoItemFlags)
-                cell.setForeground(qt.QBrush(qt.QColor(self.segmenter.foreground)))
+                cell.setForeground(qt.QBrush(qt.QColor(
+                    self.segmenter.foreground)))
                 self.versionTableView.setItem(index, 2, cell)
-                self.versionTableView.setHorizontalHeaderItem(2, qt.QTableWidgetItem('Degree'))
+                self.versionTableView.setHorizontalHeaderItem(
+                    2, qt.QTableWidgetItem('Degree'))
 
                 cell = qt.QTableWidgetItem(row['Date and time'])
                 cell.setFlags(qt.Qt.NoItemFlags)
-                cell.setForeground(qt.QBrush(qt.QColor(self.segmenter.foreground)))
+                cell.setForeground(qt.QBrush(qt.QColor(
+                    self.segmenter.foreground)))
                 self.versionTableView.setItem(index, 3, cell)
-                self.versionTableView.setHorizontalHeaderItem(3, qt.QTableWidgetItem('Date and Time'))
+                self.versionTableView.setHorizontalHeaderItem(
+                    3, qt.QTableWidgetItem('Date and Time'))
 
       self.loadButton = qt.QPushButton('Load')
       self.loadButton.clicked.connect(self.pushLoad)
@@ -83,12 +94,11 @@ class LoadClassificationWindow(qt.QWidget):
        columns_names = self.get_csv_all_classification_labels(
            self.classificationInformation_df)
 
-       selected_version_df = (
-                                 selected_version_df.loc)[:,
+       selected_version_df = (selected_version_df.loc)[:,
                              ~selected_version_df.isin(['--']).any()]
 
-       intersection = set(selected_version_df.columns).intersection(
-           columns_names.keys())
+       intersection = set(
+           selected_version_df.columns).intersection(columns_names.keys())
 
        classif_label = self.get_label_names_to_show(intersection,
                                                     columns_names)
@@ -98,7 +108,8 @@ class LoadClassificationWindow(qt.QWidget):
        # Adding checkboxes from the appropriate version and get the starting
        # row for comboboxes. N.B. All classification labels are not filled
        # with corresponding version values at this step.
-       comboboxesStartRow = self.segmenter.setupCheckboxes(3, classif_label,
+       comboboxesStartRow = self.segmenter.setupCheckboxes(3,
+                                                           classif_label,
                                                            flag_use_csv=True)
 
 
@@ -131,8 +142,7 @@ class LoadClassificationWindow(qt.QWidget):
 
            config_file_dict = classif_label['checkboxes']
 
-           column_name = self.recreate_column_name(objectName,
-                                                   'checkboxes')
+           column_name = self.recreate_column_name(objectName,'checkboxes')
 
            try:
 
@@ -157,8 +167,7 @@ class LoadClassificationWindow(qt.QWidget):
 
            label = config_file_dict[comboBoxName]
 
-           column_name = self.recreate_column_name(comboBoxName,
-                                                   'comboboxes')
+           column_name = self.recreate_column_name(comboBoxName,'comboboxes')
 
            self.segmenter.comboboxWidgets[comboBoxName].setCurrentText(
                    selected_version_df.at[0, column_name])
@@ -170,8 +179,8 @@ class LoadClassificationWindow(qt.QWidget):
        for i, (freeTextBoxObjectName, label) in enumerate(
                classif_label['freetextboxes'].items()):
 
-           column_name = self.recreate_column_name(freeTextBoxObjectName,
-                                                   'freetextboxes')
+           column_name = self.recreate_column_name(
+               freeTextBoxObjectName,'freetextboxes')
 
            try:
                saved_text = selected_version_df.at[0, column_name]
@@ -275,11 +284,8 @@ class LoadClassificationWindow(qt.QWidget):
    @enter_function
    def clean_classification_grid(self, segmenter):
        # Loop through all items in the layout and remove them
-       for i in reversed(range(segmenter.ui.ClassificationGridLayout.count(
-
-       ))):
-           widget = segmenter.ui.ClassificationGridLayout.itemAt(
-               i).widget()
+       for i in reversed(range(segmenter.ui.ClassificationGridLayout.count())):
+           widget = segmenter.ui.ClassificationGridLayout.itemAt(i).widget()
            if widget is not None:
                widget.deleteLater()
 
