@@ -1,0 +1,249 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="./">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>User Guide &mdash; SlicerCART  documentation</title>
+      <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="_static/css/theme.css?v=e59714d7" />
+      <link rel="stylesheet" type="text/css" href="_static/custom.css?v=e08e59c6" />
+
+  
+      <script src="_static/jquery.js?v=5d32c60e"></script>
+      <script src="_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="_static/documentation_options.js?v=5929fcd5"></script>
+      <script src="_static/doctools.js?v=9bcbadda"></script>
+      <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="Developer Guide" href="contributing.html" />
+    <link rel="prev" title="Video Tutorials" href="videotutorials.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search"  style="background: #2b2b2b" >
+
+          
+          
+          <a href="index.html">
+            
+              <img src="_static/SlicerCART.png" class="logo" alt="Logo"/>
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="installation.html">Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="quickstart.html">QuickStart</a></li>
+<li class="toctree-l1"><a class="reference internal" href="videotutorials.html">Video Tutorials</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">User Guide</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#startup">Startup</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#new-configuration">New configuration</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#continue-from-existing-output-folder">Continue from existing output folder</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#use-template-configuration">Use template configuration</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#id1">New configuration</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#configure-segmentation">Configure segmentation</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#configure-classification">Configure Classification</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#start-segmentation-and-or-classification">Start Segmentation and/or Classification</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#select-output-folder">Select Output folder</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#display-volume-to-segment">Display Volume to Segment</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#start-segmentation">Start Segmentation</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#save-segmentation">Save Segmentation</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#continue-segmentation">Continue Segmentation</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#links">Links</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="contributing.html">Developer Guide</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu"  style="background: #2b2b2b" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">SlicerCART</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="index.html" class="icon icon-home" aria-label="Home"></a></li>
+      <li class="breadcrumb-item active">User Guide</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="_sources/userguide.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="user-guide">
+<h1>User Guide<a class="headerlink" href="#user-guide" title="Link to this heading"></a></h1>
+<p>Detailed information for using SlicerCART in 3D Slicer is provided below.</p>
+<section id="startup">
+<h2>Startup<a class="headerlink" href="#startup" title="Link to this heading"></a></h2>
+<p>When the module is loaded, a pop-up window appears and allows the user to preset the module according to the intended use case.</p>
+<img alt="Select Configuration Popup" src="_images/select_configuration_popup.png" />
+<section id="new-configuration">
+<h3>New configuration<a class="headerlink" href="#new-configuration" title="Link to this heading"></a></h3>
+<p>To select when the module is used for a new task.</p>
+</section>
+<section id="continue-from-existing-output-folder">
+<h3>Continue from existing output folder<a class="headerlink" href="#continue-from-existing-output-folder" title="Link to this heading"></a></h3>
+<p>To select when the module is used for continuing a previously started task.</p>
+</section>
+<section id="use-template-configuration">
+<h3>Use template configuration<a class="headerlink" href="#use-template-configuration" title="Link to this heading"></a></h3>
+<p>To select when the user wants to load its own configuration template in the SlicerCART. WIP</p>
+</section>
+</section>
+<section id="id1">
+<h2>New configuration<a class="headerlink" href="#id1" title="Link to this heading"></a></h2>
+<p>A pop-up windows allow to specify parameters and customize settings.</p>
+<img alt="Select Configuration Module" src="_images/select_configuration_module.png" />
+<ul>
+<li><p><strong>Task:</strong> select if the module is used for segmentation, classification or both.</p></li>
+<li><p><strong>Modality:</strong> select if volumes are CT-Scans or MRI</p></li>
+<li><p><strong>Impose BIDS?:</strong> related to folder organization and files naming convention. Select yes if you want to load volumes only if the folder organization respects the Brain Imaging Data Structure (BIDS) format (once a volume folder will be selected, a BIDS validator will be run and a pop-up window will show if the selected folders do not respect BIDS: in that case, the volumes will not be able to load if BIDS is imposed).</p></li>
+<li><p><strong>Input File Extension:</strong> specify the files’ extension. Currently, nifti and nrrd format are accepted only (supported by Slicer). Note that if a dataset (i.e. volume folder) contains both nifti and nrrd volumes, the module will not be able to work (you can choose either one or another but not both).</p></li>
+<li><p><strong>Initial View:</strong> select the plane (axial, sagittal, or coronal) that the 3D Slicer viewer will display. Soon, implementation of viewing the same volume in different planes (e.g. different plane) will be done.</p>
+<p>N.B. In 3D Slicer, each viewer plane has an associated color:
+Red – Axial;
+Yellow – Sagittal;
+Green – Coronal</p>
+</li>
+</ul>
+<img alt="Slicer Viewer Planes" src="_images/slicer_viewer.png" />
+<ul class="simple">
+<li><p><strong>Interpolate Image?:</strong> select if loaded volumes from raw MRI data have automated postprocessing treatment to make the image smoother. Note that this is usually automatically done in Slicer: however, for example, deep-learning based models used for segmentation are trained on raw MRI data which may create imprecise ground-truth segmentation masks or compatibility issues. Note also that although if images are interpolated, segmentation masks are by default saved without any smoothing filter (compatible for deep learning model training).</p></li>
+<li><p><strong>If Modality == CT:</strong>
+The Window Level and Window Width default level can be selected, enabling to display a specific default contrast for each volume. Accepts only integers.
+Note that if you have selected CT, but do not want to specify the contrast information, the default volumes will be loaded using a Window Width/Level of 45:85.</p></li>
+<li><p><strong>Use Custom Keyboard Shortcuts?:</strong>
+Select to show a dropdown menu enabling customization of keyboard shortcuts for predefined basic functions. Name of the proposed shortcut corresponds to its action.</p></li>
+<li><p><strong>Use Custom Mouse Shortcuts?:</strong>
+Select to show a dropdown menu enabling customization of mouse button functions for image navigation and manipulation in the 3D Slicer viewer.</p></li>
+</ul>
+<section id="configure-segmentation">
+<h3>Configure segmentation<a class="headerlink" href="#configure-segmentation" title="Link to this heading"></a></h3>
+<p>Allows the user to specify the default labels name, value and display colors for each segmentation mask in the dataset. For example, if the task is to do segmentation of brain hemorrhage, intraventricular hemorrhage and peri-hematoma edema, the user can specify the label names (e.g. ICH — for intracranial hemorrhage; IVH — for intraventricular hemorrhage; PHE — perihematomal edema).
+The user can change the number of labels by clicking remove or add.
+Click apply to save the segmentation configuration.</p>
+</section>
+<section id="configure-classification">
+<h3>Configure Classification<a class="headerlink" href="#configure-classification" title="Link to this heading"></a></h3>
+<p>Allows the user to specify the labels and their value related to classification types, and their selection mode. Click on Apply to save the configuration settings.</p>
+<p>The user is now ready to start doing segmentation, classification or both tasks!</p>
+</section>
+</section>
+<section id="start-segmentation-and-or-classification">
+<h2>Start Segmentation and/or Classification<a class="headerlink" href="#start-segmentation-and-or-classification" title="Link to this heading"></a></h2>
+<p>Select Volumes folder, and specify annotator information</p>
+<ul class="simple">
+<li><p>Select the folder that contains the images that you want to process (if BIDS folder, will not consider images in derivatives), manipulate, view, etc.</p></li>
+<li><p>Specify the Annotator name, degree and revision step (all are mandatory for saving functions).</p></li>
+</ul>
+<img alt="Folder and Annotator Info" src="_images/folder_and_name_to_use.png" />
+<img alt="Example Loading Cases UI" src="_images/example_loading_cases_ui.png" />
+<p>N.B. If loading cases in the UI fails, please open an issue on the Github repository or ask a team member. If this step has not succeeded, you will not be able to use SlicerCART (e.g. imaging format incompatibility).</p>
+<section id="select-output-folder">
+<h3>Select Output folder<a class="headerlink" href="#select-output-folder" title="Link to this heading"></a></h3>
+<p>Select the folder where output data (e.g. segmentation masks, statistics) will be saved. For now, it must be empty.</p>
+<img alt="Select Output Folder" src="_images/select_output_folder.png" />
+</section>
+<section id="display-volume-to-segment">
+<h3>Display Volume to Segment<a class="headerlink" href="#display-volume-to-segment" title="Link to this heading"></a></h3>
+<p>Click on the case in Case list you want to display and/or perform segmentation, so it will be shown in the Slicer Viewer.</p>
+<img alt="Select Volume to Segment" src="_images/select_volume_to_segment.png" />
+</section>
+<section id="start-segmentation">
+<h3>Start Segmentation<a class="headerlink" href="#start-segmentation" title="Link to this heading"></a></h3>
+<p>Click on the case you want to start segmentation by clicking on:</p>
+<ul class="simple">
+<li><p>SegmentEditor: will open the default segment editor of 3D Slicer</p></li>
+<li><p>Paint: will make the user able to paint the <strong>first</strong> mask label</p></li>
+<li><p>Erase: will make the user able to erase current segment label</p></li>
+</ul>
+<img alt="Perform Segmentation" src="_images/perform_segmentation.png" />
+</section>
+<section id="save-segmentation">
+<h3>Save Segmentation<a class="headerlink" href="#save-segmentation" title="Link to this heading"></a></h3>
+<p>Once segmentation is completed, click on Save segmentation to save the segmentation mask in the output folder. Note that a <cite>.csv</cite> file will be generated for basic segmentation statistics (e.g. time of segmentation, annotator information, etc.).</p>
+<img alt="Save Segmentation" src="_images/save_segmentation.png" />
+</section>
+<section id="continue-segmentation">
+<h3>Continue Segmentation<a class="headerlink" href="#continue-segmentation" title="Link to this heading"></a></h3>
+<p>Click in the Case list on the next case you want to segment.</p>
+<img alt="Continue Segmentation" src="_images/continue_segmentation.png" />
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>TODO Next step for User Guide Documentation:</p>
+<ul class="simple">
+<li><p>Continue from existing output folder: If Continue from existing output folder was selected, a pop-up window takes the user to select the output folder of the results where</p></li>
+<li><p>Classification Documentation</p></li>
+<li><p>Assessment Documentation</p></li>
+</ul>
+</div>
+</section>
+</section>
+<section id="links">
+<h2>Links<a class="headerlink" href="#links" title="Link to this heading"></a></h2>
+<p><a class="reference external" href="welcome.md">GO BACK on Documentation Welcome Page</a></p>
+<p><a class="reference external" href="videotutorials.md">GO BACK to Video Tutorials</a></p>
+<p><a class="reference external" href="functionalities.md">CONTINUE to List of Functionalities</a></p>
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="videotutorials.html" class="btn btn-neutral float-left" title="Video Tutorials" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="contributing.html" class="btn btn-neutral float-right" title="Developer Guide" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2025.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

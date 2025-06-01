@@ -1,0 +1,18 @@
+# Normalize all text files to LF in repo
+* text=auto
+
+# Optional: enforce LF explicitly
+# * text eol=lf
+
+# Treat shell, scripts, markdown, source files as text
+*.sh text
+*.py text
+*.md text
+*.rst text
+*.txt text
+
+# Binary files (e.g., images) should not be converted
+*.png binary
+*.jpg binary
+*.gif binary
+*.pdf binary
