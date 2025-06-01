@@ -492,7 +492,6 @@ class SlicerCARTWidget(ScriptedLoadableModuleWidget, VTKObservationMixin):
         self.checkboxWidgets = {}
 
         row_index = 0
-        print('test')
 
         if flag_use_csv:
             iteration_dict = self.get_label_iteration_dict(classif_label)
