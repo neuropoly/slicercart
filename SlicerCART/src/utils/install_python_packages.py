@@ -15,6 +15,10 @@ REQUIRED_PYTHON_PACKAGES = {
 
 
 def check_and_install_python_packages():
+    """
+    check_and_install_python_packages
+
+    """
     missing_packages = []
 
     for pip_name, import_name in REQUIRED_PYTHON_PACKAGES.items():

@@ -2,6 +2,14 @@ from utils import *
 class LoadClassificationWindow(qt.QWidget):
     @enter_function
     def __init__(self, segmenter, classificationInformation_df, parent=None):
+        """
+        __init__
+
+        Args:
+            segmenter: Description of segmenter.
+            classificationInformation_df: Description of classificationInformation_df.
+            parent: Description of parent.
+        """
         super(LoadClassificationWindow, self).__init__(parent)
 
         self.classificationInformation_df = classificationInformation_df
@@ -84,6 +92,11 @@ class LoadClassificationWindow(qt.QWidget):
 
     @enter_function
     def pushLoad(self):
+        """
+        pushLoad
+
+        Args:
+        """
         selected_version = self.versionDropdown.currentText
 
         selected_version_df = (
@@ -199,7 +212,13 @@ class LoadClassificationWindow(qt.QWidget):
 
         self.close()
 
+    @enter_function
     def pushCancel(self):
+        """
+        pushCancel
+
+        Args:
+        """
         self.close()
 
     @enter_function
@@ -283,6 +302,12 @@ class LoadClassificationWindow(qt.QWidget):
 
     @enter_function
     def clean_classification_grid(self, segmenter):
+        """
+        clean_classification_grid
+
+        Args:
+            segmenter: Description of segmenter.
+        """
         # Loop through all items in the layout and remove them
         for i in reversed(range(segmenter.ui.ClassificationGridLayout.count())):
             widget = segmenter.ui.ClassificationGridLayout.itemAt(i).widget()
@@ -291,4 +316,11 @@ class LoadClassificationWindow(qt.QWidget):
 
     @enter_function
     def recreate_column_name(self, name, type):
+        """
+        recreate_column_name
+
+        Args:
+            name: Description of name.
+            type: Description of type.
+        """
         return f"{{'{name}': '{type}'}}"

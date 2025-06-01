@@ -63,6 +63,11 @@ class ConfigPath():
     @enter_function
     # Was in the initial code. Kept here for further usage if needed.
     def verify_empty(self):
+        """
+        verify_empty
+
+        Args:
+        """
         if self.outputFolder is not None and os.path.exists(self.outputFolder):
 
             content_of_output_folder = os.listdir(self.outputFolder)
@@ -307,26 +312,59 @@ class ConfigPath():
     ### The following getter and setter relate to comboboxes versioning
     @enter_function
     def get_combobox_flag(self):
+        """
+        get_combobox_flag
+
+        Args:
+        """
         return self.flag_combobox
 
     @enter_function
     def set_combobox_flag(self, value=False):
+        """
+        set_combobox_flag
+
+        Args:
+            value: Description of value.
+        """
         self.flag_combobox = value
 
     @enter_function
     def get_combobox_version(self):
+        """
+        get_combobox_version
+
+        Args:
+        """
         return self.combobox_version
 
     @enter_function
     def set_combobox_version(self, value):
+        """
+        set_combobox_version
+
+        Args:
+            value: Description of value.
+        """
         self.combobox_version = value
 
     @enter_function
     def get_comboboxes_versions(self):
+        """
+        get_comboboxes_versions
+
+        Args:
+        """
         return self.all_combobox_version
 
     @enter_function
     def get_latest_combobox_version(self, config_file):
+        """
+        get_latest_combobox_version
+
+        Args:
+            config_file: Description of config_file.
+        """
         if config_file['comboboxes'] != None :
             versions = config_file['comboboxes'].keys()
             self.combobox_version = max(versions, key=lambda k: int(k[1:]))
@@ -334,15 +372,32 @@ class ConfigPath():
 
     @enter_function
     def set_latest_combobox_version(self, config_file):
+        """
+        set_latest_combobox_version
+
+        Args:
+            config_file: Description of config_file.
+        """
         self.combobox_version = self.get_latest_combobox_version(config_file)
         return self.combobox_version
 
     @enter_function
     def get_remove_combobox_flag(self):
+        """
+        get_remove_combobox_flag
+
+        Args:
+        """
         return self.flag_remove_combobox
 
     @enter_function
     def set_remove_combobox_flag(self, value=False):
+        """
+        set_remove_combobox_flag
+
+        Args:
+            value: Description of value.
+        """
         self.flag_remove_combobox = value
 
 

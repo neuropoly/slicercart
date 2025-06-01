@@ -13,11 +13,22 @@ class UserPath():
 
     @enter_function
     def get_user_path(self):
+        """
+        get_user_path
+
+        Args:
+        """
         user_path = Path.home()
         return user_path
 
     @enter_function
     def check_or_create_filepath(self, filename='slicercart.yml'):
+        """
+        check_or_create_filepath
+
+        Args:
+            filename: Description of filename.
+        """
         user_path = UserPath.get_user_path(self)
         folder_path = f'{user_path}{os.sep}.hslicercart{os.sep}'
         filepath = os.path.join(folder_path, filename)
@@ -33,6 +44,12 @@ class UserPath():
 
     @enter_function
     def read_filepath(self, filename='slicercart.yml'):
+        """
+        read_filepath
+
+        Args:
+            filename: Description of filename.
+        """
         filepath = UserPath.check_or_create_filepath(self, filename)
 
         with open(filepath, 'r') as file:
@@ -43,6 +60,14 @@ class UserPath():
     @enter_function
     def write_in_filepath(self, output_folder_path, volume_folder_path,
                           filename='slicercart.yml'):
+        """
+        write_in_filepath
+
+        Args:
+            output_folder_path: Description of output_folder_path.
+            volume_folder_path: Description of volume_folder_path.
+            filename: Description of filename.
+        """
         filepath = UserPath.check_or_create_filepath(self, filename)
         content = UserPath.read_filepath(self, filename)
         content[output_folder_path] = volume_folder_path
@@ -52,11 +77,24 @@ class UserPath():
 
     @enter_function
     def reset_last_selected(self, filepath):
+        """
+        reset_last_selected
+
+        Args:
+            filepath: Description of filepath.
+        """
         with open(filepath, 'w') as file:
             yaml.dump({}, file)
 
     @enter_function
     def save_selected_paths(self, output_folder_path, volume_folder_path):
+        """
+        save_selected_paths
+
+        Args:
+            output_folder_path: Description of output_folder_path.
+            volume_folder_path: Description of volume_folder_path.
+        """
         filepath = UserPath.check_or_create_filepath(self,
                                                      'last_selected_paths.yml')
         UserPath.reset_last_selected(self, filepath)
@@ -66,6 +104,11 @@ class UserPath():
 
     @enter_function
     def get_selected_paths(self):
+        """
+        get_selected_paths
+
+        Args:
+        """
         filepath = UserPath.check_or_create_filepath(self,
                                                      'last_selected_paths.yml')
         content = UserPath.read_filepath(self, 'last_selected_paths.yml')
@@ -76,10 +119,20 @@ class UserPath():
 
     @enter_function
     def set_selected_existing_folder(self):
+        """
+        set_selected_existing_folder
+
+        Args:
+        """
         global SELECTED_EXISTING_FOLDER
         SELECTED_EXISTING_FOLDER = not SELECTED_EXISTING_FOLDER
 
     @enter_function
     def get_selected_existing_folder(self):
+        """
+        get_selected_existing_folder
+
+        Args:
+        """
         global SELECTED_EXISTING_FOLDER
         return SELECTED_EXISTING_FOLDER

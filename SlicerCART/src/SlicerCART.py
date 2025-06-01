@@ -20,12 +20,20 @@ from scripts import *  # Import all classes
 ###############################################################################
 
 class SlicerCART(ScriptedLoadableModule):
-    """Uses ScriptedLoadableModule base class, available at:
+    """
+    Uses ScriptedLoadableModule base class, available at:
     https://github.com/Slicer/Slicer/blob/master/Base/Python/slicer
     /ScriptedLoadableModule.py
     """
 
+    @enter_function
     def __init__(self, parent):
+        """
+        Initialize the SlicerCART module.
+        
+        Args:
+        parent: Parent widget for the module.
+        """
         ScriptedLoadableModule.__init__(self, parent)
         self.parent.title = "SlicerCART"  # TODO: make this more human
         # readable by adding spaces
@@ -67,14 +75,20 @@ class SlicerCART(ScriptedLoadableModule):
         """
 
 class SlicerCARTWidget(ScriptedLoadableModuleWidget, VTKObservationMixin):
-    """Uses ScriptedLoadableModuleWidget base class, available at:
+    """
+    Uses ScriptedLoadableModuleWidget base class, available at:
     https://github.com/Slicer/Slicer/blob/master/Base/Python/slicer
     /ScriptedLoadableModule.py
     """
+
+    @enter_function
     def __init__(self, parent=None):
         """
         Called when the user opens the module the first time and the widget
         is initialized.
+        
+        Args:
+        parent: Parent widget for this widget.
         """
         ScriptedLoadableModuleWidget.__init__(self, parent)
         VTKObservationMixin.__init__(
@@ -101,6 +115,7 @@ class SlicerCARTWidget(ScriptedLoadableModuleWidget, VTKObservationMixin):
         self.theme = Theme.get_mode(self)
         self.foreground = Theme.set_foreground(self, self.theme)
 
+    @enter_function
     def setup(self):
         """
         Called when the user opens the module the first time and the widget
@@ -313,7 +328,13 @@ class SlicerCARTWidget(ScriptedLoadableModuleWidget, VTKObservationMixin):
 
         self.ui.pushButton_ToggleVisibility.setChecked(toggle_to_set)
 
+    @enter_function
     def setup_configuration(self):
+        """
+        Setup_configuration.
+        
+        Args:.
+        """
         self.config_yaml = ConfigPath.open_project_config_file()
         # Warning: if incorrect config values that have been changed create
         # new errors around those line of codes. A solution is likely to add:
@@ -391,7 +412,12 @@ class SlicerCARTWidget(ScriptedLoadableModuleWidget, VTKObservationMixin):
 
     @enter_function
     def set_keyboard_shortcuts(self):
-        # Initialize dictionaries if they don’t exist yet
+        """
+        Set_keyboard_shortcuts.
+        
+        Args:.
+        """
+        # Initialize dictionaries if they don't exist yet
         if hasattr(self, 'shortcut_objects'):
             # Disconnect and delete all existing shortcuts
             for key, shortcut in self.shortcut_objects.items():
@@ -424,6 +450,8 @@ class SlicerCARTWidget(ScriptedLoadableModuleWidget, VTKObservationMixin):
         """
         Set labels in the UI Drop Down Menu under Segmentation according to
         configuration.
+        
+        Args:.
         """
         self.ui.dropDownButton_label_select.clear()
 
@@ -480,7 +508,13 @@ class SlicerCARTWidget(ScriptedLoadableModuleWidget, VTKObservationMixin):
                                                 self.config_yaml)
         self.setupFreeText(freetextStartRow, self.config_yaml["freetextboxes"])
 
+    @enter_function
     def set_master_volume_intensity_mask_according_to_modality(self):
+        """
+        Set_master_volume_intensity_mask_according_to_modality.
+        
+        Args:.
+        """
         if ConfigPath.MODALITY == 'CT':
             self.segmentEditorNode.SetMasterVolumeIntensityMask(True)
         elif ConfigPath.MODALITY == 'MRI':
@@ -489,6 +523,14 @@ class SlicerCARTWidget(ScriptedLoadableModuleWidget, VTKObservationMixin):
     @enter_function
     def setupCheckboxes(self, number_of_columns, classif_label,
                         flag_use_csv=False):
+        """
+        SetupCheckboxes.
+
+        Args:
+        number_of_columns: Description of number_of_columns.
+        classif_label: Description of classif_label.
+        flag_use_csv: Flag to take values from csv file.
+        """
         self.checkboxWidgets = {}
 
         row_index = 0
@@ -516,6 +558,14 @@ class SlicerCARTWidget(ScriptedLoadableModuleWidget, VTKObservationMixin):
 
     @enter_function
     def setupComboboxes(self, start_row, classif_label, combobox_version=None):
+        """
+        SetupComboboxes.
+        
+        Args:
+        start_row: Description of start_row.
+        classif_label: Description of classif_label.
+        combobox_version: Description of combobox_version.
+        """
         self.comboboxWidgets = {}
 
         if combobox_version == None:
@@ -556,7 +606,15 @@ class SlicerCARTWidget(ScriptedLoadableModuleWidget, VTKObservationMixin):
 
         return row_index + 1
 
+    @enter_function
     def setupFreeText(self, start_row, columns_to_check=None):
+        """
+        SetupFreeText.
+        
+        Args:
+        start_row: Description of start_row.
+        columns_to_check: Description of columns_to_check.
+        """
         self.freeTextBoxes = {}
 
         row_index = start_row
@@ -575,43 +633,91 @@ class SlicerCARTWidget(ScriptedLoadableModuleWidget, VTKObservationMixin):
                                                            1)
                 row_index = row_index + 1
 
+    @enter_function
     def connectShortcut(self, shortcutKey, button, callback):
+        """
+        ConnectShortcut.
+        
+        Args:
+        shortcutKey: Description of shortcutKey.
+        button: Description of button.
+        callback: Description of callback.
+        """
         shortcut = qt.QShortcut(slicer.util.mainWindow())
         shortcut.setKey(qt.QKeySequence(shortcutKey))
         shortcut.connect("activated()",
                          lambda: self.toggleKeyboardShortcut(button, callback))
         return shortcut
 
+    @enter_function
     def toggleKeyboardShortcut(self, button, callback):
+        """
+        ToggleKeyboardShortcut.
+        
+        Args:
+        button: Description of button.
+        callback: Description of callback.
+        """
         button.toggle()
         callback()
 
+    @enter_function
     def setUpperAndLowerBoundHU(self, inputLB_HU, inputUB_HU):
+        """
+        SetUpperAndLowerBoundHU.
+        
+        Args:
+        inputLB_HU: Description of inputLB_HU.
+        inputUB_HU: Description of inputUB_HU.
+        """
         self.LB_HU = inputLB_HU
         self.UB_HU = inputUB_HU
         self.ui.UB_HU.setValue(self.UB_HU)
         self.ui.LB_HU.setValue(self.LB_HU)
 
     # measurement line function set as a segment and paint functionality
+    @enter_function
     def enableSegmentAndPaintButtons(self):
+        """
+        EnableSegmentAndPaintButtons.
+        
+        Args:.
+        """
         self.ui.pushButton_Paint.setEnabled(True)
         self.ui.LassoPaintButton.setEnabled(True)
         self.ui.pushButton_Erase.setEnabled(True)
         self.ui.placeMeasurementLine.setEnabled(True)
 
+    @enter_function
     def disableSegmentAndPaintButtons(self):
+        """
+        DisableSegmentAndPaintButtons.
+        
+        Args:.
+        """
         self.ui.pushButton_Paint.setEnabled(False)
         self.ui.LassoPaintButton.setEnabled(False)
         self.ui.pushButton_Erase.setEnabled(False)
         self.ui.placeMeasurementLine.setEnabled(False)
 
+    @enter_function
     def onEditConfiguration(self):
+        """
+        OnEditConfiguration.
+        
+        Args:.
+        """
         slicerCARTConfigurationSetupWindow = SlicerCARTConfigurationSetupWindow(
             self, edit_conf=True)
         slicerCARTConfigurationSetupWindow.show()
 
     @enter_function
     def onSelectVolumesFolderButton(self):
+        """
+        OnSelectVolumesFolderButton.
+        
+        Args:.
+        """
 
         Debug.print(self,
                     f'value of UserPath.get_selected_existing_folder: '
@@ -684,6 +790,11 @@ class SlicerCARTWidget(ScriptedLoadableModuleWidget, VTKObservationMixin):
 
     @enter_function
     def reset_ui(self):
+        """
+        Reset_ui.
+        
+        Args:.
+        """
         self.ui.SlicerDirectoryListView.clear()
         self.ui.SlicerDirectoryListView.addItems(self.Cases)
 
@@ -693,6 +804,11 @@ class SlicerCARTWidget(ScriptedLoadableModuleWidget, VTKObservationMixin):
 
     @enter_function
     def update_ui(self):
+        """
+        Update_ui.
+        
+        Args:.
+        """
         self.updateCaseAll()
         self.loadPatient()
 
@@ -767,7 +883,14 @@ class SlicerCARTWidget(ScriptedLoadableModuleWidget, VTKObservationMixin):
 
         self.update_ui()
 
+    @enter_function
     def validateBIDS(self, path):
+        """
+        ValidateBIDS.
+        
+        Args:
+        path: Description of path.
+        """
         validator = BIDSValidator()
         is_structure_valid = True
 
@@ -803,6 +926,11 @@ class SlicerCARTWidget(ScriptedLoadableModuleWidget, VTKObservationMixin):
 
     @enter_function
     def updateCaseAll(self):
+        """
+        UpdateCaseAll.
+        
+        Args:.
+        """
         # All below is dependent on self.currentCase_index updates,
         self.currentCase = self.Cases[self.currentCase_index]
         self.currentCasePath = self.CasesPaths[self.currentCase_index]
@@ -818,6 +946,11 @@ class SlicerCARTWidget(ScriptedLoadableModuleWidget, VTKObservationMixin):
 
     @enter_function
     def update_current_segmentation_status(self):
+        """
+        Update_current_segmentation_status.
+        
+        Args:.
+        """
         current_color = self.ui.SlicerDirectoryListView.currentItem(
 
         ).foreground().color()
@@ -830,7 +963,13 @@ class SlicerCARTWidget(ScriptedLoadableModuleWidget, VTKObservationMixin):
             self.ui.CurrentStatus.setText(
                 'Segmentation Status : Done by this annotator')
 
+    @enter_function
     def getCurrentTableItem(self):
+        """
+        GetCurrentTableItem.
+        
+        Args:.
+        """
         # ----- ANW Addition ----- : Reset timer when change case and uncheck
         # all checkboxes
         self.resetTimer()
@@ -858,21 +997,45 @@ class SlicerCARTWidget(ScriptedLoadableModuleWidget, VTKObservationMixin):
         # button status
         self.resetTimer()
 
+    @enter_function
     def updateCaseIndex(self, index):
+        """
+        UpdateCaseIndex.
+        
+        Args:
+        index: Description of index.
+        """
         # ----- ANW Modification ----- : Numerator on UI should start at 1
         # instead of 0 for coherence
         self.ui.FileIndex.setText('{} / {}'.format(
             index + 1, len(self.Cases)))
 
+    @enter_function
     def updateCurrentPatient(self):
+        """
+        UpdateCurrentPatient.
+        
+        Args:.
+        """
         self.updateCaseIndex(self.currentCase_index)
 
+    @enter_function
     def updateCurrentPath(self):
+        """
+        UpdateCurrentPath.
+        
+        Args:.
+        """
         self.ui.CurrentPath.setReadOnly(True)
         self.ui.CurrentPath.setText(self.currentCasePath)
 
     @enter_function
     def loadPatient(self):
+        """
+        LoadPatient.
+        
+        Args:.
+        """
         timer_index = 0
         self.timers = []
         for label in self.config_yaml["labels"]:
@@ -913,6 +1076,11 @@ class SlicerCARTWidget(ScriptedLoadableModuleWidget, VTKObservationMixin):
 
     @enter_function
     def updateCurrentOutputPathAndCurrentVolumeFilename(self):
+        """
+        UpdateCurrentOutputPathAndCurrentVolumeFilename.
+        
+        Args:.
+        """
         if (self.currentCasePath == None
                 or self.CurrentFolder == None
                 or self.outputFolder == None):
@@ -933,29 +1101,65 @@ class SlicerCARTWidget(ScriptedLoadableModuleWidget, VTKObservationMixin):
     # Getter method to get the segmentation node name
     # - Not sure if this is really useful here.
     @property
+    @enter_function
     def segmentationNodeName(self):
+        """
+        SegmentationNodeName.
+        
+        Args:.
+        """
         return (f"{os.path.split(self.currentCasePath)[1].split('.')[0]}"
             "_segmentation")
 
+    @enter_function
     def newSegments(self):
+        """
+        NewSegments.
+        
+        Args:.
+        """
         pass
 
+    @enter_function
     def onPushButton_NewMask(self):
+        """
+        OnPushButton_NewMask.
+        
+        Args:.
+        """
         self.newSegments()
 
+    @enter_function
     def on_annotator_name_changed(self):
+        """
+        On_annotator_name_changed.
+        
+        Args:.
+        """
         # self.update_case_list_colors()
         self.ui.SlicerDirectoryListView.setCurrentItem(
             self.ui.SlicerDirectoryListView.item(self.currentCase_index))
         self.update_current_segmentation_status()
 
+    @enter_function
     def onPushButton_Interpolate(self):
+        """
+        OnPushButton_Interpolate.
+        
+        Args:.
+        """
         global INTERPOLATE_VALUE
         INTERPOLATE_VALUE = 1 - INTERPOLATE_VALUE  # toggle
 
         self.VolumeNode.GetDisplayNode().SetInterpolate(INTERPOLATE_VALUE)
 
+    @enter_function
     def onPreviousButton(self):
+        """
+        OnPreviousButton.
+        
+        Args:.
+        """
         # ----- ANW Addition ----- : Reset timer when change case and uncheck
         # all checkboxes
         self.resetTimer()
@@ -966,7 +1170,13 @@ class SlicerCARTWidget(ScriptedLoadableModuleWidget, VTKObservationMixin):
         self.updateCaseAll()
         self.loadPatient()
 
+    @enter_function
     def onNextButton(self):
+        """
+        OnNextButton.
+        
+        Args:.
+        """
         # ----- ANW Addition ----- : Reset timer when change case and uncheck
         # all checkboxes
         self.resetTimer()
@@ -989,6 +1199,11 @@ class SlicerCARTWidget(ScriptedLoadableModuleWidget, VTKObservationMixin):
 
     @enter_function
     def newSegmentation(self):
+        """
+        NewSegmentation.
+        
+        Args:.
+        """
         # Create segment editor widget and node
         self.segmentEditorWidget = (
             slicer.modules.segmenteditor.widgetRepresentation().self().editor)
@@ -1032,6 +1247,11 @@ class SlicerCARTWidget(ScriptedLoadableModuleWidget, VTKObservationMixin):
     # Load all segments at once
     @enter_function
     def createNewSegments(self):
+        """
+        CreateNewSegments.
+        
+        Args:.
+        """
         for label in self.config_yaml["labels"]:
             self.onNewLabelSegm(label["name"], label["color_r"],
                                 label["color_g"], label["color_b"],
@@ -1045,7 +1265,14 @@ class SlicerCARTWidget(ScriptedLoadableModuleWidget, VTKObservationMixin):
                                            self.config_yaml["labels"][0][
                                                "upper_bound_HU"])
 
+    @enter_function
     def newSegment(self, segment_name=None):
+        """
+        NewSegment.
+        
+        Args:
+        segment_name: Description of segment_name.
+        """
 
         self.segment_name = segment_name
         srcNode = slicer.util.getNodesByClass('vtkMRMLSegmentationNode')[0]
@@ -1073,8 +1300,20 @@ class SlicerCARTWidget(ScriptedLoadableModuleWidget, VTKObservationMixin):
 
         return self.segment_name
 
+    @enter_function
     def onNewLabelSegm(self, label_name, label_color_r, label_color_g,
                        label_color_b, label_LB_HU, label_UB_HU):
+        """
+        OnNewLabelSegm.
+        
+        Args:
+        label_name: Description of label_name.
+        label_color_r: Description of label_color_r.
+        label_color_g: Description of label_color_g.
+        label_color_b: Description of label_color_b.
+        label_LB_HU: Description of label_LB_HU.
+        label_UB_HU: Description of label_UB_HU.
+        """
         segment_name = self.newSegment(label_name)
         self.segmentationNode = \
             slicer.util.getNodesByClass('vtkMRMLSegmentationNode')[0]
@@ -1088,6 +1327,14 @@ class SlicerCARTWidget(ScriptedLoadableModuleWidget, VTKObservationMixin):
 
     @enter_function
     def onPushButton_select_label(self, segment_name, label_LB_HU, label_UB_HU):
+        """
+        OnPushButton_select_label.
+        
+        Args:
+        segment_name: Description of segment_name.
+        label_LB_HU: Description of label_LB_HU.
+        label_UB_HU: Description of label_UB_HU.
+        """
         self.segmentationNode = \
             slicer.util.getNodesByClass('vtkMRMLSegmentationNode')[0]
         Segmentation = self.segmentationNode.GetSegmentation()
@@ -1104,7 +1351,13 @@ class SlicerCARTWidget(ScriptedLoadableModuleWidget, VTKObservationMixin):
 
         self.timer_router()
 
+    @enter_function
     def startTimer(self):
+        """
+        StartTimer.
+        
+        Args:.
+        """
         with TIMER_MUTEX:
             self.counter = 0
             # Add flag to avoid counting time when user clicks on save segm
@@ -1123,7 +1376,14 @@ class SlicerCARTWidget(ScriptedLoadableModuleWidget, VTKObservationMixin):
             # Call the updatelcdNumber function
             self.updatelcdNumber()
 
+    # @enter_function ### THIS FUNCTION IS CALLED TOO OFTEN TO USE
+    # ENTER_FUNCTION DECORATOR (too many prints in the python console)
     def updatelcdNumber(self):
+        """
+        UpdatelcdNumber.
+        
+        Args:.
+        """
         # Get the time
         with TIMER_MUTEX:
             if self.flag2:  # add flag to avoid counting time when user
@@ -1135,7 +1395,13 @@ class SlicerCARTWidget(ScriptedLoadableModuleWidget, VTKObservationMixin):
 
             self.ui.lcdNumber.display(self.counter / 10)
 
+    @enter_function
     def stopTimer(self):
+        """
+        StopTimer.
+        
+        Args:.
+        """
         with TIMER_MUTEX:
             # If already called once (i.e when user pressed save segm button
             # but forgot to annotator name), simply return the time
@@ -1153,7 +1419,13 @@ class SlicerCARTWidget(ScriptedLoadableModuleWidget, VTKObservationMixin):
                     print(f'!!! YOU DID NOT START THE COUNTER !!! :: {e}')
                     return None
 
+    @enter_function
     def resetTimer(self):
+        """
+        ResetTimer.
+        
+        Args:.
+        """
         with TIMER_MUTEX:
             # making flag to false : stops the timer
             self.flag2 = False  # For case after the first one the timer
@@ -1173,17 +1445,35 @@ class SlicerCARTWidget(ScriptedLoadableModuleWidget, VTKObservationMixin):
             else:
                 self.disableSegmentAndPaintButtons()
 
+    @enter_function
     def enableStartTimerButton(self):
+        """
+        EnableStartTimerButton.
+        
+        Args:.
+        """
         self.ui.StartTimerButton.setEnabled(True)
         self.ui.StartTimerButton.setStyleSheet("background-color : yellowgreen")
         if (self.ui.StartTimerButton.isChecked()):
             self.ui.StartTimerButton.toggle()
 
+    @enter_function
     def disablePauseTimerButton(self):
+        """
+        DisablePauseTimerButton.
+        
+        Args:.
+        """
         self.ui.PauseTimerButton.setStyleSheet("background-color : silver")
         self.ui.PauseTimerButton.setEnabled(False)
 
+    @enter_function
     def toggleStartTimerButton(self):
+        """
+        ToggleStartTimerButton.
+        
+        Args:.
+        """
         # allow users to start the timer by clicking on any of the
         # segmentation-related buttons
         if (self.ui.SlicerDirectoryListView.count > 0):
@@ -1201,7 +1491,13 @@ class SlicerCARTWidget(ScriptedLoadableModuleWidget, VTKObservationMixin):
         else:
             self.ui.StartTimerButton.toggle()
 
+    @enter_function
     def togglePauseTimerButton(self):
+        """
+        TogglePauseTimerButton.
+        
+        Args:.
+        """
         # if button is checked - Time paused
         if self.ui.PauseTimerButton.isChecked():
             # setting background color to light-blue
@@ -1233,6 +1529,11 @@ class SlicerCARTWidget(ScriptedLoadableModuleWidget, VTKObservationMixin):
     # for the timer Class not the LCD one
     @enter_function
     def timer_router(self):
+        """
+        Timer_router.
+        
+        Args:.
+        """
         self.timers[self.current_label_index].start()
         self.flag = True
 
@@ -1244,6 +1545,11 @@ class SlicerCARTWidget(ScriptedLoadableModuleWidget, VTKObservationMixin):
 
     @enter_function
     def createFolders(self):
+        """
+        CreateFolders.
+        
+        Args:.
+        """
         self.revision_step = self.ui.RevisionStep.currentText
         if len(self.revision_step) != 0:
             if os.path.exists(self.outputFolder) == False:
@@ -1264,7 +1570,13 @@ class SlicerCARTWidget(ScriptedLoadableModuleWidget, VTKObservationMixin):
                 "Please save again with revision step!")
             msgboxtime.exec()
 
+    @enter_function
     def startTimerForActions(self):
+        """
+        StartTimerForActions.
+        
+        Args:.
+        """
         with TIMER_MUTEX:
             try:
                 if not self.flag2:
@@ -1274,6 +1586,11 @@ class SlicerCARTWidget(ScriptedLoadableModuleWidget, VTKObservationMixin):
 
     @enter_function
     def resetClassificationInformation(self):
+        """
+        ResetClassificationInformation.
+        
+        Args:.
+        """
         # Try/Except to prevent crashing when selecting another file in the
         # UI case list if no classification_config_yaml file is already created.
         version = ConfigPath.get_combobox_version()
@@ -1640,6 +1957,11 @@ class SlicerCARTWidget(ScriptedLoadableModuleWidget, VTKObservationMixin):
 
     @enter_function
     def onSaveSegmentationButton(self):
+        """
+        OnSaveSegmentationButton.
+        
+        Args:.
+        """
         # By default creates a new folder in the volume directory
         # Stop the timer when the button is pressed
         self.time = self.stopTimer()
@@ -1708,6 +2030,11 @@ class SlicerCARTWidget(ScriptedLoadableModuleWidget, VTKObservationMixin):
 
     @enter_function
     def select_next_remaining_case(self):
+        """
+        Select_next_remaining_case.
+        
+        Args:.
+        """
         Debug.print(self, f'self.currentCase_index: {self.currentCase_index}')
         Debug.print(self, f'self.currentCase: {self.currentCase}')
         Debug.print(self, f'self.currentCasePath: {self.currentCasePath}')
@@ -1781,6 +2108,11 @@ class SlicerCARTWidget(ScriptedLoadableModuleWidget, VTKObservationMixin):
 
     @enter_function
     def qualityControlOfLabels(self):
+        """
+        QualityControlOfLabels.
+        
+        Args:.
+        """
         is_valid = True
 
         segment_names = self.getAllSegmentNames()
@@ -1889,6 +2221,12 @@ class SlicerCARTWidget(ScriptedLoadableModuleWidget, VTKObservationMixin):
 
     @enter_function
     def saveSegmentationInformation(self, currentSegmentationVersion):
+        """
+        SaveSegmentationInformation.
+        
+        Args:
+        currentSegmentationVersion: Description of currentSegmentationVersion.
+        """
         # Header row
         self.previousAction = None
         tag_str = ("Volume filename,Segmentation version,Annotator Name,"
@@ -1966,6 +2304,11 @@ class SlicerCARTWidget(ScriptedLoadableModuleWidget, VTKObservationMixin):
 
     @enter_function
     def getClassificationInformationVersion(self):
+        """
+        GetClassificationInformationVersion.
+        
+        Args:.
+        """
         version = "v"
         classificationInformationPath = (f'{self.currentOutputPath}{os.sep}'
                                          f'{self.currentVolumeFilename}'
@@ -1988,6 +2331,11 @@ class SlicerCARTWidget(ScriptedLoadableModuleWidget, VTKObservationMixin):
 
     @enter_function
     def getCurrentSegmentationVersion(self):
+        """
+        GetCurrentSegmentationVersion.
+        
+        Args:.
+        """
         # Adjust the version according to each individual file.
         list_of_segmentation_filenames = glob(
             f'{self.currentOutputPath}{os.sep}'
@@ -2006,20 +2354,41 @@ class SlicerCARTWidget(ScriptedLoadableModuleWidget, VTKObservationMixin):
             version = f'{version}{next_version_number:02d}'
         return version
 
+    @enter_function
     def msg2_clicked(self, msg2_button):
+        """
+        Msg2_clicked.
+        
+        Args:
+        msg2_button: Description of msg2_button.
+        """
         if msg2_button.text == 'OK':
             slicer.util.saveNode(self.segmentationNode, self.outputSegmFile)
         else:
             return
 
+    @enter_function
     def msg3_clicked(self, msg3_button):
+        """
+        Msg3_clicked.
+        
+        Args:
+        msg3_button: Description of msg3_button.
+        """
         if msg3_button.text == 'OK':
             slicer.util.saveNode(self.labelmapVolumeNode,
                                  self.outputSegmFileNifti)
         else:
             return
 
+    @enter_function
     def msg4_clicked(self, msg4_button):
+        """
+        Msg4_clicked.
+        
+        Args:
+        msg4_button: Description of msg4_button.
+        """
         if msg4_button.text == 'OK':
             slicer.util.saveNode(self.VolumeNode, self.outputVolfile)
         else:
@@ -2027,6 +2396,11 @@ class SlicerCARTWidget(ScriptedLoadableModuleWidget, VTKObservationMixin):
 
     @enter_function
     def check_volume_folder_selected(self):
+        """
+        Check_volume_folder_selected.
+        
+        Args:.
+        """
         Debug.print(self, f'self.Currentfolder: {self.CurrentFolder}')
         if self.CurrentFolder != None:
             return True
@@ -2034,6 +2408,11 @@ class SlicerCARTWidget(ScriptedLoadableModuleWidget, VTKObservationMixin):
 
     @enter_function
     def onSelectOutputFolder(self):
+        """
+        OnSelectOutputFolder.
+        
+        Args:.
+        """
 
         if self.check_volume_folder_selected():
             self.outputFolder = (
@@ -2071,6 +2450,11 @@ class SlicerCARTWidget(ScriptedLoadableModuleWidget, VTKObservationMixin):
 
     @enter_function
     def manage_workflow_and_classification(self):
+        """
+        Manage_workflow_and_classification.
+        
+        Args:.
+        """
         # Update classification labels (part 1 of 2)
         initial_config_content = ConfigPath.get_initial_config_after_modif()
         temp_dict = ConfigPath.extract_config_classification(
@@ -2089,6 +2473,11 @@ class SlicerCARTWidget(ScriptedLoadableModuleWidget, VTKObservationMixin):
 
     @enter_function
     def set_ui_enabled_options(self):
+        """
+        Set_ui_enabled_options.
+        
+        Args:.
+        """
         if self.outputFolder is not None:
             self.ui.LoadClassification.setEnabled(True)
             self.ui.LoadSegmentation.setEnabled(True)
@@ -2119,6 +2508,11 @@ class SlicerCARTWidget(ScriptedLoadableModuleWidget, VTKObservationMixin):
     # color.
     @enter_function
     def update_case_list_colors(self):
+        """
+        Update_case_list_colors.
+        
+        Args:.
+        """
         if self.outputFolder is None or self.CurrentFolder is None:
             return
 
@@ -2148,6 +2542,13 @@ class SlicerCARTWidget(ScriptedLoadableModuleWidget, VTKObservationMixin):
 
     @enter_function
     def get_segmentation_status(self, case, segmentation_information_df):
+        """
+        Get_segmentation_status.
+        
+        Args:
+        case: Description of case.
+        segmentation_information_df: Description of segmentation_information_df.
+        """
         self.annotator_name = self.ui.Annotator_name.text
 
         found_case = 0
@@ -2171,8 +2572,16 @@ class SlicerCARTWidget(ScriptedLoadableModuleWidget, VTKObservationMixin):
 
         return found_case
 
+    @enter_function
     def msg_warnig_delete_segm_node_clicked(self,
                                             msg_warnig_delete_segm_node_button):
+        """
+        Msg_warnig_delete_segm_node_clicked.
+
+        Args:
+        msg_warnig_delete_segm_node_button: Description of
+        msg_warnig_delete_segm_node_button.
+        """
         if msg_warnig_delete_segm_node_button.text == 'OK':
             srcNode = slicer.util.getNodesByClass('vtkMRMLSegmentationNode')[0]
             slicer.mrmlScene.RemoveNode(srcNode)
@@ -2181,6 +2590,11 @@ class SlicerCARTWidget(ScriptedLoadableModuleWidget, VTKObservationMixin):
 
     @enter_function
     def onLoadClassification(self):
+        """
+        OnLoadClassification.
+        
+        Args:.
+        """
         classificationInformationPath = (f'{self.currentOutputPath}{os.sep}'
                                          f'{self.currentVolumeFilename}'
                                          f'_ClassificationInformation.csv')
@@ -2207,6 +2621,11 @@ class SlicerCARTWidget(ScriptedLoadableModuleWidget, VTKObservationMixin):
 
     @enter_function
     def onSaveClassificationButton(self):
+        """
+        OnSaveClassificationButton.
+        
+        Args:.
+        """
         self.annotator_name = self.ui.Annotator_name.text
         self.annotator_degree = self.ui.AnnotatorDegree.currentText
 
@@ -2239,7 +2658,13 @@ class SlicerCARTWidget(ScriptedLoadableModuleWidget, VTKObservationMixin):
             msgboxtime.exec()
 
 
+    @enter_function
     def onCompareSegmentVersions(self):
+        """
+        OnCompareSegmentVersions.
+        
+        Args:.
+        """
         if 'Clear' in self.ui.CompareSegmentVersions.text:
             self.onClearCompareSegmentVersions()
         else:
@@ -2249,8 +2674,15 @@ class SlicerCARTWidget(ScriptedLoadableModuleWidget, VTKObservationMixin):
                 self.onCompareSegmentVersionsWillEraseCurrentSegmentsWarningClicked)
             msg_warnig_delete_segm_node.exec()
 
+    @enter_function
     def onCompareSegmentVersionsWillEraseCurrentSegmentsWarningClicked(
             self, msg_warnig_delete_segm_node_button):
+        """
+        OnCompareSegmentVersionsWillEraseCurrentSegmentsWarningClicked.
+        
+        Args:
+        msg_warnig_delete_segm_node_button: Description of msg_warnig_delete_segm_node_button.
+        """
         if msg_warnig_delete_segm_node_button.text == 'OK':
             srcNode = slicer.util.getNodesByClass('vtkMRMLSegmentationNode')[0]
             slicer.mrmlScene.RemoveNode(srcNode)
@@ -2260,7 +2692,13 @@ class SlicerCARTWidget(ScriptedLoadableModuleWidget, VTKObservationMixin):
             return
 
 
+    @enter_function
     def warnAgainstDeletingCurrentSegmentation(self):
+        """
+        WarnAgainstDeletingCurrentSegmentation.
+        
+        Args:.
+        """
         msg_warnig_delete_segm_node = qt.QMessageBox()
         msg_warnig_delete_segm_node.setText(
             'This will delete the current segmentation. Do you want to '
@@ -2272,7 +2710,13 @@ class SlicerCARTWidget(ScriptedLoadableModuleWidget, VTKObservationMixin):
         return msg_warnig_delete_segm_node
 
 
+    @enter_function
     def onLoadSegmentation(self):
+        """
+        OnLoadSegmentation.
+        
+        Args:.
+        """
         msg_warnig_delete_segm_node = (
             self.warnAgainstDeletingCurrentSegmentation())
         msg_warnig_delete_segm_node.buttonClicked.connect(
@@ -2280,8 +2724,15 @@ class SlicerCARTWidget(ScriptedLoadableModuleWidget, VTKObservationMixin):
         msg_warnig_delete_segm_node.exec()
 
 
+    @enter_function
     def onLoadSegmentationWillEraseCurrentSegmentsWarningClicked(
             self, msg_warnig_delete_segm_node_button):
+        """
+        OnLoadSegmentationWillEraseCurrentSegmentsWarningClicked.
+        
+        Args:
+        msg_warnig_delete_segm_node_button: Description of msg_warnig_delete_segm_node_button.
+        """
         if msg_warnig_delete_segm_node_button.text == 'OK':
             srcNode = slicer.util.getNodesByClass('vtkMRMLSegmentationNode')[0]
             slicer.mrmlScene.RemoveNode(srcNode)
@@ -2379,7 +2830,13 @@ class SlicerCARTWidget(ScriptedLoadableModuleWidget, VTKObservationMixin):
         return f"v{version_int:02d}"
 
 
+    @enter_function
     def openLoadSegmentationWindow(self):
+        """
+        OpenLoadSegmentationWindow.
+        
+        Args:.
+        """
         segmentationInformationPath = (f'{self.currentOutputPath}{os.sep}'
                                        f'{self.currentVolumeFilename}'
                                        f'_SegmentationInformation.csv')
@@ -2406,6 +2863,11 @@ class SlicerCARTWidget(ScriptedLoadableModuleWidget, VTKObservationMixin):
 
     @enter_function
     def openCompareSegmentVersionsWindow(self):
+        """
+        OpenCompareSegmentVersionsWindow.
+        
+        Args:.
+        """
         segmentationInformationPath = (f'{self.currentOutputPath}{os.sep}'
                                        f'{self.currentVolumeFilename}'
                                        f'_SegmentationInformation.csv')
@@ -2434,7 +2896,13 @@ class SlicerCARTWidget(ScriptedLoadableModuleWidget, VTKObservationMixin):
     def compareSegmentVersions(self,
                                selected_label,
                                selected_version_file_paths):
-
+        """
+        CompareSegmentVersions.
+        
+        Args:
+        selected_label: Description of selected_label.
+        selected_version_file_paths: Description of selected_version_file_paths.
+        """
         self.labelOfCompareSegmentVersions = selected_label
         self.colorsSelectedVersionFilePathsForCompareSegmentVersions = {}
 
@@ -2529,7 +2997,13 @@ class SlicerCARTWidget(ScriptedLoadableModuleWidget, VTKObservationMixin):
         self.ui.ShowSegmentVersionLegendButton.setVisible(True)
 
 
+    @enter_function
     def onClearCompareSegmentVersions(self):
+        """
+        OnClearCompareSegmentVersions.
+        
+        Args:.
+        """
         self.loadPatient()
 
         self.enableStartTimerButton()
@@ -2543,7 +3017,14 @@ class SlicerCARTWidget(ScriptedLoadableModuleWidget, VTKObservationMixin):
         self.ui.ShowSegmentVersionLegendButton.setVisible(False)
 
 
+    @enter_function
     def loadSegmentation(self, absolute_path_to_segmentation_file):
+        """
+        LoadSegmentation.
+        
+        Args:
+        absolute_path_to_segmentation_file: Description of absolute_path_to_segmentation_file.
+        """
         if 'nrrd' in ConfigPath.INPUT_FILE_EXTENSION:
             slicer.util.loadSegmentation(absolute_path_to_segmentation_file)
             self.segmentationNode = \
@@ -2666,7 +3147,13 @@ class SlicerCARTWidget(ScriptedLoadableModuleWidget, VTKObservationMixin):
         slicer.mrmlScene.RemoveNode(temporary_segmentation_node)
 
 
+    @enter_function
     def getAllSegmentNames(self):
+        """
+        GetAllSegmentNames.
+        
+        Args:.
+        """
         list_of_segment_ids = (
             self.segmentationNode.GetSegmentation().GetSegmentIDs())
         list_of_segment_names = []
@@ -2679,6 +3166,11 @@ class SlicerCARTWidget(ScriptedLoadableModuleWidget, VTKObservationMixin):
 
     @enter_function
     def onPushDefaultMin(self):
+        """
+        OnPushDefaultMin.
+        
+        Args:.
+        """
         fresh_config = ConfigPath.open_project_config_file()
         self.config_yaml["labels"][self.current_label_index][
             "lower_bound_HU"] = \
@@ -2692,6 +3184,11 @@ class SlicerCARTWidget(ScriptedLoadableModuleWidget, VTKObservationMixin):
 
     @enter_function
     def onPushDefaultMax(self):
+        """
+        OnPushDefaultMax.
+        
+        Args:.
+        """
         fresh_config = ConfigPath.open_project_config_file()
         self.config_yaml["labels"][self.current_label_index][
             "upper_bound_HU"] = \
@@ -2702,7 +3199,13 @@ class SlicerCARTWidget(ScriptedLoadableModuleWidget, VTKObservationMixin):
             self.config_yaml["labels"][self.current_label_index][
                 "upper_bound_HU"])
 
+    @enter_function
     def onPush_ShowSegmentVersionLegendButton(self):
+        """
+        OnPush_ShowSegmentVersionLegendButton.
+        
+        Args:.
+        """
         segmentationInformationPath = (f'{self.currentOutputPath}{os.sep}'
                                        f'{self.currentVolumeFilename}'
                                        f'_SegmentationInformation.csv')
@@ -2726,7 +3229,13 @@ class SlicerCARTWidget(ScriptedLoadableModuleWidget, VTKObservationMixin):
             ShowSegmentVersionLegendWindow(self, segmentationInformation_df))
         showSegmentVersionLegendWindow.show()
 
+    @enter_function
     def onPushButton_undo(self):
+        """
+        OnPushButton_undo.
+        
+        Args:.
+        """
         if self.previousAction == 'segmentation':
             self.segmentEditorWidget.undo()
 
@@ -2762,6 +3271,12 @@ class SlicerCARTWidget(ScriptedLoadableModuleWidget, VTKObservationMixin):
 
     @enter_function
     def onDropDownButton_label_select(self, value):
+        """
+        OnDropDownButton_label_select.
+        
+        Args:
+        value: Description of value.
+        """
         self.current_label_index = value
         label = self.config_yaml["labels"][value]
         self.setUpperAndLowerBoundHU(label["lower_bound_HU"],
@@ -2777,7 +3292,13 @@ class SlicerCARTWidget(ScriptedLoadableModuleWidget, VTKObservationMixin):
             pass
 
 
+    @enter_function
     def onPushLassoPaint(self):
+        """
+        OnPushLassoPaint.
+        
+        Args:.
+        """
         self.startTimerForActions()
         self.previousAction = 'segmentation'
         self.ensure_active_segment_is_selected()
@@ -2788,7 +3309,13 @@ class SlicerCARTWidget(ScriptedLoadableModuleWidget, VTKObservationMixin):
         effect.setParameter("Shape", "FreeForm")
         effect.setSliceCutMode(3)
 
+    @enter_function
     def onPushButton_Paint(self):
+        """
+        OnPushButton_Paint.
+        
+        Args:.
+        """
         self.startTimerForActions()
         self.previousAction = 'segmentation'
         self.ensure_active_segment_is_selected()
@@ -2815,6 +3342,11 @@ class SlicerCARTWidget(ScriptedLoadableModuleWidget, VTKObservationMixin):
 
     @enter_function
     def ensure_active_segment_is_selected(self):
+        """
+        Ensure_active_segment_is_selected.
+        
+        Args:.
+        """
         # Make sure a valid segment is selected
         selected_segment_id = self.segmentationNode.GetSegmentation(
 
@@ -2826,6 +3358,11 @@ class SlicerCARTWidget(ScriptedLoadableModuleWidget, VTKObservationMixin):
 
     @enter_function
     def toggleFillButton(self):
+        """
+        ToggleFillButton.
+        
+        Args:.
+        """
         self.startTimerForActions()
         self.previousAction = 'segmentation'
         if self.ui.pushButton_ToggleFill.isChecked():
@@ -2839,7 +3376,8 @@ class SlicerCARTWidget(ScriptedLoadableModuleWidget, VTKObservationMixin):
             self.ui.pushButton_ToggleFill.setText('Fill: OFF')
             self.segmentationNode.GetDisplayNode().SetOpacity2DFill(0)
 
-    @ enter_function
+
+    @enter_function
     def onPushButton_ToggleVisibility(self):
         """
         Toggle visibility of segments in the slicer viewer.
@@ -2864,7 +3402,13 @@ class SlicerCARTWidget(ScriptedLoadableModuleWidget, VTKObservationMixin):
             self.mask_visible_flag_level2 = False
 
 
+    @enter_function
     def togglePaintMask(self):
+        """
+        TogglePaintMask.
+        
+        Args:.
+        """
         if self.ui.pushButton_TogglePaintMask.isChecked():
             self.ui.pushButton_TogglePaintMask.setStyleSheet(
                 f"background-color : {self.color_active}")
@@ -2873,12 +3417,24 @@ class SlicerCARTWidget(ScriptedLoadableModuleWidget, VTKObservationMixin):
                 slicer.vtkMRMLSegmentationNode.EditAllowedEverywhere)
 
 
+    @enter_function
     def onPushButton_segmeditor(self):
+        """
+        OnPushButton_segmeditor.
+        
+        Args:.
+        """
         self.startTimerForActions()
         slicer.util.selectModule("SegmentEditor")
 
 
+    @enter_function
     def onPushButton_Erase(self):
+        """
+        OnPushButton_Erase.
+        
+        Args:.
+        """
         self.startTimerForActions()
         self.previousAction = 'segmentation'
 
@@ -2895,7 +3451,13 @@ class SlicerCARTWidget(ScriptedLoadableModuleWidget, VTKObservationMixin):
         self.segmentEditorNode.SetMasterVolumeIntensityMask(False)
 
 
+    @enter_function
     def onPushButton_Smooth(self):
+        """
+        OnPushButton_Smooth.
+        
+        Args:.
+        """
         # pass
         # Smoothing
         self.startTimerForActions()
@@ -2912,6 +3474,11 @@ class SlicerCARTWidget(ScriptedLoadableModuleWidget, VTKObservationMixin):
 
     @enter_function
     def onPlacePointsAndConnect(self):
+        """
+        OnPlacePointsAndConnect.
+        
+        Args:.
+        """
         self.startTimerForActions()
         self.previousAction = 'markups'
         self.lineNode = slicer.mrmlScene.AddNewNodeByClass(
@@ -2932,7 +3499,15 @@ class SlicerCARTWidget(ScriptedLoadableModuleWidget, VTKObservationMixin):
                                   self.onLinePlaced)
 
 
+    @enter_function
     def onLinePlaced(self, caller, event):
+        """
+        OnLinePlaced.
+        
+        Args:
+        caller: Description of caller.
+        event: Description of event.
+        """
         if caller.GetNumberOfControlPoints() < 2:
             return
 
@@ -2952,7 +3527,13 @@ class SlicerCARTWidget(ScriptedLoadableModuleWidget, VTKObservationMixin):
             "Length": lineLength
         }
 
+    @enter_function
     def onPushButton_Small_holes(self):
+        """
+        OnPushButton_Small_holes.
+        
+        Args:.
+        """
         # pass
         # Fill holes smoothing
         self.startTimerForActions()
@@ -2965,7 +3546,13 @@ class SlicerCARTWidget(ScriptedLoadableModuleWidget, VTKObservationMixin):
         effect.self().onApply()
 
 
+    @enter_function
     def onLB_HU(self):
+        """
+        OnLB_HU.
+        
+        Args:.
+        """
         try:
             self.LB_HU = self.ui.LB_HU.value
             self.set_master_volume_intensity_mask_according_to_modality()
@@ -2977,7 +3564,13 @@ class SlicerCARTWidget(ScriptedLoadableModuleWidget, VTKObservationMixin):
             pass
 
 
+    @enter_function
     def onUB_HU(self):
+        """
+        OnUB_HU.
+        
+        Args:.
+        """
         try:
             self.UB_HU = self.ui.UB_HU.value
             self.set_master_volume_intensity_mask_according_to_modality()

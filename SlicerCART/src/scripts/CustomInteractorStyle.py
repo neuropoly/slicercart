@@ -2,7 +2,14 @@ from utils import *
 
 # MB CODE BELOW: MOUSE CUSTOMIZATION CLASS
 class CustomInteractorStyle(vtk.vtkInteractorStyleImage):
+    # @enter_function
     def __init__(self, sliceWidget=None):
+        """
+        __init__
+
+        Args:
+            sliceWidget: Description of sliceWidget.
+        """
         self.AddObserver("RightButtonPressEvent",
                          self.onRightButtonPressEvent)
         self.AddObserver("MouseMoveEvent", self.onMouseMoveEvent)
@@ -28,13 +35,29 @@ class CustomInteractorStyle(vtk.vtkInteractorStyleImage):
         self.adjustingWindowLevel = False
         self.z_pressed = False
 
+    # @enter_function
     def onRightButtonPressEvent(self, obj, event):
+        """
+        onRightButtonPressEvent
+
+        Args:
+            obj: Description of obj.
+            event: Description of event.
+        """
         self.startPosition = self.GetInteractor().GetEventPosition()
         self.panning = True
         self.OnRightButtonDown()
         return
 
+    # @enter_function
     def onMouseMoveEvent(self, obj, event):
+        """
+        onMouseMoveEvent
+
+        Args:
+            obj: Description of obj.
+            event: Description of event.
+        """
         if self.panning and self.startPosition:
             currentPosition = self.GetInteractor().GetEventPosition()
             deltaX = self.startPosition[0] - currentPosition[0]
@@ -73,39 +96,87 @@ class CustomInteractorStyle(vtk.vtkInteractorStyleImage):
         self.OnMouseMove()
         return
 
+    # @enter_function
     def onRightButtonReleaseEvent(self, obj, event):
+        """
+        onRightButtonReleaseEvent
+
+        Args:
+            obj: Description of obj.
+            event: Description of event.
+        """
         self.startPosition = None
         self.panning = False
         self.OnRightButtonUp()
         return
 
+    # @enter_function
     def onLeftButtonPressEvent(self, obj, event):
+        """
+        onLeftButtonPressEvent
+
+        Args:
+            obj: Description of obj.
+            event: Description of event.
+        """
         self.startPosition = self.GetInteractor().GetEventPosition()
         self.adjustingWindowLevel = True
         self.OnLeftButtonDown()
         return
 
+    # @enter_function
     def onLeftButtonReleaseEvent(self, obj, event):
+        """
+        onLeftButtonReleaseEvent
+
+        Args:
+            obj: Description of obj.
+            event: Description of event.
+        """
         self.startPosition = None
         self.adjustingWindowLevel = False
         self.OnLeftButtonUp()
         return
 
+    # @enter_function
     def onKeyPressEvent(self, obj, event):
+        """
+        onKeyPressEvent
+
+        Args:
+            obj: Description of obj.
+            event: Description of event.
+        """
         key = self.GetInteractor().GetKeySym()
         if key == "x":
             self.z_pressed = True
         self.OnKeyPress()
         return
 
+    # @enter_function
     def onKeyReleaseEvent(self, obj, event):
+        """
+        onKeyReleaseEvent
+
+        Args:
+            obj: Description of obj.
+            event: Description of event.
+        """
         key = self.GetInteractor().GetKeySym()
         if key == "x":
             self.z_pressed = False
         self.OnKeyRelease()
         return
 
+    # @enter_function
     def onMouseWheelForwardEvent(self, obj, event):
+        """
+        onMouseWheelForwardEvent
+
+        Args:
+            obj: Description of obj.
+            event: Description of event.
+        """
         if self.z_pressed:
             # print("Mouse scroll")
             self.zoom_in()
@@ -119,7 +190,15 @@ class CustomInteractorStyle(vtk.vtkInteractorStyleImage):
             self.OnMouseWheelForward()
         return
 
+    # @enter_function
     def onMouseWheelBackwardEvent(self, obj, event):
+        """
+        onMouseWheelBackwardEvent
+
+        Args:
+            obj: Description of obj.
+            event: Description of event.
+        """
         if self.z_pressed:
             # print("Mouse scroll")
             self.zoom_out()
@@ -132,17 +211,35 @@ class CustomInteractorStyle(vtk.vtkInteractorStyleImage):
             self.OnMouseWheelBackward()
         return
 
+    # @enter_function
     def zoom_in(self):
+        """
+        zoom_in
+
+        Args:
+        """
         fov = self.sliceNode.GetFieldOfView()
         self.sliceNode.SetFieldOfView(fov[0] * 0.9, fov[1] * 0.9, fov[2])
         self.sliceNode.Modified()
 
+    # @enter_function
     def zoom_out(self):
+        """
+        zoom_out
+
+        Args:
+        """
         fov = self.sliceNode.GetFieldOfView()
         self.sliceNode.SetFieldOfView(fov[0] / 0.9, fov[1] / 0.9, fov[2])
         self.sliceNode.Modified()
 
+    # @enter_function
     def zoom(self):
+        """
+        zoom
+
+        Args:
+        """
         if self.startPosition:
             fov = self.sliceNode.GetFieldOfView()
             currentPos = self.GetInteractor().GetEventPosition()
@@ -154,7 +251,13 @@ class CustomInteractorStyle(vtk.vtkInteractorStyleImage):
                                           fov[2])
             self.sliceNode.Modified()
 
+    # @enter_function
     def getSliceSpacing(self):
+        """
+        getSliceSpacing
+
+        Args:
+        """
         volumeNode = self.sliceLogic.GetBackgroundLayer().GetVolumeNode()
         if volumeNode:
             spacing = volumeNode.GetSpacing()

@@ -7,7 +7,15 @@ class WorkFiles():
     previous work sessions.
     """
 
+    @enter_function
     def __init__(self, currentFolder, outputFolder):
+        """
+        __init__
+
+        Args:
+            currentFolder: Description of currentFolder.
+            outputFolder: Description of outputFolder.
+        """
         self.CurrentFolder = currentFolder
         self.outputFolder = outputFolder
         self.working_list_filepath = os.path.join(
