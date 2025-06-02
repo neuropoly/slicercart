@@ -6,7 +6,7 @@
   <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Purpose &mdash; SlicerCART  documentation</title>
+  <title>Class Organization &mdash; SlicerCART  documentation</title>
       <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=b86133f3" />
       <link rel="stylesheet" type="text/css" href="_static/css/theme.css?v=e59714d7" />
       <link rel="stylesheet" type="text/css" href="_static/custom.css?v=e08e59c6" />
@@ -19,7 +19,8 @@
       <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="_static/js/theme.js"></script>
     <link rel="index" title="Index" href="genindex.html" />
-    <link rel="search" title="Search" href="search.html" /> 
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="prev" title="Repository Organization" href="repository_organization.html" /> 
 </head>
 
 <body class="wy-body-for-nav"> 
@@ -49,8 +50,8 @@
 <li class="toctree-l1"><a class="reference internal" href="userguide.html">User Guide</a></li>
 <li class="toctree-l1"><a class="reference internal" href="contributing.html">Developer Guide</a></li>
 </ul>
-<ul>
-<li class="toctree-l1"><a class="reference internal" href="class_organization.html">Class Organization</a></li>
+<ul class="current">
+<li class="toctree-l1 current"><a class="current reference internal" href="#">Class Organization</a></li>
 <li class="toctree-l1"><a class="reference internal" href="repository_organization.html">Repository Organization</a></li>
 </ul>
 
@@ -68,9 +69,10 @@
           <div role="navigation" aria-label="Page navigation">
   <ul class="wy-breadcrumbs">
       <li><a href="index.html" class="icon icon-home" aria-label="Home"></a></li>
-      <li class="breadcrumb-item active">Purpose</li>
+          <li class="breadcrumb-item"><a href="contributing.html">Developer Guide</a></li>
+      <li class="breadcrumb-item active">Class Organization</li>
       <li class="wy-breadcrumbs-aside">
-            <a href="_sources/purpose.rst.txt" rel="nofollow"> View page source</a>
+            <a href="_sources/class_organization.rst.txt" rel="nofollow"> View page source</a>
       </li>
   </ul>
   <hr/>
@@ -78,22 +80,41 @@
           <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
            <div itemprop="articleBody">
              
-  <section id="purpose">
-<h1>Purpose<a class="headerlink" href="#purpose" title="Link to this heading"></a></h1>
-<p>This section explains the rationale behind SlicerCART.</p>
-<p><strong>Rationale:</strong></p>
-<ul class="simple">
-<li><p>Curating large, high-quality datasets is a resource-intensive foundation critical to developing artificial intelligence models that deliver high performance. However, many commonly used open-source solutions do not offer a way to easily navigate through a list of cases, perform version control or customize the annotation workflow to specific tasks. Some software suffer from complex installation processes and lack intuitive image visualization features.</p></li>
-<li><p>To address these challenges, SlicerCART—<em>Slicer Configurable Annotation Review Tool</em>—was developed as a solution to lower the barrier to dataset creation.</p></li>
-<li><p>This Slicer module provides a time-efficient, open-source platform for manual segmentation and classification across large datasets, with tools for quality control and structured data output.</p></li>
-<li><p>Moreover, when performing quality control of existing segmentation (whether manual or automatic), it would be great to have the possibility to directly modify the existing segments and get a new corrected versions, efficiently. Only few existing open-source solutions may offer yet this option, except SlicerCART.</p></li>
-</ul>
+  <section id="class-organization">
+<h1>Class Organization<a class="headerlink" href="#class-organization" title="Link to this heading"></a></h1>
+<p>This page shows the class organization diagram of SlicerCART.
+The diagram is automatically generated using <cite>pyreverse</cite> (located in the
+<cite>docs/_static/images</cite> repository subfolder).</p>
+<p>To regenerate this diagram, run the following command from the <strong>src subfolder</strong> of the repository:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><span class="c1"># Install pylint if not already installed</span>
+pip<span class="w"> </span>install<span class="w"> </span>pylint
+
+<span class="c1"># Generate the class diagram</span>
+pyreverse<span class="w"> </span>-o<span class="w"> </span>dot<span class="w"> </span>-p<span class="w"> </span>SlicerCART<span class="w"> </span>slicerCART.py
+pyreverse<span class="w"> </span>-o<span class="w"> </span>dot<span class="w"> </span>-p<span class="w"> </span>Scripts<span class="w"> </span>scripts/*.py
+pyreverse<span class="w"> </span>-o<span class="w"> </span>dot<span class="w"> </span>-p<span class="w"> </span>Utils<span class="w"> </span>utils/*.py
+
+python<span class="w"> </span>combine_dot_files.py<span class="w"> </span>classes_Scripts.dot<span class="w"> </span>classes_SlicerCART.dot<span class="w"> </span>classes_Utils.dot
+
+<span class="c1"># Generate both PNG and SVG versions</span>
+dot<span class="w"> </span>-Tpng<span class="w"> </span>classes_SlicerCART.dot<span class="w"> </span>-o<span class="w"> </span>../docs/_static/images/class_diagram.png
+dot<span class="w"> </span>-Tsvg<span class="w"> </span>classes_SlicerCART.dot<span class="w"> </span>-o<span class="w"> </span>../docs/_static/images/class_diagram.svg
+</pre></div>
+</div>
+<img alt="Classes Diagrams" src="_images/class_diagram.png" />
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>You can interact with the diagram above by doing mouse right click -&gt; Open in a new tab -&gt; zoom/unzoom to read its content.</p>
+</div>
+<p>This diagram was last updated on June 02, 2025.</p>
 </section>
 
 
            </div>
           </div>
-          <footer>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="repository_organization.html" class="btn btn-neutral float-left" title="Repository Organization" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+    </div>
 
   <hr/>
 
