@@ -11,7 +11,7 @@ versions (e.g. segmentations generated automatically using models).
 
 ## [Installation](https://neuropoly.github.io/slicercart/installation.html)
 
-## [QuickStart](https://neuropoly.github.io/slicercart/quickstart.html)
+## [Quick Start](https://neuropoly.github.io/slicercart/quickstart.html)
 
 ## [Documentation](https://neuropoly.github.io/slicercart/index.html)
 
