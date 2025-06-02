@@ -2942,7 +2942,7 @@ class SlicerCARTWidget(ScriptedLoadableModuleWidget, VTKObservationMixin):
             Debug.print(self, 'MODALITY==CT')
             Vol_displayNode.SetWindow(ConfigPath.CT_WINDOW_WIDTH)
             Vol_displayNode.SetLevel(ConfigPath.CT_WINDOW_LEVEL)
-        Vol_displayNode.SetInterpolate(INTERPOLATE_VALUE)
+        Vol_displayNode.SetInterpolate(ConfigPath.INTERPOLATE_VALUE)
 
         self.segmentEditorWidget = (
             slicer.modules.segmenteditor.widgetRepresentation().self().editor)

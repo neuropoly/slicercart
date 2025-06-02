@@ -624,9 +624,9 @@ class SlicerCARTConfigurationSetupWindow(qt.QWidget):
         Args:
         """
         if self.interpolate_combobox.currentText == 'Yes':
-            self.interpolate_selected = 1
+            self.interpolate_selected = True
         else:
-            self.interpolate_selected = 0
+            self.interpolate_selected = False
 
     @enter_function
     def update_initial_view(self):
@@ -774,6 +774,8 @@ class SlicerCARTConfigurationSetupWindow(qt.QWidget):
             'shortcut'] = self.remove_small_holes_ks_selected
         self.config_yaml['KEYBOARD_SHORTCUTS'][6][
             'shortcut'] = self.interpolate_ks_selected
+
+        print('interpolate state', self.config_yaml['interpolate_value'])
 
         ConfigPath.write_config_file()
         self.config_yaml = ConfigPath.open_project_config_file()
