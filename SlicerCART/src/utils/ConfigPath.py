@@ -400,6 +400,16 @@ class ConfigPath():
         """
         self.flag_remove_combobox = value
 
+    @enter_function
+    def set_interpolate_value(self, value):
+        """
+        set the interpolation state for rendered volumes.
+
+        Args:
+            value: true (interpolation) or false (raw image, not interpolated)
+        """
+        self.INTERPOLATE_VALUE = value
+
 
 # Creating an instance of ConfigPath. This ensures that all the same
 # config values will be used in the different files/modules.
