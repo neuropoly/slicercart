@@ -5,8 +5,7 @@ This page shows the class organization diagram of SlicerCART.
 The diagram is automatically generated using `pyreverse` (located in the
 `docs/_static/images` repository subfolder).
 
-To regenerate this diagram, run the following command from the ''src''
-subfolder of the repository:
+To regenerate this diagram, run the following command from the **src subfolder** of the repository:
 
 .. code-block:: bash
 
