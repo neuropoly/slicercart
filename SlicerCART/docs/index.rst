@@ -57,10 +57,5 @@ License
 
 SlicerCART is distributed under the terms of the MIT License. See `License <../LICENSE.md>`_ for details.
 
-.. toctree::
-   :hidden:
-
-   class_organization
-   repository_organization
 
 
