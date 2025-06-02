@@ -245,6 +245,7 @@ class SlicerCARTWidget(ScriptedLoadableModuleWidget, VTKObservationMixin):
         self.disablePauseTimerButton()
         self.disableSegmentAndPaintButtons()
         self.ui.pushButton_Interpolate.setEnabled(False)
+        self.adjust_interpolate_button_color(ConfigPath.INTERPOLATE_VALUE)
         self.ui.SaveSegmentationButton.setEnabled(False)
 
         self.enableStartTimerButton()
@@ -409,6 +410,8 @@ class SlicerCARTWidget(ScriptedLoadableModuleWidget, VTKObservationMixin):
         if self.config_yaml['slice_view_color'] == "Green":
             slicer.app.layoutManager().setLayout(
                 slicer.vtkMRMLLayoutNode.SlicerLayoutOneUpGreenSliceView)
+
+        self.adjust_interpolate_button_color(ConfigPath.INTERPOLATE_VALUE)
 
     @enter_function
     def set_keyboard_shortcuts(self):
@@ -1148,10 +1151,27 @@ class SlicerCARTWidget(ScriptedLoadableModuleWidget, VTKObservationMixin):
         
         Args:.
         """
-        global INTERPOLATE_VALUE
-        INTERPOLATE_VALUE = 1 - INTERPOLATE_VALUE  # toggle
 
+        INTERPOLATE_VALUE = not ConfigPath.INTERPOLATE_VALUE
+        ConfigPath.set_interpolate_value(INTERPOLATE_VALUE)
+
+        self.adjust_interpolate_button_color(INTERPOLATE_VALUE)
         self.VolumeNode.GetDisplayNode().SetInterpolate(INTERPOLATE_VALUE)
+
+    @enter_function
+    def adjust_interpolate_button_color(self, value):
+        """
+        Adjust the volume interpolation state to true or false
+
+        Args:
+            value: true (interpolated volume) or false (raw image)
+        """
+        if value:
+            self.ui.pushButton_Interpolate.setStyleSheet(
+                f"color: {self.color_active};")
+        else:
+            self.ui.pushButton_Interpolate.setStyleSheet(
+                f"color: {self.color_inactive};")
 
     @enter_function
     def onPreviousButton(self):
@@ -2922,7 +2942,7 @@ class SlicerCARTWidget(ScriptedLoadableModuleWidget, VTKObservationMixin):
             Debug.print(self, 'MODALITY==CT')
             Vol_displayNode.SetWindow(ConfigPath.CT_WINDOW_WIDTH)
             Vol_displayNode.SetLevel(ConfigPath.CT_WINDOW_LEVEL)
-        Vol_displayNode.SetInterpolate(INTERPOLATE_VALUE)
+        Vol_displayNode.SetInterpolate(ConfigPath.INTERPOLATE_VALUE)
 
         self.segmentEditorWidget = (
             slicer.modules.segmenteditor.widgetRepresentation().self().editor)

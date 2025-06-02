@@ -624,9 +624,9 @@ class SlicerCARTConfigurationSetupWindow(qt.QWidget):
         Args:
         """
         if self.interpolate_combobox.currentText == 'Yes':
-            self.interpolate_selected = 1
+            self.interpolate_selected = True
         else:
-            self.interpolate_selected = 0
+            self.interpolate_selected = False
 
     @enter_function
     def update_initial_view(self):
