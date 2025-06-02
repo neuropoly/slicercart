@@ -2,7 +2,7 @@ name: Deploy Docs to GitHub Pages
 
 on:
   push:
-    branches: [main]  # or your default branch name
+    branches: [main]
     paths:
       - 'SlicerCART/docs/_build/html/**'
 
