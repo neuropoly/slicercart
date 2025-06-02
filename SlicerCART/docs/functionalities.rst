@@ -87,15 +87,3 @@ This module has been adapted to perform several tasks. Among other things, it al
   - Modify specific segments of different versions
   - Save all segments displayed ± modified on the viewer as a version += 1
     of segments in the output folder
-
-.. _welcome-page:
-
-`GO BACK on Documentation Welcome Page <welcome.md>`_
-
-.. _userguide-page:
-
-`Go BACK to User Guide <userguide.md>`_
-
-.. _purpose-page:
-
-`CONTINUE to Purpose <purpose.md>`_

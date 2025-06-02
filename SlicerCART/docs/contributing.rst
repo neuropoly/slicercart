@@ -40,7 +40,16 @@ Coding Standards
 * On Github, 1 issue for 1 Pull Request. Always create a branch.
    .. code-block:: bash
 
-         git checkout -b feature-name
+         git checkout -b 'feature-name'
+
+Core Organization
+-----------------
+
+Insert here the repository folder tree organization (automatically generated
+at each documentation generation)
+
+See class organization.
+
 
 
 

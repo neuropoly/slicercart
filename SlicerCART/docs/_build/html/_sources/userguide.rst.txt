@@ -11,6 +11,13 @@ Overview
 
 SlicerCART supports efficient multi-subjects imaging data navigation, labeling, and segmentation. This figure shows the module graphical user interface at launching.
 
+For a complete list of functionalities, see :doc:`functionalities`.
+
+.. toctree::
+   :hidden:
+
+   functionalities
+
 Launching
 -------
 .. image:: _static/images/launching.png
@@ -22,7 +29,7 @@ When the module is loaded, a pop-up window appears and allows the user to preset
 - **Task:** select if the module is used for segmentation, classification or both.
 - **Modality:** select if volumes are CT-Scans or MRI
 - **Impose BIDS?:** related to folder organization and files naming convention. Select yes if you want to load volumes only if the folder organization respects the *Brain Imaging Data Structure* (BIDS) format (once a volume folder will be selected, a BIDS validator will be run and a pop-up window will show if the selected folders do not respect BIDS: in that case, the volumes will not load).
-- **Input File Extension:** specify the files’ extension. Currently, whether NIfTI or NRRD format is accepted only. Note that if a dataset (i.e. volume folder) contains both nifti and nrrd volumes, the module will not be able to work (you can choose either one or another, but not both).
+- **Input File Extension:** specify the files' extension. Currently, whether NIfTI or NRRD format is accepted only. Note that if a dataset (i.e. volume folder) contains both nifti and nrrd volumes, the module will not be able to work (you can choose either one or another, but not both).
 
 - **Initial View:** select the view (axial, sagittal, or coronal) that the 3D Slicer viewer will display.
 
@@ -96,4 +103,6 @@ Workflow Example
    :alt: Workflow
 
 When a new output folder is selected, SlicerCART automatically generates a configuration file and worklist files. The configuration file serves as a future reference for resuming the task later—especially useful if SlicerCART has been used for another project with a different setup in the meantime. The worklist can be customized to include or exclude specific cases based on filenames, allowing targeted analysis and streamlined navigation within large datasets. Important: the remaining list must be ≤ than the working list. If the files are incompatible, the user will be prompted to verify them.
+
+
 

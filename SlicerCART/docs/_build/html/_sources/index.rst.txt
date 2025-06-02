@@ -14,7 +14,6 @@ Getting Started
    videotutorials
    userguide
    contributing
-   functionalities
 
 About SlicerCART
 -----------
