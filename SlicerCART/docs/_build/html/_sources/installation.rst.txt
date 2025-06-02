@@ -10,47 +10,82 @@ Prerequisites
    
    SlicerCART is a module for 3D Slicer. You need to have 3D Slicer installed on your system:
 
-   * Download 3D Slicer from the `official website <https://download.slicer.org/>`_
-   * Install the version appropriate for your operating system
+   * Download 3D Slicer from the `official website <https://download.slicer.org/>`_ (version 5.6.2 on macOS is recommended)
    * Launch 3D Slicer to verify the installation
 
-2. **Python Dependencies**
-   
-   SlicerCART requires several Python packages. These will be installed automatically when you install the module.
 
-Installation Methods
-------------------
+2. **Qt**
+    The open-source version of Qt can be downloaded from `https://www.qt
+    .io/offline-installers <https://www.qt.io/offline-installers>`_ (the version under Qt Creator). **Note:** This package is essential for enabling pop-up windows
 
-There are two ways to install SlicerCART:
+3. **Python Dependencies**
 
-1. **Using 3D Slicer Extension Manager (Recommended)**
-   
+   SlicerCART requires several Python packages that will be automatically installed in 3D Slicer python console at module initial launching.
+
+Installation
+------------
+
+1. **Get Access to SlicerCART repository**
+
+   * Download `SlicerCART repository as a ZIP file <https://github.com/neuropoly/slicercart/archive/refs/heads/main.zip>`_, and extract the folder to your choice location
+
+   OR
+
+   * Clone the repository to the location of your choice:
+
+     .. code-block:: bash
+
+        # Clone the repository
+        git clone https://github.com/neuropoly/slicercart.git
+
+2. **Get Access to SlicerCART in 3D Slicer**
+
    * Open 3D Slicer
-   * Go to View -> Extension Manager
-   * Search for "SlicerCART"
-   * Click Install
-   * Restart 3D Slicer when prompted
 
-2. **Manual Installation (For Developers)**
-   
-   If you want to install from source:
+   * Go to Edit -> Developer -> check Enable developer mode
 
-   .. code-block:: bash
+     .. image:: _static/images/developer_mode.png
+        :alt: Example Restart
+        :align: center
+        :height: 100px
 
-      # Clone the repository
-      git clone https://github.com/neuropoly/slicercart.git
-      cd slicercart
+   * Go to Edit -> Application Settings
 
-      # Install dependencies
-      pip install -r requirements.txt
+        * On MacOS -> Go to the location of the python file ``SlicerCART.py`` (You should only have one FILE of that name. Note that if you add the path of the FOLDER SlicerCART, it will not work: you MUST add the path of ``SlicerCART.py`` FILE)
 
-      # Add the module to 3D Slicer's module path
-      # Replace with your Slicer installation path
-      export SLICERCART_PATH=/path/to/slicercart
-      echo "Add $SLICERCART_PATH to 3D Slicer's additional module paths"
+          .. image:: _static/images/module_path_adding.png
+             :alt: Select Filepath Module
+             :align: center
 
-Verifying Installation
---------------------
+          .. image:: _static/images/module_filepath.png
+             :alt: Select and Restart
+             :align: center
+
+   * 3D Slicer will ask to Restart: click Ok.
+
+        .. image:: _static/images/example_restart.png
+          :alt: Example Restart
+          :align: center
+          :height: 250px
+
+   * Go to Modules Drop Down -> Examples -> SlicerCART
+
+     .. image:: _static/images/example_slicercart.png
+        :alt: Example SlicerCART
+        :align: center
+        :height: 400px
+
+   * (Optional) Ensure SlicerCART is launched at 3D Slicer startup.
+
+     * To do so, go to `Edit -> Application Settings -> Modules -> Default startup module`
+
+
+N.B. There might be errors in the Python Console: if so, it is highly
+recommended for you to fix them before any further use.
+
+
+Verification
+------------
 
 To verify that SlicerCART is installed correctly:
 
@@ -61,7 +96,7 @@ To verify that SlicerCART is installed correctly:
 5. The module interface should appear in the main panel
 
 Troubleshooting
--------------
+------------
 
 Common Issues
 ^^^^^^^^^^^
@@ -72,16 +107,10 @@ Common Issues
    * Check if the module path is correctly set
    * Try restarting 3D Slicer
 
-2. **Missing Dependencies**
+2. **Version Compatibility**
    
-   * Open Python Console in 3D Slicer
-   * Try importing required packages
-   * Install any missing dependencies
-
-3. **Version Compatibility**
-   
-   * Ensure you're using a compatible version of 3D Slicer
-   * Check the module's version requirements
+   * Ensure you're using a compatible version of 3D Slicer (e.g. 5.6.2)
+   * Ensure you're using a compatible operating system (e.g. mac OS)
 
 Getting Help
 ^^^^^^^^^^

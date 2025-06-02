@@ -45,16 +45,15 @@
         </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
               <ul class="current">
 <li class="toctree-l1"><a class="reference internal" href="installation.html">Installation</a></li>
-<li class="toctree-l1"><a class="reference internal" href="quickstart.html">QuickStart</a></li>
+<li class="toctree-l1"><a class="reference internal" href="quickstart.html">Quick Start</a></li>
 <li class="toctree-l1"><a class="reference internal" href="videotutorials.html">Video Tutorials</a></li>
 <li class="toctree-l1"><a class="reference internal" href="userguide.html">User Guide</a></li>
 <li class="toctree-l1 current"><a class="current reference internal" href="#">Developer Guide</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="#code-of-conduct">Code of Conduct</a></li>
-<li class="toctree-l2"><a class="reference internal" href="#getting-started">Getting Started</a></li>
-<li class="toctree-l2"><a class="reference internal" href="#development-workflow">Development Workflow</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#coding-standards">Coding Standards</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#development-workflow">Development Workflow</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#pull-request-guidelines">Pull Request Guidelines</a></li>
-<li class="toctree-l2"><a class="reference internal" href="#documentation">Documentation</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#useful-links">Useful links</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#getting-help">Getting Help</a></li>
 </ul>
 </li>
@@ -91,37 +90,43 @@
 <h2>Code of Conduct<a class="headerlink" href="#code-of-conduct" title="Link to this heading"></a></h2>
 <p>We are committed to providing a friendly, safe, and welcoming environment for all contributors. Please be respectful and constructive in your interactions.</p>
 </section>
-<section id="getting-started">
-<h2>Getting Started<a class="headerlink" href="#getting-started" title="Link to this heading"></a></h2>
-<ol class="arabic">
-<li><p><strong>Fork the Repository</strong></p>
-<ul class="simple">
-<li><p>Visit <a class="reference external" href="https://github.com/neuropoly/slicercart">SlicerCART on GitHub</a></p></li>
-<li><p>Click the “Fork” button</p></li>
-<li><p>Clone your fork locally</p></li>
+<section id="coding-standards">
+<h2>Coding Standards<a class="headerlink" href="#coding-standards" title="Link to this heading"></a></h2>
+<ul>
+<li><p>Max 80 columns for a single code line</p></li>
+<li><p>This project uses the <a class="reference external" href="https://peps.python.org/pep-0008/">PEP8</a> convention for naming. Reminder:</p>
+<ul>
+<li><p><code class="docutils literal notranslate"><span class="pre">MyClass</span></code> for naming a <strong>Class</strong></p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">MY_CONSTANT</span></code> for naming a <strong>CONSTANT</strong></p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">my_variable</span></code> for naming a <strong>variable</strong></p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">define_my_function()</span></code> for naming a <strong>function</strong> (always start with an action verb)</p></li>
+<li><p>Function definition example (add docstrings for explanations):</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="k">def</span><span class="w"> </span><span class="nf">my_function</span><span class="p">(</span><span class="n">arg1</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Add such a descriptive comment at the beginning of each function</span>
+<span class="sd">    in order to explain clearly to the next user what the function does. :)</span>
+
+<span class="sd">     Args</span>
+<span class="sd">         arg1: first argument</span>
+<span class="sd">     &quot;&quot;&quot;</span>
+</pre></div>
+</div>
+</li>
+<li><p>Use <code class="docutils literal notranslate"><span class="pre">TODO:</span></code> for naming <strong>To Dos</strong> in the code</p></li>
+<li><p>Add <strong>one blank line</strong> between each function for clarity</p></li>
+<li><p><strong>Useful comments</strong> are strongly encouraged</p></li>
+<li><p>Want to report a feature improvement or bug? Go on <a href="#id1"><span class="problematic" id="id2">`</span></a>SlicerCART Github</p></li>
 </ul>
+<p>&lt;<a class="reference external" href="https://github.com/neuropoly/slicer-manual-annotation/issues">https://github.com/neuropoly/slicer-manual-annotation/issues</a>&gt;`__.</p>
 </li>
-<li><p><strong>Set Up Development Environment</strong></p>
-<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><span class="c1"># Clone your fork</span>
-git<span class="w"> </span>clone<span class="w"> </span>https://github.com/YOUR_USERNAME/slicercart.git
-<span class="nb">cd</span><span class="w"> </span>slicercart
-
-<span class="c1"># Add upstream remote</span>
-git<span class="w"> </span>remote<span class="w"> </span>add<span class="w"> </span>upstream<span class="w"> </span>https://github.com/neuropoly/slicercart.git
-
-<span class="c1"># Install dependencies</span>
-pip<span class="w"> </span>install<span class="w"> </span>-r<span class="w"> </span>requirements.txt
+<li><dl>
+<dt>On Github, 1 issue for 1 Pull Request. Always create a branch.</dt><dd><div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>git<span class="w"> </span>checkout<span class="w"> </span>-b<span class="w"> </span>feature-name
 </pre></div>
 </div>
+</dd>
+</dl>
 </li>
-<li><p><strong>Create a Branch</strong></p>
-<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>git<span class="w"> </span>checkout<span class="w"> </span>-b<span class="w"> </span>feature-name
-<span class="c1"># or</span>
-git<span class="w"> </span>checkout<span class="w"> </span>-b<span class="w"> </span>bugfix-description
-</pre></div>
-</div>
-</li>
-</ol>
+</ul>
 </section>
 <section id="development-workflow">
 <h2>Development Workflow<a class="headerlink" href="#development-workflow" title="Link to this heading"></a></h2>
@@ -158,34 +163,6 @@ git<span class="w"> </span>checkout<span class="w"> </span>-b<span class="w"> </
 </li>
 </ol>
 </section>
-<section id="coding-standards">
-<h2>Coding Standards<a class="headerlink" href="#coding-standards" title="Link to this heading"></a></h2>
-<ol class="arabic simple">
-<li><p><strong>Python Style</strong></p>
-<ul class="simple">
-<li><p>Follow PEP 8 guidelines</p></li>
-<li><p>Use meaningful variable names</p></li>
-<li><p>Add docstrings to functions and classes</p></li>
-<li><p>Keep functions focused and concise</p></li>
-</ul>
-</li>
-<li><p><strong>Documentation</strong></p>
-<ul class="simple">
-<li><p>Update relevant documentation</p></li>
-<li><p>Add inline comments for complex logic</p></li>
-<li><p>Keep README.md up to date</p></li>
-<li><p>Document new features</p></li>
-</ul>
-</li>
-<li><p><strong>Testing</strong></p>
-<ul class="simple">
-<li><p>Write unit tests for new features</p></li>
-<li><p>Update existing tests as needed</p></li>
-<li><p>Ensure all tests pass</p></li>
-</ul>
-</li>
-</ol>
-</section>
 <section id="pull-request-guidelines">
 <h2>Pull Request Guidelines<a class="headerlink" href="#pull-request-guidelines" title="Link to this heading"></a></h2>
 <ol class="arabic simple">
@@ -214,33 +191,14 @@ git<span class="w"> </span>checkout<span class="w"> </span>-b<span class="w"> </
 </li>
 </ol>
 </section>
-<section id="documentation">
-<h2>Documentation<a class="headerlink" href="#documentation" title="Link to this heading"></a></h2>
-<ol class="arabic simple">
-<li><p><strong>Code Documentation</strong></p>
-<ul class="simple">
-<li><p>Add docstrings to all functions</p></li>
-<li><p>Include type hints</p></li>
-<li><p>Document parameters and return values</p></li>
-<li><p>Explain complex algorithms</p></li>
+<section id="useful-links">
+<h2>Useful links<a class="headerlink" href="#useful-links" title="Link to this heading"></a></h2>
+<blockquote>
+<div><ul class="simple">
+<li><p><a class="reference external" href="https://peps.python.org/pep-0008/">PEP8 style guide official documentation</a></p></li>
+<li><p><a class="reference external" href="https://github.com/INF1007-Gabarits/Guide-codage-python">Polytechnique Montreal Home-Made Guide for programming style (in French)</a></p></li>
 </ul>
-</li>
-<li><p><strong>User Documentation</strong></p>
-<ul class="simple">
-<li><p>Update user guides</p></li>
-<li><p>Add examples</p></li>
-<li><p>Include screenshots</p></li>
-<li><p>Document new features</p></li>
-</ul>
-</li>
-<li><p><strong>Developer Documentation</strong></p>
-<ul class="simple">
-<li><p>Update architecture docs</p></li>
-<li><p>Document API changes</p></li>
-<li><p>Add development guides</p></li>
-</ul>
-</li>
-</ol>
+</div></blockquote>
 </section>
 <section id="getting-help">
 <h2>Getting Help<a class="headerlink" href="#getting-help" title="Link to this heading"></a></h2>

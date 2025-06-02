@@ -9,93 +9,93 @@ scripts.CompareSegmentVersionsWindow module
 
 .. automodule:: scripts.CompareSegmentVersionsWindow
    :members:
-   :undoc-members:
    :show-inheritance:
+   :undoc-members:
 
 scripts.CustomInteractorStyle module
 ------------------------------------
 
 .. automodule:: scripts.CustomInteractorStyle
    :members:
-   :undoc-members:
    :show-inheritance:
+   :undoc-members:
 
 scripts.InteractingClasses module
 ---------------------------------
 
 .. automodule:: scripts.InteractingClasses
    :members:
-   :undoc-members:
    :show-inheritance:
+   :undoc-members:
 
 scripts.LoadClassificationWindow module
 ---------------------------------------
 
 .. automodule:: scripts.LoadClassificationWindow
    :members:
-   :undoc-members:
    :show-inheritance:
+   :undoc-members:
 
 scripts.LoadSegmentationWindow module
 -------------------------------------
 
 .. automodule:: scripts.LoadSegmentationWindow
    :members:
-   :undoc-members:
    :show-inheritance:
+   :undoc-members:
 
 scripts.OptionalMethods module
 ------------------------------
 
 .. automodule:: scripts.OptionalMethods
    :members:
-   :undoc-members:
    :show-inheritance:
+   :undoc-members:
 
 scripts.ShowSegmentVersionLegendWindow module
 ---------------------------------------------
 
 .. automodule:: scripts.ShowSegmentVersionLegendWindow
    :members:
-   :undoc-members:
    :show-inheritance:
+   :undoc-members:
 
 scripts.SlicerCARTLogic module
 ------------------------------
 
 .. automodule:: scripts.SlicerCARTLogic
    :members:
-   :undoc-members:
    :show-inheritance:
+   :undoc-members:
 
 scripts.SlicerCARTTest module
 -----------------------------
 
 .. automodule:: scripts.SlicerCARTTest
    :members:
-   :undoc-members:
    :show-inheritance:
+   :undoc-members:
 
 scripts.Timer module
 --------------------
 
 .. automodule:: scripts.Timer
    :members:
-   :undoc-members:
    :show-inheritance:
+   :undoc-members:
 
 scripts.WorkFiles module
 ------------------------
 
 .. automodule:: scripts.WorkFiles
    :members:
-   :undoc-members:
    :show-inheritance:
+   :undoc-members:
 
 Module contents
 ---------------
 
 .. automodule:: scripts
    :members:
-   :undoc-members:
    :show-inheritance:
+   :undoc-members:

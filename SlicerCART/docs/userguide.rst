@@ -1,149 +1,99 @@
 User Guide
 =====================
 
-Detailed information for using SlicerCART in 3D Slicer is provided below.
+Detailed information for using SlicerCART is provided below.
 
-Startup
+
+Overview
 -------
+.. image:: _static/images/overview.png
+   :alt: Overview
 
-When the module is loaded, a pop-up window appears and allows the user to preset the module according to the intended use case.
+SlicerCART supports efficient multi-subjects imaging data navigation, labeling, and segmentation. This figure shows the module graphical user interface at launching.
 
-.. image:: _static/images/select_configuration_popup.png
-   :alt: Select Configuration Popup
+Launching
+-------
+.. image:: _static/images/launching.png
+   :alt: Launching
 
-New configuration
-~~~~~~~~~~~~~~~~~
+When the module is loaded, a pop-up window appears and allows the user to preset the module according to the intended use case. SlicerCART can be configured to accommodate task-specific requirements and user preferences, depending on the intended use. New Configuration allows to define a new project labels and specificities. Continue from existing output folder enables to continue a previously started task. Some configuration examples are illustrated:
 
-To select when the module is used for a new task.
-
-Continue from existing output folder
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-
-To select when the module is used for continuing a previously started task.
-
-Use template configuration
-~~~~~~~~~~~~~~~~~~~~~~~~~~
-
-To select when the user wants to load its own configuration template in the SlicerCART. WIP
-
-New configuration
------------------
-
-A pop-up windows allow to specify parameters and customize settings.
-
-.. image:: _static/images/select_configuration_module.png
-   :alt: Select Configuration Module
 
 - **Task:** select if the module is used for segmentation, classification or both.
 - **Modality:** select if volumes are CT-Scans or MRI
-- **Impose BIDS?:** related to folder organization and files naming convention. Select yes if you want to load volumes only if the folder organization respects the Brain Imaging Data Structure (BIDS) format (once a volume folder will be selected, a BIDS validator will be run and a pop-up window will show if the selected folders do not respect BIDS: in that case, the volumes will not be able to load if BIDS is imposed).
-- **Input File Extension:** specify the files’ extension. Currently, nifti and nrrd format are accepted only (supported by Slicer). Note that if a dataset (i.e. volume folder) contains both nifti and nrrd volumes, the module will not be able to work (you can choose either one or another but not both).
-- **Initial View:** select the plane (axial, sagittal, or coronal) that the 3D Slicer viewer will display. Soon, implementation of viewing the same volume in different planes (e.g. different plane) will be done.
+- **Impose BIDS?:** related to folder organization and files naming convention. Select yes if you want to load volumes only if the folder organization respects the *Brain Imaging Data Structure* (BIDS) format (once a volume folder will be selected, a BIDS validator will be run and a pop-up window will show if the selected folders do not respect BIDS: in that case, the volumes will not load).
+- **Input File Extension:** specify the files’ extension. Currently, whether NIfTI or NRRD format is accepted only. Note that if a dataset (i.e. volume folder) contains both nifti and nrrd volumes, the module will not be able to work (you can choose either one or another, but not both).
 
-  N.B. In 3D Slicer, each viewer plane has an associated color:
-  Red – Axial;
-  Yellow – Sagittal;
-  Green – Coronal
+- **Initial View:** select the view (axial, sagittal, or coronal) that the 3D Slicer viewer will display.
 
-.. image:: _static/images/slicer_viewer.png
-   :alt: Slicer Viewer Planes
+  .. note::
+
+     In 3D Slicer, each viewer plane has an associated default color:
+
+     - **Red** – Axial
+     - **Yellow** – Sagittal
+     - **Green** – Coronal
+
 
 - **Interpolate Image?:** select if loaded volumes from raw MRI data have automated postprocessing treatment to make the image smoother. Note that this is usually automatically done in Slicer: however, for example, deep-learning based models used for segmentation are trained on raw MRI data which may create imprecise ground-truth segmentation masks or compatibility issues. Note also that although if images are interpolated, segmentation masks are by default saved without any smoothing filter (compatible for deep learning model training).
 - **If Modality == CT:**
   The Window Level and Window Width default level can be selected, enabling to display a specific default contrast for each volume. Accepts only integers.
   Note that if you have selected CT, but do not want to specify the contrast information, the default volumes will be loaded using a Window Width/Level of 45:85.
 - **Use Custom Keyboard Shortcuts?:**
-  Select to show a dropdown menu enabling customization of keyboard shortcuts for predefined basic functions. Name of the proposed shortcut corresponds to its action.
+  Select to show enable customization of keyboard shortcuts for predefined basic functions. Shortcut name corresponds to its action.
 - **Use Custom Mouse Shortcuts?:**
-  Select to show a dropdown menu enabling customization of mouse button functions for image navigation and manipulation in the 3D Slicer viewer.
+  Select to show a dropdown menu enabling customization of mouse button functions for mage manipulation in the 3D Slicer viewer.
 
 Configure segmentation
 ~~~~~~~~~~~~~~~~~~~~~~
 
-Allows the user to specify the default labels name, value and display colors for each segmentation mask in the dataset. For example, if the task is to do segmentation of brain hemorrhage, intraventricular hemorrhage and peri-hematoma edema, the user can specify the label names (e.g. ICH — for intracranial hemorrhage; IVH — for intraventricular hemorrhage; PHE — perihematomal edema).
-The user can change the number of labels by clicking remove or add.
-Click apply to save the segmentation configuration.
+Allows the user to specify the default labels name, value and display colors
+for each segmentation mask in the dataset. For example, if the task is to do
+segmentation of traumatic spinal cord injury lesions defined by
+intramedullary edema and hemorrhage as distinct segmentation classes, the
+user can specify the label names (e.g. edema — for spinal cord edema;
+hemorrhage — for intramedullary hemorrhage). The user can change the number
+of labels by clicking remove or add (see :ref:`label-selection-and-validation`).
 
 Configure Classification
 ~~~~~~~~~~~~~~~~~~~~~~~~
 
-Allows the user to specify the labels and their value related to classification types, and their selection mode. Click on Apply to save the configuration settings.
+Allows the user to specify the labels and their value related to classification types, and their selection mode.
 
-The user is now ready to start doing segmentation, classification or both tasks!
-
-Start Segmentation and/or Classification
----------------------------------------
-
-Select Volumes folder, and specify annotator information
-
-- Select the folder that contains the images that you want to process (if BIDS folder, will not consider images in derivatives), manipulate, view, etc.
-- Specify the Annotator name, degree and revision step (all are mandatory for saving functions).
-
-.. image:: _static/images/folder_and_name_to_use.png
-   :alt: Folder and Annotator Info
-
-.. image:: _static/images/example_loading_cases_ui.png
-   :alt: Example Loading Cases UI
-
-N.B. If loading cases in the UI fails, please open an issue on the Github repository or ask a team member. If this step has not succeeded, you will not be able to use SlicerCART (e.g. imaging format incompatibility).
-
-Select Output folder
-~~~~~~~~~~~~~~~~~~~~
-
-Select the folder where output data (e.g. segmentation masks, statistics) will be saved. For now, it must be empty.
-
-.. image:: _static/images/select_output_folder.png
-   :alt: Select Output Folder
-
-Display Volume to Segment
-~~~~~~~~~~~~~~~~~~~~~~~~~
-
-Click on the case in Case list you want to display and/or perform segmentation, so it will be shown in the Slicer Viewer.
-
-.. image:: _static/images/select_volume_to_segment.png
-   :alt: Select Volume to Segment
-
-Start Segmentation
-~~~~~~~~~~~~~~~~~~
-
-Click on the case you want to start segmentation by clicking on:
-
-- SegmentEditor: will open the default segment editor of 3D Slicer
-- Paint: will make the user able to paint the **first** mask label
-- Erase: will make the user able to erase current segment label
-
-.. image:: _static/images/perform_segmentation.png
-   :alt: Perform Segmentation
-
-Save Segmentation
+.. _label-selection-and-validation:
+Label Selection and Validation
 ~~~~~~~~~~~~~~~~~
+.. image:: _static/images/label_selection.png
+   :alt: Label Selection
 
-Once segmentation is completed, click on Save segmentation to save the segmentation mask in the output folder. Note that a `.csv` file will be generated for basic segmentation statistics (e.g. time of segmentation, annotator information, etc.).
+The module allows users to add, remove, and customize labels for manual segmentation and classification. Interface elements such as combo boxes, drop-down menus, and text fields can be configured based on the specific requirements of the task. Click apply to save the  configuration.
 
-.. image:: _static/images/save_segmentation.png
-   :alt: Save Segmentation
+.. image:: _static/images/label_validation.png
+   :alt: Label Validation
 
-Continue Segmentation
-~~~~~~~~~~~~~~~~~~~~~
+In models utilizing segmentation masks, proper labeling is crucial. Therefore, the label selection and saving process for both segmentation and classification tasks are standardized.
 
-Click in the Case list on the next case you want to segment.
+The user is now ready to start doing segmentation or classification tasks!
 
-.. image:: _static/images/continue_segmentation.png
-   :alt: Continue Segmentation
+User Interface
+-------
+.. image:: _static/images/user_interface.png
+   :alt: User Interface
 
-.. note::
+Once the configuration is complete, one essential step remains before starting: the user must select the volume folder (where imaging data are located) and output folder (where masks, processed data, and other task-related files will be saved). The annotator name, degree and revision step can be added for tracking purposes, with the date and time automatically logged at each case-version save. The Case list facilitates efficient navigation through large datasets. The Classification window displays the configured labels. The Segmentation window centralizes key tools for annotation.
 
-   TODO Next step for User Guide Documentation:
 
-   - Continue from existing output folder: If Continue from existing output folder was selected, a pop-up window takes the user to select the output folder of the results where
-   - Classification Documentation
-   - Assessment Documentation
+Use Cases Versatility
+-------
+.. image:: _static/images/correction.png
+   :alt: Correction
 
-Links
------
+SlicerCART supports loading batches of cases along with their existing segmentation masks. Users can select a specific version (assuming ``_vXX`` is in filename before extension (e.g. ``_v01.nii.gz``), rate each case (quality control) and, if necessary, annotate and correct the masks. Updated versions are saved automatically (e.g. if the original mask is labeled as ``_v02``, the new version becomes ``_v03``). *Limitation: 99 versions per file*.
 
-`GO BACK on Documentation Welcome Page <welcome.md>`_
+Workflow Example
+-------
+.. image:: _static/images/workflow.png
+   :alt: Workflow
 
-`GO BACK to Video Tutorials <videotutorials.md>`_
+When a new output folder is selected, SlicerCART automatically generates a configuration file and worklist files. The configuration file serves as a future reference for resuming the task later—especially useful if SlicerCART has been used for another project with a different setup in the meantime. The worklist can be customized to include or exclude specific cases based on filenames, allowing targeted analysis and streamlined navigation within large datasets. Important: the remaining list must be ≤ than the working list. If the files are incompatible, the user will be prompted to verify them.
 
-`CONTINUE to List of Functionalities <functionalities.md>`_

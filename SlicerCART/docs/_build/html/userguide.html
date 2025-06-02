@@ -46,29 +46,19 @@
         </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
               <ul class="current">
 <li class="toctree-l1"><a class="reference internal" href="installation.html">Installation</a></li>
-<li class="toctree-l1"><a class="reference internal" href="quickstart.html">QuickStart</a></li>
+<li class="toctree-l1"><a class="reference internal" href="quickstart.html">Quick Start</a></li>
 <li class="toctree-l1"><a class="reference internal" href="videotutorials.html">Video Tutorials</a></li>
 <li class="toctree-l1 current"><a class="current reference internal" href="#">User Guide</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="#startup">Startup</a><ul>
-<li class="toctree-l3"><a class="reference internal" href="#new-configuration">New configuration</a></li>
-<li class="toctree-l3"><a class="reference internal" href="#continue-from-existing-output-folder">Continue from existing output folder</a></li>
-<li class="toctree-l3"><a class="reference internal" href="#use-template-configuration">Use template configuration</a></li>
-</ul>
-</li>
-<li class="toctree-l2"><a class="reference internal" href="#id1">New configuration</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#overview">Overview</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#launching">Launching</a><ul>
 <li class="toctree-l3"><a class="reference internal" href="#configure-segmentation">Configure segmentation</a></li>
 <li class="toctree-l3"><a class="reference internal" href="#configure-classification">Configure Classification</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#label-selection-and-validation">Label Selection and Validation</a></li>
 </ul>
 </li>
-<li class="toctree-l2"><a class="reference internal" href="#start-segmentation-and-or-classification">Start Segmentation and/or Classification</a><ul>
-<li class="toctree-l3"><a class="reference internal" href="#select-output-folder">Select Output folder</a></li>
-<li class="toctree-l3"><a class="reference internal" href="#display-volume-to-segment">Display Volume to Segment</a></li>
-<li class="toctree-l3"><a class="reference internal" href="#start-segmentation">Start Segmentation</a></li>
-<li class="toctree-l3"><a class="reference internal" href="#save-segmentation">Save Segmentation</a></li>
-<li class="toctree-l3"><a class="reference internal" href="#continue-segmentation">Continue Segmentation</a></li>
-</ul>
-</li>
-<li class="toctree-l2"><a class="reference internal" href="#links">Links</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#user-interface">User Interface</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#use-cases-versatility">Use Cases Versatility</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#workflow-example">Workflow Example</a></li>
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference internal" href="contributing.html">Developer Guide</a></li>
@@ -100,118 +90,78 @@
              
   <section id="user-guide">
 <h1>User Guide<a class="headerlink" href="#user-guide" title="Link to this heading"></a></h1>
-<p>Detailed information for using SlicerCART in 3D Slicer is provided below.</p>
-<section id="startup">
-<h2>Startup<a class="headerlink" href="#startup" title="Link to this heading"></a></h2>
-<p>When the module is loaded, a pop-up window appears and allows the user to preset the module according to the intended use case.</p>
-<img alt="Select Configuration Popup" src="_images/select_configuration_popup.png" />
-<section id="new-configuration">
-<h3>New configuration<a class="headerlink" href="#new-configuration" title="Link to this heading"></a></h3>
-<p>To select when the module is used for a new task.</p>
+<p>Detailed information for using SlicerCART is provided below.</p>
+<section id="overview">
+<h2>Overview<a class="headerlink" href="#overview" title="Link to this heading"></a></h2>
+<img alt="Overview" src="_images/overview.png" />
+<p>SlicerCART supports efficient multi-subjects imaging data navigation, labeling, and segmentation. This figure shows the module graphical user interface at launching.</p>
 </section>
-<section id="continue-from-existing-output-folder">
-<h3>Continue from existing output folder<a class="headerlink" href="#continue-from-existing-output-folder" title="Link to this heading"></a></h3>
-<p>To select when the module is used for continuing a previously started task.</p>
-</section>
-<section id="use-template-configuration">
-<h3>Use template configuration<a class="headerlink" href="#use-template-configuration" title="Link to this heading"></a></h3>
-<p>To select when the user wants to load its own configuration template in the SlicerCART. WIP</p>
-</section>
-</section>
-<section id="id1">
-<h2>New configuration<a class="headerlink" href="#id1" title="Link to this heading"></a></h2>
-<p>A pop-up windows allow to specify parameters and customize settings.</p>
-<img alt="Select Configuration Module" src="_images/select_configuration_module.png" />
+<section id="launching">
+<h2>Launching<a class="headerlink" href="#launching" title="Link to this heading"></a></h2>
+<img alt="Launching" src="_images/launching.png" />
+<p>When the module is loaded, a pop-up window appears and allows the user to preset the module according to the intended use case. SlicerCART can be configured to accommodate task-specific requirements and user preferences, depending on the intended use. New Configuration allows to define a new project labels and specificities. Continue from existing output folder enables to continue a previously started task. Some configuration examples are illustrated:</p>
 <ul>
 <li><p><strong>Task:</strong> select if the module is used for segmentation, classification or both.</p></li>
 <li><p><strong>Modality:</strong> select if volumes are CT-Scans or MRI</p></li>
-<li><p><strong>Impose BIDS?:</strong> related to folder organization and files naming convention. Select yes if you want to load volumes only if the folder organization respects the Brain Imaging Data Structure (BIDS) format (once a volume folder will be selected, a BIDS validator will be run and a pop-up window will show if the selected folders do not respect BIDS: in that case, the volumes will not be able to load if BIDS is imposed).</p></li>
-<li><p><strong>Input File Extension:</strong> specify the files’ extension. Currently, nifti and nrrd format are accepted only (supported by Slicer). Note that if a dataset (i.e. volume folder) contains both nifti and nrrd volumes, the module will not be able to work (you can choose either one or another but not both).</p></li>
-<li><p><strong>Initial View:</strong> select the plane (axial, sagittal, or coronal) that the 3D Slicer viewer will display. Soon, implementation of viewing the same volume in different planes (e.g. different plane) will be done.</p>
-<p>N.B. In 3D Slicer, each viewer plane has an associated color:
-Red – Axial;
-Yellow – Sagittal;
-Green – Coronal</p>
-</li>
-</ul>
-<img alt="Slicer Viewer Planes" src="_images/slicer_viewer.png" />
+<li><p><strong>Impose BIDS?:</strong> related to folder organization and files naming convention. Select yes if you want to load volumes only if the folder organization respects the <em>Brain Imaging Data Structure</em> (BIDS) format (once a volume folder will be selected, a BIDS validator will be run and a pop-up window will show if the selected folders do not respect BIDS: in that case, the volumes will not load).</p></li>
+<li><p><strong>Input File Extension:</strong> specify the files’ extension. Currently, whether NIfTI or NRRD format is accepted only. Note that if a dataset (i.e. volume folder) contains both nifti and nrrd volumes, the module will not be able to work (you can choose either one or another, but not both).</p></li>
+<li><p><strong>Initial View:</strong> select the view (axial, sagittal, or coronal) that the 3D Slicer viewer will display.</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>In 3D Slicer, each viewer plane has an associated default color:</p>
 <ul class="simple">
+<li><p><strong>Red</strong> – Axial</p></li>
+<li><p><strong>Yellow</strong> – Sagittal</p></li>
+<li><p><strong>Green</strong> – Coronal</p></li>
+</ul>
+</div>
+</li>
 <li><p><strong>Interpolate Image?:</strong> select if loaded volumes from raw MRI data have automated postprocessing treatment to make the image smoother. Note that this is usually automatically done in Slicer: however, for example, deep-learning based models used for segmentation are trained on raw MRI data which may create imprecise ground-truth segmentation masks or compatibility issues. Note also that although if images are interpolated, segmentation masks are by default saved without any smoothing filter (compatible for deep learning model training).</p></li>
 <li><p><strong>If Modality == CT:</strong>
 The Window Level and Window Width default level can be selected, enabling to display a specific default contrast for each volume. Accepts only integers.
 Note that if you have selected CT, but do not want to specify the contrast information, the default volumes will be loaded using a Window Width/Level of 45:85.</p></li>
 <li><p><strong>Use Custom Keyboard Shortcuts?:</strong>
-Select to show a dropdown menu enabling customization of keyboard shortcuts for predefined basic functions. Name of the proposed shortcut corresponds to its action.</p></li>
+Select to show enable customization of keyboard shortcuts for predefined basic functions. Shortcut name corresponds to its action.</p></li>
 <li><p><strong>Use Custom Mouse Shortcuts?:</strong>
-Select to show a dropdown menu enabling customization of mouse button functions for image navigation and manipulation in the 3D Slicer viewer.</p></li>
+Select to show a dropdown menu enabling customization of mouse button functions for mage manipulation in the 3D Slicer viewer.</p></li>
 </ul>
 <section id="configure-segmentation">
 <h3>Configure segmentation<a class="headerlink" href="#configure-segmentation" title="Link to this heading"></a></h3>
-<p>Allows the user to specify the default labels name, value and display colors for each segmentation mask in the dataset. For example, if the task is to do segmentation of brain hemorrhage, intraventricular hemorrhage and peri-hematoma edema, the user can specify the label names (e.g. ICH — for intracranial hemorrhage; IVH — for intraventricular hemorrhage; PHE — perihematomal edema).
-The user can change the number of labels by clicking remove or add.
-Click apply to save the segmentation configuration.</p>
+<p>Allows the user to specify the default labels name, value and display colors
+for each segmentation mask in the dataset. For example, if the task is to do
+segmentation of traumatic spinal cord injury lesions defined by
+intramedullary edema and hemorrhage as distinct segmentation classes, the
+user can specify the label names (e.g. edema — for spinal cord edema;
+hemorrhage — for intramedullary hemorrhage). The user can change the number
+of labels by clicking remove or add (see <a class="reference internal" href="#label-selection-and-validation"><span class="std std-ref">Label Selection and Validation</span></a>).</p>
 </section>
 <section id="configure-classification">
 <h3>Configure Classification<a class="headerlink" href="#configure-classification" title="Link to this heading"></a></h3>
-<p>Allows the user to specify the labels and their value related to classification types, and their selection mode. Click on Apply to save the configuration settings.</p>
-<p>The user is now ready to start doing segmentation, classification or both tasks!</p>
+<p>Allows the user to specify the labels and their value related to classification types, and their selection mode.</p>
+</section>
+<section id="label-selection-and-validation">
+<span id="id1"></span><h3>Label Selection and Validation<a class="headerlink" href="#label-selection-and-validation" title="Link to this heading"></a></h3>
+<img alt="Label Selection" src="_images/label_selection.png" />
+<p>The module allows users to add, remove, and customize labels for manual segmentation and classification. Interface elements such as combo boxes, drop-down menus, and text fields can be configured based on the specific requirements of the task. Click apply to save the  configuration.</p>
+<img alt="Label Validation" src="_images/label_validation.png" />
+<p>In models utilizing segmentation masks, proper labeling is crucial. Therefore, the label selection and saving process for both segmentation and classification tasks are standardized.</p>
+<p>The user is now ready to start doing segmentation or classification tasks!</p>
 </section>
 </section>
-<section id="start-segmentation-and-or-classification">
-<h2>Start Segmentation and/or Classification<a class="headerlink" href="#start-segmentation-and-or-classification" title="Link to this heading"></a></h2>
-<p>Select Volumes folder, and specify annotator information</p>
-<ul class="simple">
-<li><p>Select the folder that contains the images that you want to process (if BIDS folder, will not consider images in derivatives), manipulate, view, etc.</p></li>
-<li><p>Specify the Annotator name, degree and revision step (all are mandatory for saving functions).</p></li>
-</ul>
-<img alt="Folder and Annotator Info" src="_images/folder_and_name_to_use.png" />
-<img alt="Example Loading Cases UI" src="_images/example_loading_cases_ui.png" />
-<p>N.B. If loading cases in the UI fails, please open an issue on the Github repository or ask a team member. If this step has not succeeded, you will not be able to use SlicerCART (e.g. imaging format incompatibility).</p>
-<section id="select-output-folder">
-<h3>Select Output folder<a class="headerlink" href="#select-output-folder" title="Link to this heading"></a></h3>
-<p>Select the folder where output data (e.g. segmentation masks, statistics) will be saved. For now, it must be empty.</p>
-<img alt="Select Output Folder" src="_images/select_output_folder.png" />
+<section id="user-interface">
+<h2>User Interface<a class="headerlink" href="#user-interface" title="Link to this heading"></a></h2>
+<img alt="User Interface" src="_images/user_interface.png" />
+<p>Once the configuration is complete, one essential step remains before starting: the user must select the volume folder (where imaging data are located) and output folder (where masks, processed data, and other task-related files will be saved). The annotator name, degree and revision step can be added for tracking purposes, with the date and time automatically logged at each case-version save. The Case list facilitates efficient navigation through large datasets. The Classification window displays the configured labels. The Segmentation window centralizes key tools for annotation.</p>
 </section>
-<section id="display-volume-to-segment">
-<h3>Display Volume to Segment<a class="headerlink" href="#display-volume-to-segment" title="Link to this heading"></a></h3>
-<p>Click on the case in Case list you want to display and/or perform segmentation, so it will be shown in the Slicer Viewer.</p>
-<img alt="Select Volume to Segment" src="_images/select_volume_to_segment.png" />
+<section id="use-cases-versatility">
+<h2>Use Cases Versatility<a class="headerlink" href="#use-cases-versatility" title="Link to this heading"></a></h2>
+<img alt="Correction" src="_images/correction.png" />
+<p>SlicerCART supports loading batches of cases along with their existing segmentation masks. Users can select a specific version (assuming <code class="docutils literal notranslate"><span class="pre">_vXX</span></code> is in filename before extension (e.g. <code class="docutils literal notranslate"><span class="pre">_v01.nii.gz</span></code>), rate each case (quality control) and, if necessary, annotate and correct the masks. Updated versions are saved automatically (e.g. if the original mask is labeled as <code class="docutils literal notranslate"><span class="pre">_v02</span></code>, the new version becomes <code class="docutils literal notranslate"><span class="pre">_v03</span></code>). <em>Limitation: 99 versions per file</em>.</p>
 </section>
-<section id="start-segmentation">
-<h3>Start Segmentation<a class="headerlink" href="#start-segmentation" title="Link to this heading"></a></h3>
-<p>Click on the case you want to start segmentation by clicking on:</p>
-<ul class="simple">
-<li><p>SegmentEditor: will open the default segment editor of 3D Slicer</p></li>
-<li><p>Paint: will make the user able to paint the <strong>first</strong> mask label</p></li>
-<li><p>Erase: will make the user able to erase current segment label</p></li>
-</ul>
-<img alt="Perform Segmentation" src="_images/perform_segmentation.png" />
-</section>
-<section id="save-segmentation">
-<h3>Save Segmentation<a class="headerlink" href="#save-segmentation" title="Link to this heading"></a></h3>
-<p>Once segmentation is completed, click on Save segmentation to save the segmentation mask in the output folder. Note that a <cite>.csv</cite> file will be generated for basic segmentation statistics (e.g. time of segmentation, annotator information, etc.).</p>
-<img alt="Save Segmentation" src="_images/save_segmentation.png" />
-</section>
-<section id="continue-segmentation">
-<h3>Continue Segmentation<a class="headerlink" href="#continue-segmentation" title="Link to this heading"></a></h3>
-<p>Click in the Case list on the next case you want to segment.</p>
-<img alt="Continue Segmentation" src="_images/continue_segmentation.png" />
-<div class="admonition note">
-<p class="admonition-title">Note</p>
-<p>TODO Next step for User Guide Documentation:</p>
-<ul class="simple">
-<li><p>Continue from existing output folder: If Continue from existing output folder was selected, a pop-up window takes the user to select the output folder of the results where</p></li>
-<li><p>Classification Documentation</p></li>
-<li><p>Assessment Documentation</p></li>
-</ul>
-</div>
-</section>
-</section>
-<section id="links">
-<h2>Links<a class="headerlink" href="#links" title="Link to this heading"></a></h2>
-<p><a class="reference external" href="welcome.md">GO BACK on Documentation Welcome Page</a></p>
-<p><a class="reference external" href="videotutorials.md">GO BACK to Video Tutorials</a></p>
-<p><a class="reference external" href="functionalities.md">CONTINUE to List of Functionalities</a></p>
+<section id="workflow-example">
+<h2>Workflow Example<a class="headerlink" href="#workflow-example" title="Link to this heading"></a></h2>
+<img alt="Workflow" src="_images/workflow.png" />
+<p>When a new output folder is selected, SlicerCART automatically generates a configuration file and worklist files. The configuration file serves as a future reference for resuming the task later—especially useful if SlicerCART has been used for another project with a different setup in the meantime. The worklist can be customized to include or exclude specific cases based on filenames, allowing targeted analysis and streamlined navigation within large datasets. Important: the remaining list must be ≤ than the working list. If the files are incompatible, the user will be prompted to verify them.</p>
 </section>
 </section>
 

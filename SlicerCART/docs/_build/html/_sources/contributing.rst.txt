@@ -8,36 +8,41 @@ Code of Conduct
 
 We are committed to providing a friendly, safe, and welcoming environment for all contributors. Please be respectful and constructive in your interactions.
 
-Getting Started
+Coding Standards
 -------------
 
-1. **Fork the Repository**
-   
-   * Visit `SlicerCART on GitHub <https://github.com/neuropoly/slicercart>`_
-   * Click the "Fork" button
-   * Clone your fork locally
+* Max 80 columns for a single code line
+* This project uses the `PEP8 <https://peps.python.org/pep-0008/>`_ convention for naming. Reminder:
 
-2. **Set Up Development Environment**
-   
+  - ``MyClass`` for naming a **Class**
+  - ``MY_CONSTANT`` for naming a **CONSTANT**
+  - ``my_variable`` for naming a **variable**
+  - ``define_my_function()`` for naming a **function** (always start with an action verb)
+  - Function definition example (add docstrings for explanations):
+
+    .. code-block:: python
+
+       def my_function(arg1):
+           """
+           Add such a descriptive comment at the beginning of each function
+           in order to explain clearly to the next user what the function does. :)
+
+            Args
+                arg1: first argument
+            """
+
+  - Use ``TODO:`` for naming **To Dos** in the code
+  - Add **one blank line** between each function for clarity
+  - **Useful comments** are strongly encouraged
+  - Want to report a feature improvement or bug? Go on `SlicerCART Github
+  <https://github.com/neuropoly/slicer-manual-annotation/issues>`__.
+
+* On Github, 1 issue for 1 Pull Request. Always create a branch.
    .. code-block:: bash
 
-      # Clone your fork
-      git clone https://github.com/YOUR_USERNAME/slicercart.git
-      cd slicercart
+         git checkout -b feature-name
 
-      # Add upstream remote
-      git remote add upstream https://github.com/neuropoly/slicercart.git
 
-      # Install dependencies
-      pip install -r requirements.txt
-
-3. **Create a Branch**
-   
-   .. code-block:: bash
-
-      git checkout -b feature-name
-      # or
-      git checkout -b bugfix-description
 
 Development Workflow
 -----------------
@@ -68,29 +73,6 @@ Development Workflow
    * Describe your changes in detail
    * Link to any related issues
 
-Coding Standards
---------------
-
-1. **Python Style**
-   
-   * Follow PEP 8 guidelines
-   * Use meaningful variable names
-   * Add docstrings to functions and classes
-   * Keep functions focused and concise
-
-2. **Documentation**
-   
-   * Update relevant documentation
-   * Add inline comments for complex logic
-   * Keep README.md up to date
-   * Document new features
-
-3. **Testing**
-   
-   * Write unit tests for new features
-   * Update existing tests as needed
-   * Ensure all tests pass
-
 Pull Request Guidelines
 --------------------
 
@@ -114,28 +96,13 @@ Pull Request Guidelines
    * Make requested changes
    * Keep the discussion constructive
 
-Documentation
------------
 
-1. **Code Documentation**
-   
-   * Add docstrings to all functions
-   * Include type hints
-   * Document parameters and return values
-   * Explain complex algorithms
+Useful links
+----------
 
-2. **User Documentation**
-   
-   * Update user guides
-   * Add examples
-   * Include screenshots
-   * Document new features
+  - `PEP8 style guide official documentation <https://peps.python.org/pep-0008/>`_
+  - `Polytechnique Montreal Home-Made Guide for programming style (in French) <https://github.com/INF1007-Gabarits/Guide-codage-python>`_
 
-3. **Developer Documentation**
-   
-   * Update architecture docs
-   * Document API changes
-   * Add development guides
 
 Getting Help
 ----------

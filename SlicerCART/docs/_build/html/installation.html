@@ -20,7 +20,7 @@
     <script src="_static/js/theme.js"></script>
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
-    <link rel="next" title="QuickStart" href="quickstart.html" />
+    <link rel="next" title="Quick Start" href="quickstart.html" />
     <link rel="prev" title="Welcome to SlicerCART Documentation" href="index.html" /> 
 </head>
 
@@ -47,8 +47,8 @@
               <ul class="current">
 <li class="toctree-l1 current"><a class="current reference internal" href="#">Installation</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="#prerequisites">Prerequisites</a></li>
-<li class="toctree-l2"><a class="reference internal" href="#installation-methods">Installation Methods</a></li>
-<li class="toctree-l2"><a class="reference internal" href="#verifying-installation">Verifying Installation</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#id1">Installation</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#verification">Verification</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#troubleshooting">Troubleshooting</a><ul>
 <li class="toctree-l3"><a class="reference internal" href="#common-issues">Common Issues</a></li>
 <li class="toctree-l3"><a class="reference internal" href="#getting-help">Getting Help</a></li>
@@ -56,7 +56,7 @@
 </li>
 </ul>
 </li>
-<li class="toctree-l1"><a class="reference internal" href="quickstart.html">QuickStart</a></li>
+<li class="toctree-l1"><a class="reference internal" href="quickstart.html">Quick Start</a></li>
 <li class="toctree-l1"><a class="reference internal" href="videotutorials.html">Video Tutorials</a></li>
 <li class="toctree-l1"><a class="reference internal" href="userguide.html">User Guide</a></li>
 <li class="toctree-l1"><a class="reference internal" href="contributing.html">Developer Guide</a></li>
@@ -95,49 +95,78 @@
 <li><p><strong>3D Slicer</strong></p>
 <p>SlicerCART is a module for 3D Slicer. You need to have 3D Slicer installed on your system:</p>
 <ul class="simple">
-<li><p>Download 3D Slicer from the <a class="reference external" href="https://download.slicer.org/">official website</a></p></li>
-<li><p>Install the version appropriate for your operating system</p></li>
+<li><p>Download 3D Slicer from the <a class="reference external" href="https://download.slicer.org/">official website</a> (version 5.6.2 on macOS is recommended)</p></li>
 <li><p>Launch 3D Slicer to verify the installation</p></li>
 </ul>
 </li>
+<li><dl class="simple">
+<dt><strong>Qt</strong></dt><dd><p>The open-source version of Qt can be downloaded from <a class="reference external" href="https://www.qt.io/offline-installers">https://www.qt
+.io/offline-installers</a> (the version under Qt Creator). <strong>Note:</strong> This package is essential for enabling pop-up windows</p>
+</dd>
+</dl>
+</li>
 <li><p><strong>Python Dependencies</strong></p>
-<p>SlicerCART requires several Python packages. These will be installed automatically when you install the module.</p>
+<p>SlicerCART requires several Python packages that will be automatically installed in 3D Slicer python console at module initial launching.</p>
 </li>
 </ol>
 </section>
-<section id="installation-methods">
-<h2>Installation Methods<a class="headerlink" href="#installation-methods" title="Link to this heading"></a></h2>
-<p>There are two ways to install SlicerCART:</p>
+<section id="id1">
+<h2>Installation<a class="headerlink" href="#id1" title="Link to this heading"></a></h2>
 <ol class="arabic">
-<li><p><strong>Using 3D Slicer Extension Manager (Recommended)</strong></p>
+<li><p><strong>Get Access to SlicerCART repository</strong></p>
 <ul class="simple">
-<li><p>Open 3D Slicer</p></li>
-<li><p>Go to View -&gt; Extension Manager</p></li>
-<li><p>Search for “SlicerCART”</p></li>
-<li><p>Click Install</p></li>
-<li><p>Restart 3D Slicer when prompted</p></li>
+<li><p>Download <a class="reference external" href="https://github.com/neuropoly/slicercart/archive/refs/heads/main.zip">SlicerCART repository as a ZIP file</a>, and extract the folder to your choice location</p></li>
 </ul>
-</li>
-<li><p><strong>Manual Installation (For Developers)</strong></p>
-<p>If you want to install from source:</p>
+<p>OR</p>
+<ul>
+<li><p>Clone the repository to the location of your choice:</p>
 <div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><span class="c1"># Clone the repository</span>
 git<span class="w"> </span>clone<span class="w"> </span>https://github.com/neuropoly/slicercart.git
-<span class="nb">cd</span><span class="w"> </span>slicercart
-
-<span class="c1"># Install dependencies</span>
-pip<span class="w"> </span>install<span class="w"> </span>-r<span class="w"> </span>requirements.txt
-
-<span class="c1"># Add the module to 3D Slicer&#39;s module path</span>
-<span class="c1"># Replace with your Slicer installation path</span>
-<span class="nb">export</span><span class="w"> </span><span class="nv">SLICERCART_PATH</span><span class="o">=</span>/path/to/slicercart
-<span class="nb">echo</span><span class="w"> </span><span class="s2">&quot;Add </span><span class="nv">$SLICERCART_PATH</span><span class="s2"> to 3D Slicer&#39;s additional module paths&quot;</span>
 </pre></div>
 </div>
 </li>
+</ul>
+</li>
+<li><p><strong>Get Access to SlicerCART in 3D Slicer</strong></p>
+<ul>
+<li><p>Open 3D Slicer</p></li>
+<li><p>Go to Edit -&gt; Developer -&gt; check Enable developer mode</p>
+<a class="reference internal image-reference" href="_images/developer_mode.png"><img alt="Example Restart" class="align-center" src="_images/developer_mode.png" style="height: 100px;" />
+</a>
+</li>
+<li><p>Go to Edit -&gt; Application Settings</p>
+<blockquote>
+<div><ul>
+<li><p>On MacOS -&gt; Go to the location of the python file <code class="docutils literal notranslate"><span class="pre">SlicerCART.py</span></code> (You should only have one FILE of that name. Note that if you add the path of the FOLDER SlicerCART, it will not work: you MUST add the path of <code class="docutils literal notranslate"><span class="pre">SlicerCART.py</span></code> FILE)</p>
+<img alt="Select Filepath Module" class="align-center" src="_images/module_path_adding.png" />
+<img alt="Select and Restart" class="align-center" src="_images/module_filepath.png" />
+</li>
+</ul>
+</div></blockquote>
+</li>
+<li><p>3D Slicer will ask to Restart: click Ok.</p>
+<blockquote>
+<div><a class="reference internal image-reference" href="_images/example_restart.png"><img alt="Example Restart" class="align-center" src="_images/example_restart.png" style="height: 250px;" />
+</a>
+</div></blockquote>
+</li>
+<li><p>Go to Modules Drop Down -&gt; Examples -&gt; SlicerCART</p>
+<a class="reference internal image-reference" href="_images/example_slicercart.png"><img alt="Example SlicerCART" class="align-center" src="_images/example_slicercart.png" style="height: 400px;" />
+</a>
+</li>
+<li><p>(Optional) Ensure SlicerCART is launched at 3D Slicer startup.</p>
+<ul class="simple">
+<li><p>To do so, go to <cite>Edit -&gt; Application Settings -&gt; Modules -&gt; Default startup module</cite></p></li>
+</ul>
+</li>
+</ul>
+</li>
 </ol>
+<p>N.B. There might be errors in the Python Console: if so, it is highly
+recommended for you to fix them before any further use.</p>
 </section>
-<section id="verifying-installation">
-<h2>Verifying Installation<a class="headerlink" href="#verifying-installation" title="Link to this heading"></a></h2>
+<section id="verification">
+<h2>Verification<a class="headerlink" href="#verification" title="Link to this heading"></a></h2>
 <p>To verify that SlicerCART is installed correctly:</p>
 <ol class="arabic simple">
 <li><p>Launch 3D Slicer</p></li>
@@ -159,17 +188,10 @@ pip<span class="w"> </span>install<span class="w"> </span>-r<span class="w"> </s
 <li><p>Try restarting 3D Slicer</p></li>
 </ul>
 </li>
-<li><p><strong>Missing Dependencies</strong></p>
-<ul class="simple">
-<li><p>Open Python Console in 3D Slicer</p></li>
-<li><p>Try importing required packages</p></li>
-<li><p>Install any missing dependencies</p></li>
-</ul>
-</li>
 <li><p><strong>Version Compatibility</strong></p>
 <ul class="simple">
-<li><p>Ensure you’re using a compatible version of 3D Slicer</p></li>
-<li><p>Check the module’s version requirements</p></li>
+<li><p>Ensure you’re using a compatible version of 3D Slicer (e.g. 5.6.2)</p></li>
+<li><p>Ensure you’re using a compatible operating system (e.g. mac OS)</p></li>
 </ul>
 </li>
 </ol>
@@ -191,7 +213,7 @@ pip<span class="w"> </span>install<span class="w"> </span>-r<span class="w"> </s
           </div>
           <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
         <a href="index.html" class="btn btn-neutral float-left" title="Welcome to SlicerCART Documentation" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
-        <a href="quickstart.html" class="btn btn-neutral float-right" title="QuickStart" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+        <a href="quickstart.html" class="btn btn-neutral float-right" title="Quick Start" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
     </div>
 
   <hr/>
