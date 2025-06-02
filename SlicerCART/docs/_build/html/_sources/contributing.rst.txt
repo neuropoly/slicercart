@@ -45,38 +45,15 @@ Coding Standards
 Core Organization
 -----------------
 
-See Repository Organization (change repository organization for a new page
-with the three from .txt) for the tree or the repository files and folders.
+See :doc:`repository_organization` for the repository files and folders tree structure.
 See :doc:`class_organization` for the class diagrams of the repository scripts.
 
-This documentation was last updated on |today|.
 
-
-in the new page, insert this:
-
-Below is the repository folder tree organization. To regenerate this tree,
-run the following command from the root of the repository:
-
-.. code-block:: bash
-
-   # On macOS/Linux
-   tree -I '_build|__pycache__|*.pyc|.git|.DS_Store' > SlicerCART/docs/repository_tree.txt
-   
-   # On Windows (using PowerShell)
-   Get-ChildItem -Recurse | Where-Object { $_.FullName -notmatch ' (_build|__pycache__|\.pyc|\.git|\.DS_Store)' } | ForEach-Object { $_.FullName.Replace($PWD, '') } | Out-File SlicerCART/docs/repository_tree.txt
-
-
-
-.. literalinclude:: repository_tree.txt
-   :language: text
-
-to here.
-
-For detailed class organization and relationships, see :doc:`class_organization`.
 
 .. toctree::
    :hidden:
 
+   repository_organization
    class_organization
 
 Development Workflow

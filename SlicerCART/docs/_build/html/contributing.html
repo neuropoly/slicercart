@@ -20,7 +20,7 @@
     <script src="_static/js/theme.js"></script>
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
-    <link rel="next" title="Class Organization" href="class_organization.html" />
+    <link rel="next" title="Repository Organization" href="repository_organization.html" />
     <link rel="prev" title="Functionalities" href="functionalities.html" /> 
 </head>
 
@@ -53,6 +53,7 @@
 <li class="toctree-l2"><a class="reference internal" href="#code-of-conduct">Code of Conduct</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#coding-standards">Coding Standards</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#core-organization">Core Organization</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="repository_organization.html">Repository Organization</a></li>
 <li class="toctree-l3"><a class="reference internal" href="class_organization.html">Class Organization</a></li>
 </ul>
 </li>
@@ -135,150 +136,8 @@
 </section>
 <section id="core-organization">
 <h2>Core Organization<a class="headerlink" href="#core-organization" title="Link to this heading"></a></h2>
-<p>See Repository Organization (change repository organization for a new page
-with the three from .txt) for the tree or the repository files and folders.
+<p>See <a class="reference internal" href="repository_organization.html"><span class="doc">Repository Organization</span></a> for the repository files and folders tree structure.
 See <a class="reference internal" href="class_organization.html"><span class="doc">Class Organization</span></a> for the class diagrams of the repository scripts.</p>
-<p>This documentation was last updated on June 02, 2025.</p>
-<p>in the new page, insert this:</p>
-<p>Below is the repository folder tree organization. To regenerate this tree,
-run the following command from the root of the repository:</p>
-<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><span class="c1"># On macOS/Linux</span>
-tree<span class="w"> </span>-I<span class="w"> </span><span class="s1">&#39;_build|__pycache__|*.pyc|.git|.DS_Store&#39;</span><span class="w"> </span>&gt;<span class="w"> </span>SlicerCART/docs/repository_tree.txt
-
-<span class="c1"># On Windows (using PowerShell)</span>
-Get-ChildItem<span class="w"> </span>-Recurse<span class="w"> </span><span class="p">|</span><span class="w"> </span>Where-Object<span class="w"> </span><span class="o">{</span><span class="w"> </span><span class="nv">$_</span>.FullName<span class="w"> </span>-notmatch<span class="w"> </span><span class="s1">&#39; (_build|__pycache__|\.pyc|\.git|\.DS_Store)&#39;</span><span class="w"> </span><span class="o">}</span><span class="w"> </span><span class="p">|</span><span class="w"> </span>ForEach-Object<span class="w"> </span><span class="o">{</span><span class="w"> </span><span class="nv">$_</span>.FullName.Replace<span class="o">(</span><span class="nv">$PWD</span>,<span class="w"> </span><span class="s1">&#39;&#39;</span><span class="o">)</span><span class="w"> </span><span class="o">}</span><span class="w"> </span><span class="p">|</span><span class="w"> </span>Out-File<span class="w"> </span>SlicerCART/docs/repository_tree.txt
-</pre></div>
-</div>
-<div class="highlight-text notranslate"><div class="highlight"><pre><span></span>.
-├── CONTRIBUTING.md
-├── LICENSE
-├── README.md
-├── SlicerCART
-│   ├── docs
-│   │   ├── Makefile
-│   │   ├── SlicerCART.rst
-│   │   ├── _static
-│   │   │   ├── custom.css
-│   │   │   └── images
-│   │   │       ├── classification_example.png
-│   │   │       ├── continue_segmentation.png
-│   │   │       ├── correction.png
-│   │   │       ├── developer_mode.png
-│   │   │       ├── example_loading_cases_ui.png
-│   │   │       ├── example_restart.png
-│   │   │       ├── example_slicercart.png
-│   │   │       ├── folder_and_name_to_use.png
-│   │   │       ├── label_selection.png
-│   │   │       ├── label_validation.png
-│   │   │       ├── launching.png
-│   │   │       ├── module_filepath.png
-│   │   │       ├── module_path_adding.png
-│   │   │       ├── overview.png
-│   │   │       ├── perform_segmentation.png
-│   │   │       ├── save_segmentation.png
-│   │   │       ├── select_configuration_module.png
-│   │   │       ├── select_configuration_popup.png
-│   │   │       ├── select_output_folder.png
-│   │   │       ├── select_volume_to_segment.png
-│   │   │       ├── slicer_viewer.png
-│   │   │       ├── start_segmentation.png
-│   │   │       ├── user_interface.png
-│   │   │       └── workflow.png
-│   │   ├── _templates
-│   │   ├── api
-│   │   │   └── index.rst
-│   │   ├── api_reference
-│   │   │   └── index.rst
-│   │   ├── architecture.rst
-│   │   ├── changelog.rst
-│   │   ├── class_organization.rst
-│   │   ├── conf.py
-│   │   ├── contributing.rst
-│   │   ├── developer_guide
-│   │   │   └── index.rst
-│   │   ├── functionalities.rst
-│   │   ├── index.rst
-│   │   ├── installation.rst
-│   │   ├── make.bat
-│   │   ├── modules.rst
-│   │   ├── purpose.rst
-│   │   ├── quickstart.rst
-│   │   ├── repository_tree.txt
-│   │   ├── requirements.txt
-│   │   ├── scripts.rst
-│   │   ├── user_guide
-│   │   │   ├── configuration.rst
-│   │   │   ├── getting_started.rst
-│   │   │   └── index.rst
-│   │   ├── userguide.rst
-│   │   ├── utils.rst
-│   │   └── videotutorials.rst
-│   ├── documentation
-│   │   ├── functionalities.md
-│   │   ├── images
-│   │   │   ├── continue_segmentation.png
-│   │   │   ├── example_loading_cases_ui.png
-│   │   │   ├── example_restart.png
-│   │   │   ├── example_slicercart.png
-│   │   │   ├── folder_and_name_to_use.png
-│   │   │   ├── module_filepath.png
-│   │   │   ├── module_path_adding.png
-│   │   │   ├── perform_segmentation.png
-│   │   │   ├── save_segmentation.png
-│   │   │   ├── select_configuration_module.png
-│   │   │   ├── select_configuration_popup.png
-│   │   │   ├── select_output_folder.png
-│   │   │   ├── select_volume_to_segment.png
-│   │   │   ├── slicer_viewer.png
-│   │   │   └── start_segmentation.png
-│   │   ├── installation.md
-│   │   ├── purpose.md
-│   │   ├── quickstart.md
-│   │   ├── userguide.md
-│   │   ├── videotutorials.md
-│   │   └── welcome.md
-│   ├── generate_documentation.sh
-│   └── src
-│       ├── CMakeLists.txt
-│       ├── Resources
-│       │   ├── Icons
-│       │   │   └── SlicerCART.png
-│       │   └── UI
-│       │       └── SlicerCART.ui
-│       ├── SlicerCART.py
-│       ├── configuration_config.yml
-│       ├── general
-│       ├── scripts
-│       │   ├── CompareSegmentVersionsWindow.py
-│       │   ├── CustomInteractorStyle.py
-│       │   ├── InteractingClasses.py
-│       │   ├── LoadClassificationWindow.py
-│       │   ├── LoadSegmentationWindow.py
-│       │   ├── OptionalMethods.py
-│       │   ├── ShowSegmentVersionLegendWindow.py
-│       │   ├── SlicerCARTLogic.py
-│       │   ├── SlicerCARTTest.py
-│       │   ├── Timer.py
-│       │   ├── WorkFiles.py
-│       │   └── __init__.py
-│       └── utils
-│           ├── ConfigPath.py
-│           ├── UITheme.py
-│           ├── UserPath.py
-│           ├── __init__.py
-│           ├── constants.py
-│           ├── debugging_helpers.py
-│           ├── development_helpers.py
-│           ├── install_python_packages.py
-│           └── requirements.py
-├── scope_of_development.md
-└── workflow_example.md
-
-19 directories, 105 files
-</pre></div>
-</div>
-<p>to here.</p>
-<p>For detailed class organization and relationships, see <a class="reference internal" href="class_organization.html"><span class="doc">Class Organization</span></a>.</p>
 <div class="toctree-wrapper compound">
 </div>
 </section>
@@ -371,7 +230,7 @@ Get-ChildItem<span class="w"> </span>-Recurse<span class="w"> </span><span class
           </div>
           <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
         <a href="functionalities.html" class="btn btn-neutral float-left" title="Functionalities" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
-        <a href="class_organization.html" class="btn btn-neutral float-right" title="Class Organization" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+        <a href="repository_organization.html" class="btn btn-neutral float-right" title="Repository Organization" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
     </div>
 
   <hr/>
