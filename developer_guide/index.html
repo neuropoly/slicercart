@@ -1,0 +1,179 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Developer Guide &mdash; SlicerCART  documentation</title>
+      <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="../_static/css/theme.css?v=e59714d7" />
+      <link rel="stylesheet" type="text/css" href="../_static/custom.css?v=e08e59c6" />
+
+  
+      <script src="../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../_static/documentation_options.js?v=5929fcd5"></script>
+      <script src="../_static/doctools.js?v=9bcbadda"></script>
+      <script src="../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search"  style="background: #2b2b2b" >
+
+          
+          
+          <a href="../index.html">
+            
+              <img src="../_static/SlicerCART.png" class="logo" alt="Logo"/>
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <ul>
+<li class="toctree-l1"><a class="reference internal" href="../installation.html">Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../quickstart.html">Quick Start</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../videotutorials.html">Video Tutorials</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../userguide.html">User Guide</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../contributing.html">Developer Guide</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu"  style="background: #2b2b2b" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../index.html">SlicerCART</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../index.html" class="icon icon-home" aria-label="Home"></a></li>
+      <li class="breadcrumb-item active">Developer Guide</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="../_sources/developer_guide/index.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="developer-guide">
+<h1>Developer Guide<a class="headerlink" href="#developer-guide" title="Link to this heading"></a></h1>
+<p>This guide provides detailed information for developers who want to contribute to SlicerCART or understand its internal workings.</p>
+<div class="toctree-wrapper compound">
+</div>
+<section id="development-setup">
+<h2>Development Setup<a class="headerlink" href="#development-setup" title="Link to this heading"></a></h2>
+<ol class="arabic">
+<li><p>Clone the repository:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>git<span class="w"> </span>clone<span class="w"> </span>https://github.com/neuropoly/slicercart.git
+<span class="nb">cd</span><span class="w"> </span>slicercart
+</pre></div>
+</div>
+</li>
+<li><p>Install development dependencies:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>pip<span class="w"> </span>install<span class="w"> </span>-r<span class="w"> </span>requirements.txt
+</pre></div>
+</div>
+</li>
+<li><p>Set up 3D Slicer development environment</p></li>
+</ol>
+</section>
+<section id="architecture-overview">
+<h2>Architecture Overview<a class="headerlink" href="#architecture-overview" title="Link to this heading"></a></h2>
+<p>SlicerCART follows a modular architecture with these main components:</p>
+<ul class="simple">
+<li><p><strong>GUI Layer</strong> - User interface components and event handling</p></li>
+<li><p><strong>Business Logic Layer</strong> - Core functionality and data processing</p></li>
+<li><p><strong>Data Layer</strong> - File I/O and data management</p></li>
+<li><p><strong>Integration Layer</strong> - 3D Slicer integration</p></li>
+</ul>
+</section>
+<section id="contributing">
+<h2>Contributing<a class="headerlink" href="#contributing" title="Link to this heading"></a></h2>
+<p>We welcome contributions! Please see our <a class="reference internal" href="../contributing.html"><span class="doc">Developer Guide</span></a> guide for details on:</p>
+<ul class="simple">
+<li><p>Setting up your development environment</p></li>
+<li><p>Coding standards</p></li>
+<li><p>Pull request process</p></li>
+<li><p>Testing requirements</p></li>
+</ul>
+</section>
+<section id="code-organization">
+<h2>Code Organization<a class="headerlink" href="#code-organization" title="Link to this heading"></a></h2>
+<p>The codebase is organized as follows:</p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">src/</span></code> - Main source code</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">utils/</span></code> - Utility functions and helpers</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">scripts/</span></code> - Helper scripts</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">Resources/</span></code> - Icons and other resources</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">documentation/</span></code> - Documentation source files</p></li>
+</ul>
+</section>
+<section id="testing">
+<h2>Testing<a class="headerlink" href="#testing" title="Link to this heading"></a></h2>
+<p>We use various testing approaches:</p>
+<ul class="simple">
+<li><p>Unit tests</p></li>
+<li><p>Integration tests</p></li>
+<li><p>GUI tests</p></li>
+<li><p>Manual testing procedures</p></li>
+</ul>
+</section>
+<section id="documentation">
+<h2>Documentation<a class="headerlink" href="#documentation" title="Link to this heading"></a></h2>
+<p>Documentation is written in reStructuredText and built using Sphinx. See the <span class="xref std std-doc">documentation</span> page for details on:</p>
+<ul class="simple">
+<li><p>Writing documentation</p></li>
+<li><p>Building documentation locally</p></li>
+<li><p>Documentation style guide</p></li>
+</ul>
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2025.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>
