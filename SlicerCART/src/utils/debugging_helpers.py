@@ -60,6 +60,13 @@ class Debug:
             print(statement)
 
     def df_file(self, df, folderpath):
+        """
+        df_file
+
+        Args:
+            df: Description of df.
+            folderpath: Description of folderpath.
+        """
         filename = os.path.join(folderpath, 'debug_df.csv')
         df.to_csv(filename, index=False)
 

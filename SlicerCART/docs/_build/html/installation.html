@@ -1,0 +1,242 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="./">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Installation &mdash; SlicerCART  documentation</title>
+      <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="_static/css/theme.css?v=e59714d7" />
+      <link rel="stylesheet" type="text/css" href="_static/custom.css?v=e08e59c6" />
+
+  
+      <script src="_static/jquery.js?v=5d32c60e"></script>
+      <script src="_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="_static/documentation_options.js?v=5929fcd5"></script>
+      <script src="_static/doctools.js?v=9bcbadda"></script>
+      <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="Quick Start" href="quickstart.html" />
+    <link rel="prev" title="Welcome to SlicerCART Documentation" href="index.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search"  style="background: #2b2b2b" >
+
+          
+          
+          <a href="index.html">
+            
+              <img src="_static/SlicerCART.png" class="logo" alt="Logo"/>
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <ul class="current">
+<li class="toctree-l1 current"><a class="current reference internal" href="#">Installation</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#prerequisites">Prerequisites</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#id1">Installation</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#verification">Verification</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#troubleshooting">Troubleshooting</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#common-issues">Common Issues</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#getting-help">Getting Help</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="quickstart.html">Quick Start</a></li>
+<li class="toctree-l1"><a class="reference internal" href="videotutorials.html">Video Tutorials</a></li>
+<li class="toctree-l1"><a class="reference internal" href="userguide.html">User Guide</a></li>
+<li class="toctree-l1"><a class="reference internal" href="contributing.html">Developer Guide</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu"  style="background: #2b2b2b" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">SlicerCART</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="index.html" class="icon icon-home" aria-label="Home"></a></li>
+      <li class="breadcrumb-item active">Installation</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="_sources/installation.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="installation">
+<h1>Installation<a class="headerlink" href="#installation" title="Link to this heading"></a></h1>
+<p>This guide will help you install SlicerCART and set up your environment.</p>
+<section id="prerequisites">
+<h2>Prerequisites<a class="headerlink" href="#prerequisites" title="Link to this heading"></a></h2>
+<ol class="arabic">
+<li><p><strong>3D Slicer</strong></p>
+<p>SlicerCART is a module for 3D Slicer. You need to have 3D Slicer installed on your system:</p>
+<ul class="simple">
+<li><p>Download 3D Slicer from the <a class="reference external" href="https://download.slicer.org/">official website</a> (version 5.6.2 on macOS is recommended)</p></li>
+<li><p>Launch 3D Slicer to verify the installation</p></li>
+</ul>
+</li>
+<li><dl class="simple">
+<dt><strong>Qt</strong></dt><dd><p>The open-source version of Qt can be downloaded from <a class="reference external" href="https://www.qt.io/offline-installers">https://www.qt
+.io/offline-installers</a> (the version under Qt Creator). <strong>Note:</strong> This package is essential for enabling pop-up windows</p>
+</dd>
+</dl>
+</li>
+<li><p><strong>Python Dependencies</strong></p>
+<p>SlicerCART requires several Python packages that will be automatically installed in 3D Slicer python console at module initial launching.</p>
+</li>
+</ol>
+</section>
+<section id="id1">
+<h2>Installation<a class="headerlink" href="#id1" title="Link to this heading"></a></h2>
+<ol class="arabic">
+<li><p><strong>Get Access to SlicerCART repository</strong></p>
+<ul class="simple">
+<li><p>Download <a class="reference external" href="https://github.com/neuropoly/slicercart/archive/refs/heads/main.zip">SlicerCART repository as a ZIP file</a>, and extract the folder to your choice location</p></li>
+</ul>
+<p>OR</p>
+<ul>
+<li><p>Clone the repository to the location of your choice:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><span class="c1"># Clone the repository</span>
+git<span class="w"> </span>clone<span class="w"> </span>https://github.com/neuropoly/slicercart.git
+</pre></div>
+</div>
+</li>
+</ul>
+</li>
+<li><p><strong>Get Access to SlicerCART in 3D Slicer</strong></p>
+<ul>
+<li><p>Open 3D Slicer</p></li>
+<li><p>Go to Edit -&gt; Developer -&gt; check Enable developer mode</p>
+<a class="reference internal image-reference" href="_images/developer_mode.png"><img alt="Example Restart" class="align-center" src="_images/developer_mode.png" style="height: 100px;" />
+</a>
+</li>
+<li><p>Go to Edit -&gt; Application Settings</p>
+<blockquote>
+<div><ul>
+<li><p>On MacOS -&gt; Go to the location of the python file <code class="docutils literal notranslate"><span class="pre">SlicerCART.py</span></code> (You should only have one FILE of that name. Note that if you add the path of the FOLDER SlicerCART, it will not work: you MUST add the path of <code class="docutils literal notranslate"><span class="pre">SlicerCART.py</span></code> FILE)</p>
+<img alt="Select Filepath Module" class="align-center" src="_images/module_path_adding.png" />
+<img alt="Select and Restart" class="align-center" src="_images/module_filepath.png" />
+</li>
+</ul>
+</div></blockquote>
+</li>
+<li><p>3D Slicer will ask to Restart: click Ok.</p>
+<blockquote>
+<div><a class="reference internal image-reference" href="_images/example_restart.png"><img alt="Example Restart" class="align-center" src="_images/example_restart.png" style="height: 250px;" />
+</a>
+</div></blockquote>
+</li>
+<li><p>Go to Modules Drop Down -&gt; Examples -&gt; SlicerCART</p>
+<a class="reference internal image-reference" href="_images/example_slicercart.png"><img alt="Example SlicerCART" class="align-center" src="_images/example_slicercart.png" style="height: 400px;" />
+</a>
+</li>
+<li><p>(Optional) Ensure SlicerCART is launched at 3D Slicer startup.</p>
+<ul class="simple">
+<li><p>To do so, go to <cite>Edit -&gt; Application Settings -&gt; Modules -&gt; Default startup module</cite></p></li>
+</ul>
+</li>
+</ul>
+</li>
+</ol>
+<p>N.B. There might be errors in the Python Console: if so, it is highly
+recommended for you to fix them before any further use.</p>
+</section>
+<section id="verification">
+<h2>Verification<a class="headerlink" href="#verification" title="Link to this heading"></a></h2>
+<p>To verify that SlicerCART is installed correctly:</p>
+<ol class="arabic simple">
+<li><p>Launch 3D Slicer</p></li>
+<li><p>Go to Modules dropdown menu</p></li>
+<li><p>Look for “SlicerCART” in the list</p></li>
+<li><p>Click on SlicerCART to open the module</p></li>
+<li><p>The module interface should appear in the main panel</p></li>
+</ol>
+</section>
+<section id="troubleshooting">
+<h2>Troubleshooting<a class="headerlink" href="#troubleshooting" title="Link to this heading"></a></h2>
+<section id="common-issues">
+<h3>Common Issues<a class="headerlink" href="#common-issues" title="Link to this heading"></a></h3>
+<ol class="arabic simple">
+<li><p><strong>Module Not Found</strong></p>
+<ul class="simple">
+<li><p>Verify that 3D Slicer is properly installed</p></li>
+<li><p>Check if the module path is correctly set</p></li>
+<li><p>Try restarting 3D Slicer</p></li>
+</ul>
+</li>
+<li><p><strong>Version Compatibility</strong></p>
+<ul class="simple">
+<li><p>Ensure you’re using a compatible version of 3D Slicer (e.g. 5.6.2)</p></li>
+<li><p>Ensure you’re using a compatible operating system (e.g. mac OS)</p></li>
+</ul>
+</li>
+</ol>
+</section>
+<section id="getting-help">
+<h3>Getting Help<a class="headerlink" href="#getting-help" title="Link to this heading"></a></h3>
+<p>If you encounter issues:</p>
+<ul class="simple">
+<li><p>Check our <a class="reference external" href="https://github.com/neuropoly/slicercart/issues">GitHub Issues</a></p></li>
+<li><p>Create a new issue with detailed information about your problem</p></li>
+<li><p>Contact the development team</p></li>
+</ul>
+</section>
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="index.html" class="btn btn-neutral float-left" title="Welcome to SlicerCART Documentation" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="quickstart.html" class="btn btn-neutral float-right" title="Quick Start" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2025.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

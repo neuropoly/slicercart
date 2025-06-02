@@ -1,7 +1,16 @@
 from utils import *
 
 class LoadSegmentationsWindow(qt.QWidget):
+    @enter_function
     def __init__(self, segmenter, segmentationInformation_df, parent=None):
+        """
+        __init__
+
+        Args:
+            segmenter: Description of segmenter.
+            segmentationInformation_df: Description of segmentationInformation_df.
+            parent: Description of parent.
+        """
         super(LoadSegmentationsWindow, self).__init__(parent)
 
         self.segmentationInformation_df = segmentationInformation_df
@@ -84,6 +93,11 @@ class LoadSegmentationsWindow(qt.QWidget):
 
     @enter_function
     def pushLoad(self):
+        """
+        pushLoad
+
+        Args:
+        """
         selected_version = self.versionDropdown.currentText
 
         segmentation_file_extension = ""
@@ -104,4 +118,9 @@ class LoadSegmentationsWindow(qt.QWidget):
 
     @enter_function
     def pushCancel(self):
+        """
+        pushCancel
+
+        Args:
+        """
         self.close()

@@ -12,6 +12,11 @@ class Theme():
 
     @enter_function
     def get_mode(self):
+        """
+        get_mode
+
+        Args:
+        """
         # from qt import QApplication, QPalette
         # Get the current application's instance
         app = QApplication.instance()
@@ -27,6 +32,12 @@ class Theme():
 
     @enter_function
     def set_foreground(self, theme):
+        """
+        set_foreground
+
+        Args:
+            theme: Description of theme.
+        """
         if theme == "dark":
             return 'white'
         if theme == "light":

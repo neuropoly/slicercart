@@ -2,6 +2,14 @@ from utils import *
 
 class CompareSegmentVersionsWindow(qt.QWidget):
     def __init__(self, segmenter, segmentationInformation_df, parent=None):
+        """
+        __init__
+
+        Args:
+            segmenter: Description of segmenter.
+            segmentationInformation_df: Description of segmentationInformation_df.
+            parent: Description of parent.
+        """
         super(CompareSegmentVersionsWindow, self).__init__(parent)
 
         self.segmentationInformation_df = segmentationInformation_df
@@ -103,6 +111,11 @@ class CompareSegmentVersionsWindow(qt.QWidget):
         self.resize(800, 400)
 
     def pushViewSegmentsButton(self):
+        """
+        pushViewSegmentsButton
+
+        Args:
+        """
         selected_label = self.labelDropdown.currentText
         selected_version_file_paths = {}
 
@@ -130,4 +143,9 @@ class CompareSegmentVersionsWindow(qt.QWidget):
         self.close()
 
     def pushCancel(self):
+        """
+        pushCancel
+
+        Args:
+        """
         self.close()
