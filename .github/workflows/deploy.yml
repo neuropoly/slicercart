@@ -10,10 +10,10 @@ jobs:
   deploy:
     runs-on: ubuntu-latest
     steps:
-      - name: Checkout Repo
+      - name: Checkout repository
         uses: actions/checkout@v3
 
-      - name: Copy built HTML
+      - name: Copy built HTML to deployment dir
         run: |
           mkdir public
           cp -r SlicerCART/docs/_build/html/* public/
@@ -24,4 +24,4 @@ jobs:
           github_token: ${{ secrets.GITHUB_TOKEN }}
           publish_dir: ./public
           publish_branch: gh-pages
-          force_orphan: true   # <--- Add this line here
+          force_orphan: true
