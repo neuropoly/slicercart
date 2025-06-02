@@ -18,6 +18,14 @@ import sys
 #             dirs_exist_ok=True
 #         )
 #     )
+from datetime import datetime
+today = datetime.today().strftime('%B %d, %Y')  # e.g., "June 01, 2025"
+
+# Add substitution for use in .rst files
+rst_prolog = f"""
+.. |today| replace:: {today}
+"""
+
 
 sys.path.insert(0, os.path.abspath('../src'))
 

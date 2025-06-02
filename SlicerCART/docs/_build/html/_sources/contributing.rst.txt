@@ -40,9 +40,40 @@ Coding Standards
 * On Github, 1 issue for 1 Pull Request. Always create a branch.
    .. code-block:: bash
 
-         git checkout -b feature-name
+         git checkout -b 'feature-name'
+
+Core Organization
+-----------------
+
+See Repository Organization for the tree or the repository files and folders.
+See :doc:`class_organization` for the class diagrams of the repository scripts.
+
+This documentation was last updated on |today|.
 
 
+Below is the repository folder tree organization. To regenerate this tree,
+run the following command from the root of the repository:
+
+.. code-block:: bash
+
+   # On macOS/Linux
+   tree -I '_build|__pycache__|*.pyc|.git|.DS_Store' > SlicerCART/docs/repository_tree.txt
+   
+   # On Windows (using PowerShell)
+   Get-ChildItem -Recurse | Where-Object { $_.FullName -notmatch ' (_build|__pycache__|\.pyc|\.git|\.DS_Store)' } | ForEach-Object { $_.FullName.Replace($PWD, '') } | Out-File SlicerCART/docs/repository_tree.txt
+
+
+
+.. literalinclude:: repository_tree.txt
+   :language: text
+
+
+For detailed class organization and relationships, see :doc:`class_organization`.
+
+.. toctree::
+   :hidden:
+
+   class_organization
 
 Development Workflow
 -----------------

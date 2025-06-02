@@ -1,0 +1,126 @@
+.
+├── CONTRIBUTING.md
+├── LICENSE
+├── README.md
+├── SlicerCART
+│   ├── docs
+│   │   ├── Makefile
+│   │   ├── SlicerCART.rst
+│   │   ├── _static
+│   │   │   ├── custom.css
+│   │   │   └── images
+│   │   │       ├── classification_example.png
+│   │   │       ├── continue_segmentation.png
+│   │   │       ├── correction.png
+│   │   │       ├── developer_mode.png
+│   │   │       ├── example_loading_cases_ui.png
+│   │   │       ├── example_restart.png
+│   │   │       ├── example_slicercart.png
+│   │   │       ├── folder_and_name_to_use.png
+│   │   │       ├── label_selection.png
+│   │   │       ├── label_validation.png
+│   │   │       ├── launching.png
+│   │   │       ├── module_filepath.png
+│   │   │       ├── module_path_adding.png
+│   │   │       ├── overview.png
+│   │   │       ├── perform_segmentation.png
+│   │   │       ├── save_segmentation.png
+│   │   │       ├── select_configuration_module.png
+│   │   │       ├── select_configuration_popup.png
+│   │   │       ├── select_output_folder.png
+│   │   │       ├── select_volume_to_segment.png
+│   │   │       ├── slicer_viewer.png
+│   │   │       ├── start_segmentation.png
+│   │   │       ├── user_interface.png
+│   │   │       └── workflow.png
+│   │   ├── _templates
+│   │   ├── api
+│   │   │   └── index.rst
+│   │   ├── api_reference
+│   │   │   └── index.rst
+│   │   ├── architecture.rst
+│   │   ├── changelog.rst
+│   │   ├── class_organization.rst
+│   │   ├── conf.py
+│   │   ├── contributing.rst
+│   │   ├── developer_guide
+│   │   │   └── index.rst
+│   │   ├── functionalities.rst
+│   │   ├── index.rst
+│   │   ├── installation.rst
+│   │   ├── make.bat
+│   │   ├── modules.rst
+│   │   ├── purpose.rst
+│   │   ├── quickstart.rst
+│   │   ├── repository_tree.txt
+│   │   ├── requirements.txt
+│   │   ├── scripts.rst
+│   │   ├── user_guide
+│   │   │   ├── configuration.rst
+│   │   │   ├── getting_started.rst
+│   │   │   └── index.rst
+│   │   ├── userguide.rst
+│   │   ├── utils.rst
+│   │   └── videotutorials.rst
+│   ├── documentation
+│   │   ├── functionalities.md
+│   │   ├── images
+│   │   │   ├── continue_segmentation.png
+│   │   │   ├── example_loading_cases_ui.png
+│   │   │   ├── example_restart.png
+│   │   │   ├── example_slicercart.png
+│   │   │   ├── folder_and_name_to_use.png
+│   │   │   ├── module_filepath.png
+│   │   │   ├── module_path_adding.png
+│   │   │   ├── perform_segmentation.png
+│   │   │   ├── save_segmentation.png
+│   │   │   ├── select_configuration_module.png
+│   │   │   ├── select_configuration_popup.png
+│   │   │   ├── select_output_folder.png
+│   │   │   ├── select_volume_to_segment.png
+│   │   │   ├── slicer_viewer.png
+│   │   │   └── start_segmentation.png
+│   │   ├── installation.md
+│   │   ├── purpose.md
+│   │   ├── quickstart.md
+│   │   ├── userguide.md
+│   │   ├── videotutorials.md
+│   │   └── welcome.md
+│   ├── generate_documentation.sh
+│   └── src
+│       ├── CMakeLists.txt
+│       ├── Resources
+│       │   ├── Icons
+│       │   │   └── SlicerCART.png
+│       │   └── UI
+│       │       └── SlicerCART.ui
+│       ├── SlicerCART.py
+│       ├── configuration_config.yml
+│       ├── general
+│       ├── scripts
+│       │   ├── CompareSegmentVersionsWindow.py
+│       │   ├── CustomInteractorStyle.py
+│       │   ├── InteractingClasses.py
+│       │   ├── LoadClassificationWindow.py
+│       │   ├── LoadSegmentationWindow.py
+│       │   ├── OptionalMethods.py
+│       │   ├── ShowSegmentVersionLegendWindow.py
+│       │   ├── SlicerCARTLogic.py
+│       │   ├── SlicerCARTTest.py
+│       │   ├── Timer.py
+│       │   ├── WorkFiles.py
+│       │   └── __init__.py
+│       └── utils
+│           ├── ConfigPath.py
+│           ├── UITheme.py
+│           ├── UserPath.py
+│           ├── __init__.py
+│           ├── constants.py
+│           ├── debugging_helpers.py
+│           ├── development_helpers.py
+│           ├── install_python_packages.py
+│           └── requirements.py
+├── scope_of_development.md
+└── workflow_example.md
+
+19 directories, 105 files
