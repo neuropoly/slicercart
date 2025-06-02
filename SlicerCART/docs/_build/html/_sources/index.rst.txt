@@ -55,7 +55,8 @@ Other Resources
 License
 -----------
 
-SlicerCART is distributed under the terms of the MIT License. See `License <../LICENSE.md>`_ for details.
+SlicerCART is distributed under the terms of the MIT License. See `License <https://github.com/neuropoly/slicercart/blob/main/LICENSE>`_ for details.
+
 
 
 
