@@ -1,6 +1,7 @@
 Functionalities
 ==========================
-
+mettre la description de tous les buttons connect dans slicercart dans cet
+onglet ex par classe
 This section lists the functionalities of SlicerCART. If the function you
 are looking for is not found below, it is likely that SlicerCART does not have
 yet
