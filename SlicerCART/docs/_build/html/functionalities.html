@@ -89,105 +89,94 @@
              
   <section id="functionalities">
 <h1>Functionalities<a class="headerlink" href="#functionalities" title="Link to this heading"></a></h1>
-<p>mettre la description de tous les buttons connect dans slicercart dans cet
-onglet ex par classe
-This section lists the functionalities of SlicerCART. If the function you
+<p>This section lists the functionalities of SlicerCART. If the function you
 are looking for is not found below, it is likely that SlicerCART does not have
-yet
-this feature: you are invited to open an issue on the <a class="reference external" href="https://github.com/neuropoly/slicer-manual-annotation/issues">Github Repository</a> to
+yet this feature: you are invited to open an issue on the <a class="reference external" href="https://github.com/neuropoly/slicer-manual-annotation/issues">Github Repository</a> to
 request the functionality you are looking for.</p>
-<p><strong>Specific functions (in details)</strong></p>
+<p><strong>Details:</strong></p>
 <p>This module has been adapted to perform several tasks. Among other things, it allows the user to:</p>
-<ul>
-<li><p>Customize configuration preferences for optimizing workflow for
-segmentation or classification tasks, including:</p>
+<ul class="simple">
+<li><p>Customize configuration preferences for project-specific segmentation or classification tasks, including:</p>
 <ul>
 <li><p>Task Selection (Segmentation and/or Classification)</p></li>
-<li><p>Modality to be viewed/process/annotated (CT or MRI)
-- (Must be one or the other for now. Does not currently take DICOM images)</p></li>
-<li><p>Brain Imaging Data Structure (BIDS) format imposition (test quickly if a
-dataset respects the BIDS convention through a BIDS-validator script:
+<li><p>Modality to be viewed/process/annotated (CT or MRI) [Must be one or the other for now. Does not currently take DICOM images.]</p></li>
+<li><p><em>Brain Imaging Data Structure</em> (BIDS) format imposition (test quickly if a dataset respects the BIDS convention through a BIDS-validator script:
 makes unable to load a dataset if it does not respect BIDS format)</p></li>
-<li><p>View to be displayed by default in the Slicer viewer (e.g.
-axial, sagittal, etc.)</p></li>
+<li><p>View to display by default in the viewer (e.g. axial, sagittal, etc.) [only one at the time]</p></li>
 <li><p>Interpolation of images (by default, Slicer images that are displayed
-get “interpolated” (i.e. smoother): with SlicerCART, you can select this
-option that can be relevant for segmentation tasks)</p></li>
-<li><p>For CT-Scans:
-- Specify the range of Hounsfield units for which a segmentation mask</p>
-<blockquote>
-<div><p>will be feasible (e.g. 45 to 90): otherwise, segmentation mask will
-not be created.</p>
-</div></blockquote>
+get “interpolated” (i.e. smoother): with SlicerCART, you can toggle through this option)</p></li>
+<li><p>For CT-Scans:</p>
+<ul>
+<li><p>Specify the range of Hounsfield units for which a segmentation mask will be feasible (e.g. 45 to 90): otherwise, segmentation mask will not be created.</p></li>
+</ul>
 </li>
 <li><p>Customize keyboard shortcuts</p></li>
 <li><p>Customize mouse button functions</p></li>
-<li><p>Configure from the GUI the segmentation labels,
+<li><p>Configure from the user interface the segmentation labels,
 including:</p>
-<ul class="simple">
+<ul>
 <li><p>Label name</p></li>
 <li><p>Label value</p></li>
 <li><p>Color</p></li>
-<li><p>Adding/Removal of labels</p></li>
+<li><p>Adding/Removal of labels (at least one is required for proper use)</p></li>
 </ul>
 </li>
 <li><p>Select if timer should be displayed during segmentation task</p></li>
 <li><p>Configure from the GUI the classification labels,
 including adding/Removal of:</p>
-<ul class="simple">
+<ul>
 <li><p>Labels</p></li>
 <li><p>Checkbox</p></li>
-<li><p>DropDown Menu with choice selection</p></li>
+<li><p>DropDown Menu (options)</p></li>
 <li><p>Text field</p></li>
 </ul>
 </li>
-<li><p>(Specify to save all segments to one file or multiple files) TO DO</p></li>
 </ul>
 </li>
 <li><p>Identify the name, degree and revision step related to the human annotator</p></li>
-<li><p>Select folder of interest where volumes are saved (and possibly impose BIDS)
-- Displays automatically the PATH of the loaded volume</p></li>
+<li><p>Select folder of interest where volumes are saved</p>
+<ul>
+<li><p>Display automatically the PATH of the loaded volume</p></li>
+</ul>
+</li>
 <li><p>Select the output folder where processing and work is preferred to be saved</p></li>
-<li><p>(Select a ground-truth folder where references studies can be used for
-iterative self-assessment) TO COME</p></li>
-<li><p>Display in the GUI a case list of all the studies of interests for the segmentation task (<a href="#id1"><span class="problematic" id="id2">*</span></a>from a site directory or a customized list)</p></li>
-<li><p>Select from the GUI case list any volume of interest to display</p></li>
+<li><p>Display in the user interface a case list of all the studies of interests for the segmentation task (from a site directory or a customized list)</p></li>
+<li><p>Select from the case list any volume of interest to display</p></li>
 <li><p>Navigate through case list from next and previous buttons</p></li>
-<li><p>(Load automatically the first remaining case for segmentation in a
-customized list) TO COME</p></li>
+<li><p>Load automatically the first remaining case for segmentation in a customized list</p></li>
 <li><p>Create automatically all required segments that may be used according to the project configuration each time a volume is displayed</p></li>
-<li><p>From the Segmentation window:</p>
-<ul class="simple">
-<li><p>Open quickly the Segment Editor</p></li>
-<li><p>Start Painting for the first label</p></li>
-<li><p>Erase any part of visible masks</p></li>
-<li><p>Select Lasso Paint (fills the space of a contour-based geometrical
-annotation)</p></li>
-<li><p>(Place a measurement line) TO COMPLETE</p></li>
-</ul>
-</li>
-<li><p>Toggle interpolation of the volume loaded</p></li>
-<li><p>Execute multiple automated functions when saving segmentation masks for a given volume. Indeed, the automated functions:</p>
-<ul class="simple">
-<li><p>Save segmentation masks in the selected output folder with volume file hierarchy</p></li>
-<li><p>Track the different versions (save the following version if previous version(s) already exist(s)) <strong>N.B. limitation to 99 versions for a single volume</strong></p></li>
-<li><p>Save a .csv file with segmentation statistics (e.g. subject, annotator’s name and degree, revision step, date and time, total duration, duration of each label annotation)</p></li>
+<li><p>From the Classification window:</p>
+<ul>
+<li><p>Perform classification tasks e.g. checkbox, dropdown menu, textbox</p></li>
+<li><p>Check and load a specific classification labels version for a given volume</p></li>
 <li><p>Save a .csv file with classification statistics (e.g. subject, annotator’s name and degree, revision step, date and time, checkboxes / dropdown / free text fields)</p></li>
-<li><p>(Go to the next remaining case and make it ready to segment without any
-further action) TO COME</p></li>
+<li><p>Go automatically to the next case in the UI</p></li>
 </ul>
 </li>
-<li><p>Load a pre-existing segmentation for further modification (will be saved as a new version of the segmentation)</p></li>
-<li><p>Compare different versions of segmentation TO COMPLETE
-- Specify versions to be loaded at the same time
-- Display multiple versions of segmentation masks at the same time
-- Modify specific segments of different versions
-- Save all segments displayed ± modified on the viewer as a version += 1</p>
-<blockquote>
-<div><p>of segments in the output folder</p>
-</div></blockquote>
+<li><p>From the Segmentation window:</p>
+<ul>
+<li><p>Open directly the Segment Editor</p></li>
+<li><p>Select the active segment to edit</p></li>
+<li><p>Start Painting</p></li>
+<li><p>Erase any part of visible masks</p></li>
+<li><p>Select Lasso Paint (fills the space of a contour-based geometrical annotation)</p></li>
+<li><p>Place a measurement line</p></li>
+<li><p>Load the latest available segmentation mask versions available</p></li>
+<li><p>Execute multiple automated functions when saving segmentation masks for a given volume. Indeed, the automated functions:</p>
+<ul>
+<li><p>Save segmentation masks in the selected output folder with volume file hierarchy</p></li>
+<li><p>Track the different versions (save the following version if previous version(s) already exist(s)) <em>N.B. limitation to 99 versions for a single volume</em></p></li>
+<li><p>Save a .csv file with segmentation statistics (e.g. subject, annotator’s name and degree, revision step, date and time, total duration, duration of each label annotation)</p></li>
+<li><p>Go to the next remaining case and make it ready to segment without any further action</p></li>
+</ul>
+</li>
+<li><p>Load a pre-existing segmentation for further modification (will be saved as a new version)</p></li>
+</ul>
 </li>
 </ul>
+<p>See <a class="reference internal" href="repository_organization.html"><span class="doc">Repository Organization</span></a> for the repository files and folders tree structure.</p>
+<p>See <a class="reference internal" href="class_organization.html"><span class="doc">Class Organization</span></a> for the class diagrams of the repository scripts.</p>
+<p>This documentation was last updated on June 02, 2025.</p>
 </section>
 
 

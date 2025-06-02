@@ -9,6 +9,8 @@
 │   │   ├── _static
 │   │   │   ├── custom.css
 │   │   │   └── images
+│   │   │       ├── class_diagram.png
+│   │   │       ├── class_diagram.svg
 │   │   │       ├── classification_example.png
 │   │   │       ├── continue_segmentation.png
 │   │   │       ├── correction.png
@@ -41,6 +43,7 @@
 │   │   ├── architecture.rst
 │   │   ├── changelog.rst
 │   │   ├── class_organization.rst
+│   │   ├── combine_dot_files.rst
 │   │   ├── conf.py
 │   │   ├── contributing.rst
 │   │   ├── developer_guide
@@ -52,6 +55,7 @@
 │   │   ├── modules.rst
 │   │   ├── purpose.rst
 │   │   ├── quickstart.rst
+│   │   ├── repository_organization.rst
 │   │   ├── repository_tree.txt
 │   │   ├── requirements.txt
 │   │   ├── scripts.rst
@@ -95,8 +99,14 @@
 │       │   └── UI
 │       │       └── SlicerCART.ui
 │       ├── SlicerCART.py
+│       ├── classes_Scripts.dot
+│       ├── classes_SlicerCART.dot
+│       ├── classes_Utils.dot
+│       ├── combine_dot_files.py
 │       ├── configuration_config.yml
 │       ├── general
+│       ├── packages_Scripts.dot
+│       ├── packages_Utils.dot
 │       ├── scripts
 │       │   ├── CompareSegmentVersionsWindow.py
 │       │   ├── CustomInteractorStyle.py
@@ -123,4 +133,4 @@
 ├── scope_of_development.md
 └── workflow_example.md
 
-19 directories, 105 files
+19 directories, 115 files

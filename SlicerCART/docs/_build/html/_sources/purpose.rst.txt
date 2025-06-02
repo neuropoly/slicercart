@@ -1,12 +1,15 @@
 Purpose
 ==================
 
-This section explains the rationale behind SlicerCART and its purpose.
+This section explains the rationale behind SlicerCART.
 
 **Rationale:**
 
-- Manual segmentation and classification tasks are required in the research setting related to medical imaging artificial intelligence tool development
-- An open-source solution for such tasks would better benefit the research setting
-- Actual open-source solutions that enable imaging viewing and annotation are not optimal from an end-user standpoint (especially from various background), increasing the already high burden of manual segmentation and classification tasks
-- A workflow aimed to efficiently navigate through a dataset while performing manual segmentation / correction, including revision steps and robust annotation consistency assessment is crucial for handling large amount of data and provide the best ground-truth references segmentation as possible.
+- Curating large, high-quality datasets is a resource-intensive foundation critical to developing artificial intelligence models that deliver high performance. However, many commonly used open-source solutions do not offer a way to easily navigate through a list of cases, perform version control or customize the annotation workflow to specific tasks. Some software suffer from complex installation processes and lack intuitive image visualization features.
+
+- To address these challenges, SlicerCART—*Slicer Configurable Annotation Review Tool*—was developed as a solution to lower the barrier to dataset creation.
+
+- This Slicer module provides a time-efficient, open-source platform for manual segmentation and classification across large datasets, with tools for quality control and structured data output.
+
+- Moreover, when performing quality control of existing segmentation (whether manual or automatic), it would be great to have the possibility to directly modify the existing segments and get a new corrected versions, efficiently. Only few existing open-source solutions may offer yet this option, except SlicerCART.
 

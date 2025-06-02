@@ -34,8 +34,7 @@ Coding Standards
   - Use ``TODO:`` for naming **To Dos** in the code
   - Add **one blank line** between each function for clarity
   - **Useful comments** are strongly encouraged
-  - Want to report a feature improvement or bug? Go on `SlicerCART Github
-  <https://github.com/neuropoly/slicer-manual-annotation/issues>`__.
+  - Want to report a feature improvement or bug? Go on `SlicerCART Github <https://github.com/neuropoly/slicer-manual-annotation/issues>`__.
 
 * On Github, 1 issue for 1 Pull Request. Always create a branch.
    .. code-block:: bash
@@ -46,6 +45,7 @@ Core Organization
 -----------------
 
 See :doc:`repository_organization` for the repository files and folders tree structure.
+
 See :doc:`class_organization` for the class diagrams of the repository scripts.
 
 
