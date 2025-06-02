@@ -45,11 +45,14 @@ Coding Standards
 Core Organization
 -----------------
 
-See Repository Organization for the tree or the repository files and folders.
+See Repository Organization (change repository organization for a new page
+with the three from .txt) for the tree or the repository files and folders.
 See :doc:`class_organization` for the class diagrams of the repository scripts.
 
 This documentation was last updated on |today|.
 
+
+in the new page, insert this:
 
 Below is the repository folder tree organization. To regenerate this tree,
 run the following command from the root of the repository:
@@ -67,6 +70,7 @@ run the following command from the root of the repository:
 .. literalinclude:: repository_tree.txt
    :language: text
 
+to here.
 
 For detailed class organization and relationships, see :doc:`class_organization`.
 

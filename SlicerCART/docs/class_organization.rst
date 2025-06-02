@@ -22,6 +22,6 @@ the repository:
 
 This will create a new class diagram in the `docs/_static/images` directory. The options used are:
 
-.. image:: _static/images/classes.png
+.. image:: _static/images/class_diagram.png
    :alt: Class Organization Diagram
    :width: 100%
