@@ -1,0 +1,26 @@
+name: Deploy Docs to GitHub Pages
+
+on:
+  push:
+    branches: [main]  # or your default branch name
+    paths:
+      - 'SlicerCART/docs/_build/html/**'
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Repo
+        uses: actions/checkout@v3
+
+      - name: Copy built HTML
+        run: |
+          mkdir public
+          cp -r SlicerCART/docs/_build/html/* public/
+
+      - name: Deploy to GitHub Pages
+        uses: peaceiris/actions-gh-pages@v3
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          publish_dir: ./public
+          publish_branch: gh-pages
