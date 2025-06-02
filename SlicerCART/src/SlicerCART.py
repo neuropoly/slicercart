@@ -245,7 +245,6 @@ class SlicerCARTWidget(ScriptedLoadableModuleWidget, VTKObservationMixin):
         self.disablePauseTimerButton()
         self.disableSegmentAndPaintButtons()
         self.ui.pushButton_Interpolate.setEnabled(False)
-        print('CongiPath interpoalte initila', ConfigPath.INTERPOLATE_VALUE)
         self.adjust_interpolate_button_color(ConfigPath.INTERPOLATE_VALUE)
         self.ui.SaveSegmentationButton.setEnabled(False)
 
@@ -1153,13 +1152,8 @@ class SlicerCARTWidget(ScriptedLoadableModuleWidget, VTKObservationMixin):
         Args:.
         """
 
-        # global INTERPOLATE_VALUE
-        # INTERPOLATE_VALUE = 1 - INTERPOLATE_VALUE  # toggle
-        # INTERPOLATE_VALUE = 1 - ConfigPath.INTERPOLATE_VALUE
-        print('interpolate value before', ConfigPath.INTERPOLATE_VALUE)
         INTERPOLATE_VALUE = not ConfigPath.INTERPOLATE_VALUE
         ConfigPath.set_interpolate_value(INTERPOLATE_VALUE)
-        print('interpolate value after', ConfigPath.INTERPOLATE_VALUE)
 
         self.adjust_interpolate_button_color(INTERPOLATE_VALUE)
         self.VolumeNode.GetDisplayNode().SetInterpolate(INTERPOLATE_VALUE)
