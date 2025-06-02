@@ -72,7 +72,7 @@ freetextboxes:
   other_comments: Comments
 impose_bids_format: false
 input_filetype: '*.nii.gz'
-interpolate_value: true
+interpolate_value: false
 is_classification_requested: true
 is_display_timer_requested: false
 is_keyboard_shortcuts_requested: true

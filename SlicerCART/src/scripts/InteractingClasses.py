@@ -775,8 +775,6 @@ class SlicerCARTConfigurationSetupWindow(qt.QWidget):
         self.config_yaml['KEYBOARD_SHORTCUTS'][6][
             'shortcut'] = self.interpolate_ks_selected
 
-        print('interpolate state', self.config_yaml['interpolate_value'])
-
         ConfigPath.write_config_file()
         self.config_yaml = ConfigPath.open_project_config_file()
 
