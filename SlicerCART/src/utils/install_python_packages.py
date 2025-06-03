@@ -1,3 +1,5 @@
+import os
+import slicer
 
 # TODO: There is probably a more elegant way to install pacakages through the
 #  extension manager when the user installs the extension.
