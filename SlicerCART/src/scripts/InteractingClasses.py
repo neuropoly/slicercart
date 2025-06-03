@@ -144,6 +144,22 @@ class SlicerCARTConfigurationSetupWindow(qt.QWidget):
 
         layout.addLayout(interpolate_hbox)
 
+        # Add default activation of keep working list mode
+        keep_working_list_hbox = qt.QHBoxLayout()
+
+        self.keep_working_list_label = qt.QLabel()
+        self.keep_working_list_label.setText('Keep working list? ')
+        self.keep_working_list_label.setStyleSheet("font-weight: bold")
+        keep_working_list_hbox.addWidget(self.keep_working_list_label)
+
+        self.keep_working_list_combobox = qt.QComboBox()
+        self.keep_working_list_combobox.addItem('No')
+        self.keep_working_list_combobox.addItem('Yes')
+
+        keep_working_list_hbox.addWidget(self.keep_working_list_combobox)
+
+        layout.addLayout(keep_working_list_hbox)
+
         ct_window_level_hbox = qt.QHBoxLayout()
 
         self.ct_window_level_label = qt.QLabel()
@@ -386,6 +402,8 @@ class SlicerCARTConfigurationSetupWindow(qt.QWidget):
             self.update_initial_view)
         self.interpolate_combobox.currentIndexChanged.connect(
             self.update_interpolate)
+        self.keep_working_list_combobox.currentIndexChanged.connect(
+            self.update_keep_working_list)
         self.ct_window_level_line_edit.textChanged.connect(
             self.update_ct_window_level)
         self.ct_window_width_line_edit.textChanged.connect(
@@ -436,6 +454,7 @@ class SlicerCARTConfigurationSetupWindow(qt.QWidget):
             self.file_extension_combobox.setCurrentIndex(1)
 
         self.interpolate_combobox.setCurrentIndex(self.interpolate_selected)
+        self.keep_working_list_combobox.setCurrentIndex(self.keep_working_list_selected)
 
         self.segmentation_task_checkbox.setChecked(self.segmentation_selected)
         self.classification_task_checkbox.setChecked(
@@ -482,6 +501,7 @@ class SlicerCARTConfigurationSetupWindow(qt.QWidget):
             self.initial_view_selected = 'Green (coronal)'
 
         self.interpolate_selected = self.config_yaml['interpolate_value']
+        self.keep_working_list_selected = self.config_yaml['keep_working_list']
 
         self.toggle_fill_ks_selected = \
             self.config_yaml['KEYBOARD_SHORTCUTS'][0]['shortcut']
@@ -662,6 +682,19 @@ class SlicerCARTConfigurationSetupWindow(qt.QWidget):
             self.interpolate_selected = False
 
     @enter_function
+    def update_keep_working_list(self):
+        """
+        update_keep_working_list
+
+        Args:
+        """
+        if self.keep_working_list_combobox.currentText == 'Yes':
+            self.keep_working_list_selected = True
+        else:
+            self.keep_working_list_selected = False
+
+
+    @enter_function
     def update_initial_view(self):
         """
         update_initial_view
@@ -782,6 +815,9 @@ class SlicerCARTConfigurationSetupWindow(qt.QWidget):
         self.config_yaml['input_filetype'] = self.file_extension_selected
 
         self.config_yaml['interpolate_value'] = self.interpolate_selected
+        self.config_yaml['keep_working_list'] = self.keep_working_list_selected
+        print('before setting the keep workig-list',
+              self.keep_working_list_selected)
 
         if 'Red' in self.initial_view_selected:
             self.config_yaml['slice_view_color'] = 'Red'
