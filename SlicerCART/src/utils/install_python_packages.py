@@ -1,9 +1,9 @@
-import os
-import slicer
-
 # TODO: There is probably a more elegant way to install pacakages through the
 #  extension manager when the user installs the extension.
 # TODO: check if the package installed with error
+
+import qt ### temp fix for qt issue IV
+import slicer ### temp fix for qt issue IV
 
 # Dictionary of required python packages and their import names
 REQUIRED_PYTHON_PACKAGES = {
