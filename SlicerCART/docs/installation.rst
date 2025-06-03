@@ -49,9 +49,11 @@ Installation
         :align: center
         :height: 100px
 
-   * Go to Edit -> Application Settings
+   * Go to Edit -> Application Settings -> Modules
 
-        * On MacOS -> Go to the location of the python file ``SlicerCART.py`` (You should only have one FILE of that name. Note that if you add the path of the FOLDER SlicerCART, it will not work: you MUST add the path of ``SlicerCART.py`` FILE)
+        * Go to the location of the python file ``<PATH_TO_REPOSITORY>/slicercart/SlicerCART/src/SlicerCART.py``
+
+        * Drag/Drop the file ``SlicerCART.py`` in the `Additional module paths` list.
 
           .. image:: _static/images/module_path_adding.png
              :alt: Select Filepath Module
