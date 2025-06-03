@@ -63,7 +63,7 @@ Installation
              :alt: Select and Restart
              :align: center
 
-   * 3D Slicer will ask to Restart: click Ok.
+   * Click "OK". 3D Slicer will ask to Restart: click "Yes".
 
         .. image:: _static/images/example_restart.png
           :alt: Example Restart
