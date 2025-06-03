@@ -15,8 +15,8 @@ Prerequisites
 
 
 2. **Qt**
-    The open-source version of Qt can be downloaded from `https://www.qt
-    .io/offline-installers <https://www.qt.io/offline-installers>`_ (the version under Qt Creator). **Note:** This package is essential for enabling pop-up windows
+    Install "Qt Creator" from `https://www.qt
+    .io/offline-installers <https://www.qt.io/offline-installers>`_. This package is essential for enabling pop-up windows
 
 3. **Python Dependencies**
 
