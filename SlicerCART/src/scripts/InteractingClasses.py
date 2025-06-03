@@ -454,7 +454,8 @@ class SlicerCARTConfigurationSetupWindow(qt.QWidget):
             self.file_extension_combobox.setCurrentIndex(1)
 
         self.interpolate_combobox.setCurrentIndex(self.interpolate_selected)
-        self.keep_working_list_combobox.setCurrentIndex(self.keep_working_list_selected)
+        self.keep_working_list_combobox.setCurrentIndex(
+            self.keep_working_list_selected)
 
         self.segmentation_task_checkbox.setChecked(self.segmentation_selected)
         self.classification_task_checkbox.setChecked(
@@ -816,8 +817,6 @@ class SlicerCARTConfigurationSetupWindow(qt.QWidget):
 
         self.config_yaml['interpolate_value'] = self.interpolate_selected
         self.config_yaml['keep_working_list'] = self.keep_working_list_selected
-        print('before setting the keep workig-list',
-              self.keep_working_list_selected)
 
         if 'Red' in self.initial_view_selected:
             self.config_yaml['slice_view_color'] = 'Red'

@@ -232,7 +232,6 @@ class ConfigPath():
 
         self.KEEP_WORKING_LIST = config["keep_working_list"]
         self.SAVE_UINT8 = config["save_uint8"]
-        self.ENABLE_DEBUG = config["enable_debug"]
 
         if self.MODALITY == 'CT':
             # then BIDS not mandatory because it is not yet supported
@@ -410,17 +409,6 @@ class ConfigPath():
             value: true (interpolation) or false (raw image, not interpolated)
         """
         self.INTERPOLATE_VALUE = value
-
-    # @enter_function
-    # def set_enable_debug(self, value):
-    #     """
-    #     set the activation of debug mode in Slicer Python console.
-    #
-    #     Args:
-    #         value: true or false
-    #     """
-    #     self.ENABLE_DEBUG = value
-
 
 
 # Creating an instance of ConfigPath. This ensures that all the same
