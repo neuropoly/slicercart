@@ -144,6 +144,22 @@ class SlicerCARTConfigurationSetupWindow(qt.QWidget):
 
         layout.addLayout(interpolate_hbox)
 
+        # Add default activation of keep working list mode
+        keep_working_list_hbox = qt.QHBoxLayout()
+
+        self.keep_working_list_label = qt.QLabel()
+        self.keep_working_list_label.setText('Keep working list? ')
+        self.keep_working_list_label.setStyleSheet("font-weight: bold")
+        keep_working_list_hbox.addWidget(self.keep_working_list_label)
+
+        self.keep_working_list_combobox = qt.QComboBox()
+        self.keep_working_list_combobox.addItem('No')
+        self.keep_working_list_combobox.addItem('Yes')
+
+        keep_working_list_hbox.addWidget(self.keep_working_list_combobox)
+
+        layout.addLayout(keep_working_list_hbox)
+
         ct_window_level_hbox = qt.QHBoxLayout()
 
         self.ct_window_level_label = qt.QLabel()
@@ -285,6 +301,23 @@ class SlicerCARTConfigurationSetupWindow(qt.QWidget):
 
         layout.addLayout(interpolate_ks_hbox)
 
+        # Add the save classification label keyboard shortcut
+        save_classification_ks_hbox = qt.QHBoxLayout()
+
+        self.save_classification_ks_label = qt.QLabel()
+        self.save_classification_ks_label.setText(
+            'Save Classification Keyboard Shortcut : ')
+        self.save_classification_ks_label.setStyleSheet("font-style: italic")
+        save_classification_ks_hbox.addWidget(self.save_classification_ks_label)
+
+        self.save_classification_ks_line_edit = qt.QLineEdit(
+            self.save_classification_ks_selected)
+        self.save_classification_ks_line_edit.setMaxLength(1)
+        save_classification_ks_hbox.addWidget(
+            self.save_classification_ks_line_edit)
+
+        layout.addLayout(save_classification_ks_hbox)
+
         mouse_shortcuts_hbox = qt.QHBoxLayout()
 
         mouse_shortcuts_label = qt.QLabel('Use Custom Mouse Shortcuts? ')
@@ -298,13 +331,13 @@ class SlicerCARTConfigurationSetupWindow(qt.QWidget):
         self.configure_segmentation_button = qt.QPushButton(
             'Configure Segmentation...')
         self.configure_segmentation_button.setStyleSheet(
-            "background-color : yellowgreen")
+            "background-color : #A6A6A6")
         layout.addWidget(self.configure_segmentation_button)
 
         self.configure_classification_button = qt.QPushButton(
             'Configure Classification...')
         self.configure_classification_button.setStyleSheet(
-            "background-color : yellowgreen")
+            "background-color : #A6A6A6")
         layout.addWidget(self.configure_classification_button)
 
         self.previous_button = qt.QPushButton('Previous')
@@ -369,6 +402,8 @@ class SlicerCARTConfigurationSetupWindow(qt.QWidget):
             self.update_initial_view)
         self.interpolate_combobox.currentIndexChanged.connect(
             self.update_interpolate)
+        self.keep_working_list_combobox.currentIndexChanged.connect(
+            self.update_keep_working_list)
         self.ct_window_level_line_edit.textChanged.connect(
             self.update_ct_window_level)
         self.ct_window_width_line_edit.textChanged.connect(
@@ -386,6 +421,8 @@ class SlicerCARTConfigurationSetupWindow(qt.QWidget):
             self.update_remove_small_holes_ks)
         self.interpolate_ks_line_edit.textChanged.connect(
             self.update_interpolate_ks)
+        self.save_classification_ks_line_edit.textChanged.connect(
+            self.update_save_classification_ks)
         self.configure_classification_button.clicked.connect(
             self.push_configure_classification)
         self.previous_button.clicked.connect(self.push_previous)
@@ -417,6 +454,8 @@ class SlicerCARTConfigurationSetupWindow(qt.QWidget):
             self.file_extension_combobox.setCurrentIndex(1)
 
         self.interpolate_combobox.setCurrentIndex(self.interpolate_selected)
+        self.keep_working_list_combobox.setCurrentIndex(
+            self.keep_working_list_selected)
 
         self.segmentation_task_checkbox.setChecked(self.segmentation_selected)
         self.classification_task_checkbox.setChecked(
@@ -463,6 +502,7 @@ class SlicerCARTConfigurationSetupWindow(qt.QWidget):
             self.initial_view_selected = 'Green (coronal)'
 
         self.interpolate_selected = self.config_yaml['interpolate_value']
+        self.keep_working_list_selected = self.config_yaml['keep_working_list']
 
         self.toggle_fill_ks_selected = \
             self.config_yaml['KEYBOARD_SHORTCUTS'][0]['shortcut']
@@ -478,6 +518,8 @@ class SlicerCARTConfigurationSetupWindow(qt.QWidget):
             self.config_yaml['KEYBOARD_SHORTCUTS'][5]['shortcut']
         self.interpolate_ks_selected = \
             self.config_yaml['KEYBOARD_SHORTCUTS'][6]['shortcut']
+        self.save_classification_ks_selected = \
+            self.config_yaml['KEYBOARD_SHORTCUTS'][7]['shortcut']
 
     @enter_function
     def classification_checkbox_state_changed(self):
@@ -521,6 +563,8 @@ class SlicerCARTConfigurationSetupWindow(qt.QWidget):
         self.interpolate_ks_label.setVisible(self.keyboard_shortcuts_selected)
         self.interpolate_ks_line_edit.setVisible(
             self.keyboard_shortcuts_selected)
+        self.save_classification_ks_line_edit.setVisible(
+            self.keyboard_shortcuts_selected)
 
     @enter_function
     def segmentation_checkbox_state_changed(self):
@@ -541,6 +585,16 @@ class SlicerCARTConfigurationSetupWindow(qt.QWidget):
         Args:
         """
         self.interpolate_ks_selected = self.interpolate_ks_line_edit.text
+
+    @enter_function
+    def update_save_classification_ks(self):
+        """
+        update_save_classification_ks
+
+        Args:
+        """
+        self.save_classification_ks_selected = (
+            self.save_classification_ks_line_edit.text)
 
     @enter_function
     def update_remove_small_holes_ks(self):
@@ -627,6 +681,19 @@ class SlicerCARTConfigurationSetupWindow(qt.QWidget):
             self.interpolate_selected = True
         else:
             self.interpolate_selected = False
+
+    @enter_function
+    def update_keep_working_list(self):
+        """
+        update_keep_working_list
+
+        Args:
+        """
+        if self.keep_working_list_combobox.currentText == 'Yes':
+            self.keep_working_list_selected = True
+        else:
+            self.keep_working_list_selected = False
+
 
     @enter_function
     def update_initial_view(self):
@@ -749,6 +816,7 @@ class SlicerCARTConfigurationSetupWindow(qt.QWidget):
         self.config_yaml['input_filetype'] = self.file_extension_selected
 
         self.config_yaml['interpolate_value'] = self.interpolate_selected
+        self.config_yaml['keep_working_list'] = self.keep_working_list_selected
 
         if 'Red' in self.initial_view_selected:
             self.config_yaml['slice_view_color'] = 'Red'
@@ -774,6 +842,8 @@ class SlicerCARTConfigurationSetupWindow(qt.QWidget):
             'shortcut'] = self.remove_small_holes_ks_selected
         self.config_yaml['KEYBOARD_SHORTCUTS'][6][
             'shortcut'] = self.interpolate_ks_selected
+        self.config_yaml['KEYBOARD_SHORTCUTS'][7][
+            'shortcut'] = self.save_classification_ks_selected
 
         ConfigPath.write_config_file()
         self.config_yaml = ConfigPath.open_project_config_file()
