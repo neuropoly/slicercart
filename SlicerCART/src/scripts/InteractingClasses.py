@@ -331,13 +331,13 @@ class SlicerCARTConfigurationSetupWindow(qt.QWidget):
         self.configure_segmentation_button = qt.QPushButton(
             'Configure Segmentation...')
         self.configure_segmentation_button.setStyleSheet(
-            "background-color : yellowgreen")
+            "background-color : #A6A6A6")
         layout.addWidget(self.configure_segmentation_button)
 
         self.configure_classification_button = qt.QPushButton(
             'Configure Classification...')
         self.configure_classification_button.setStyleSheet(
-            "background-color : yellowgreen")
+            "background-color : #A6A6A6")
         layout.addWidget(self.configure_classification_button)
 
         self.previous_button = qt.QPushButton('Previous')
