@@ -6,7 +6,7 @@ This is a 3D Slicer extension aimed to improve workflow in manual
 segmentation, classification and revision tasks. SlicerCART 
 enables to quickly load specific volumes of a dataset and navigate through them, 
 perform manual segmentation of medical images (e.g. annotating 
-multiple sclerosis lesions on MRI), label imaging data (e.g. presene or absence of bone fracture), and correct existing segmentation 
+multiple sclerosis lesions on MRI), label imaging data (e.g. presence or absence of fracture), and correct existing segmentation 
 versions (e.g. segmentations generated automatically using models). This open-source solution lowers the barrier to imaging dataset creation.
 
 ## [Installation](https://neuropoly.github.io/slicercart/installation.html)
