@@ -285,6 +285,23 @@ class SlicerCARTConfigurationSetupWindow(qt.QWidget):
 
         layout.addLayout(interpolate_ks_hbox)
 
+        # Add the save classification label keyboard shortcut
+        save_classification_ks_hbox = qt.QHBoxLayout()
+
+        self.save_classification_ks_label = qt.QLabel()
+        self.save_classification_ks_label.setText(
+            'Save Classification Keyboard Shortcut : ')
+        self.save_classification_ks_label.setStyleSheet("font-style: italic")
+        save_classification_ks_hbox.addWidget(self.save_classification_ks_label)
+
+        self.save_classification_ks_line_edit = qt.QLineEdit(
+            self.save_classification_ks_selected)
+        self.save_classification_ks_line_edit.setMaxLength(1)
+        save_classification_ks_hbox.addWidget(
+            self.save_classification_ks_line_edit)
+
+        layout.addLayout(save_classification_ks_hbox)
+
         mouse_shortcuts_hbox = qt.QHBoxLayout()
 
         mouse_shortcuts_label = qt.QLabel('Use Custom Mouse Shortcuts? ')
@@ -386,6 +403,8 @@ class SlicerCARTConfigurationSetupWindow(qt.QWidget):
             self.update_remove_small_holes_ks)
         self.interpolate_ks_line_edit.textChanged.connect(
             self.update_interpolate_ks)
+        self.save_classification_ks_line_edit.textChanged.connect(
+            self.update_save_classification_ks)
         self.configure_classification_button.clicked.connect(
             self.push_configure_classification)
         self.previous_button.clicked.connect(self.push_previous)
@@ -478,6 +497,8 @@ class SlicerCARTConfigurationSetupWindow(qt.QWidget):
             self.config_yaml['KEYBOARD_SHORTCUTS'][5]['shortcut']
         self.interpolate_ks_selected = \
             self.config_yaml['KEYBOARD_SHORTCUTS'][6]['shortcut']
+        self.save_classification_ks_selected = \
+            self.config_yaml['KEYBOARD_SHORTCUTS'][7]['shortcut']
 
     @enter_function
     def classification_checkbox_state_changed(self):
@@ -521,6 +542,8 @@ class SlicerCARTConfigurationSetupWindow(qt.QWidget):
         self.interpolate_ks_label.setVisible(self.keyboard_shortcuts_selected)
         self.interpolate_ks_line_edit.setVisible(
             self.keyboard_shortcuts_selected)
+        self.save_classification_ks_line_edit.setVisible(
+            self.keyboard_shortcuts_selected)
 
     @enter_function
     def segmentation_checkbox_state_changed(self):
@@ -541,6 +564,16 @@ class SlicerCARTConfigurationSetupWindow(qt.QWidget):
         Args:
         """
         self.interpolate_ks_selected = self.interpolate_ks_line_edit.text
+
+    @enter_function
+    def update_save_classification_ks(self):
+        """
+        update_save_classification_ks
+
+        Args:
+        """
+        self.save_classification_ks_selected = (
+            self.save_classification_ks_line_edit.text)
 
     @enter_function
     def update_remove_small_holes_ks(self):
@@ -774,6 +807,8 @@ class SlicerCARTConfigurationSetupWindow(qt.QWidget):
             'shortcut'] = self.remove_small_holes_ks_selected
         self.config_yaml['KEYBOARD_SHORTCUTS'][6][
             'shortcut'] = self.interpolate_ks_selected
+        self.config_yaml['KEYBOARD_SHORTCUTS'][7][
+            'shortcut'] = self.save_classification_ks_selected
 
         ConfigPath.write_config_file()
         self.config_yaml = ConfigPath.open_project_config_file()
