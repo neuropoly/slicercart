@@ -42,7 +42,7 @@ Installation
 
    * Open 3D Slicer
 
-   * Go to Edit -> Developer -> check Enable developer mode
+   * Go to Edit -> Application Settings -> Developer. Check `Enable developer mode`
 
      .. image:: _static/images/developer_mode.png
         :alt: Example Restart
