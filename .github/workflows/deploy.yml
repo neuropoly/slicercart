@@ -4,7 +4,7 @@ on:
   push:
     branches: [main]
     paths:
-      - 'SlicerCART/docs/_build/html/**'
+      - 'SlicerCART/docs/_source/**'
 
 jobs:
   deploy:
