@@ -77,8 +77,8 @@ instance/
 # Scrapy stuff:
 .scrapy
 
-# Sphinx documentation
-docs/_build/
+# The build website
+/SlicerCART/docs/_build/
 
 # PyBuilder
 .pybuilder/
