@@ -2,8 +2,8 @@
 #  extension manager when the user installs the extension.
 # TODO: check if the package installed with error
 
-import qt ### temp fix for qt issue IV
-import slicer ### temp fix for qt issue IV
+import qt
+import slicer
 
 # Dictionary of required python packages and their import names
 REQUIRED_PYTHON_PACKAGES = {
