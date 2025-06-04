@@ -27,7 +27,7 @@ rst_prolog = f"""
 """
 
 
-sys.path.insert(0, os.path.abspath('../src'))
+sys.path.insert(0, os.path.abspath('../../src'))
 
 project = 'SlicerCART'
 copyright = '2025'
