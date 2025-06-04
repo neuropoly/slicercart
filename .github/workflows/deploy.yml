@@ -41,7 +41,7 @@ jobs:
           # Enter the documentation path
           cd SlicerCART/docs
           # Rebuild the website w/ Sphinx
-          sphinx-build ./_source/ _build/
+          make html
 
       - name: Deploy to GitHub Pages
         # Only update the official website if this was a change to 'main'
