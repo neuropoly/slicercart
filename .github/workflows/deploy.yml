@@ -28,6 +28,7 @@ jobs:
         with:
           miniforge-version: latest  # Use MiniForge to avoid a potential lawsuit
           environment-file: SlicerCART/docs/environment.yml
+          conda-remove-defaults: true  # So we don't get sued by Anaconda
           auto-activate-base: false  # Don't load the default "test" environment by default...
           activate-environment: slicercart_docs # ... load the one defined in the `environment.yml` instead
 
