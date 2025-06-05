@@ -29,15 +29,12 @@ jobs:
           python-version: 3.13
           environment-file: SlicerCART/docs/environment.yml
           activate-environment: slicer_cart_sphinx
-          auto-activate-base: false
+          auto-activate-base: true  # Load MiniConda by default
 
       - name: Build Website Files
         run: |
           # Enter the documentation path
           cd SlicerCART/docs
-          
-          # Activate the environment
-          conda activate slicer_cart_sphinx
           
           # Rebuild the website w/ Sphinx
           make html
