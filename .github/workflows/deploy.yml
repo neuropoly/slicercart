@@ -23,20 +23,16 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v3
 
-      - name: Set up MiniForge
+      - name: Set up Miniconda
         uses: conda-incubator/setup-miniconda@v3
         with:
-          miniforge-version: latest
-
-      - name: Set up Conda Environment
-        run: |
-          mamba create --name slicercart_docs --file SlicerCART/docs/requirements.txt
+          miniforge-version: latest  # Use MiniForge to avoid a potential lawsuit
+          environment-file: SlicerCART/docs/environment.yml
+          auto-activate-base: false  # Don't load the default "test" environment by default...
+          activate-environment: slicercart_docs # ... load the one defined in the `environment.yml` instead
 
       - name: Build Website Files
         run: |
-          # Load the environment
-          mamba activate slicercart_docs
-          
           # Enter the documentation path
           cd SlicerCART/docs
           
