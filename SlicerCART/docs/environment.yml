@@ -1,4 +1,3 @@
-name: slicercart_docs
 channels:
   - conda-forge
 dependencies:
