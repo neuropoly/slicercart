@@ -33,9 +33,7 @@ jobs:
           activate-environment: slicercart_docs # ... load the one defined in the `environment.yml` instead
 
       - name: TMP; Report Conda Prefix
-        run: |
-          # TEMPORARY: Print the current prefix for debugging sake
-          echo "$CONDA_PREFIX"
+        run: echo "$CONDA_PREFIX"
 
       - name: Build Website Files
         run: |
