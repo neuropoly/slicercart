@@ -28,8 +28,8 @@ jobs:
         with:
           python-version: 3.13
           environment-file: SlicerCART/docs/environment.yml
-          activate-environment: slicer_cart_sphinx
-          auto-activate-base: true  # Load MiniConda by default
+          activate-environment: ""
+          auto-activate-base: true  # Load this environment by default
 
       - name: Build Website Files
         run: |
