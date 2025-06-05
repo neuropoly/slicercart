@@ -33,7 +33,7 @@ jobs:
           activate-environment: slicercart_docs # ... load the one defined in the `environment.yml` instead
 
       - name: TMP; Report Conda Prefix
-        run: echo "$CONDA_PREFIX"
+        run: mamba env export
 
       - name: Build Website Files
         run: |
