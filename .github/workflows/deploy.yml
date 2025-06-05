@@ -37,8 +37,11 @@ jobs:
           # Enter the documentation path
           cd SlicerCART/docs
           
+          # TEMPORARY: Print the current prefix for debugging sake
+          echo "$CONDA_PREFIX"
+          
           # Rebuild the website w/ Sphinx
-          make html
+          sphinx-build source/ build/
 
       - name: Deploy to GitHub Pages
         # Only update the official website if this was a change to 'main'
