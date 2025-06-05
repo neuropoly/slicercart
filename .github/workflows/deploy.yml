@@ -32,16 +32,18 @@ jobs:
           auto-activate-base: false  # Don't load the default "test" environment by default...
           activate-environment: slicercart_docs # ... load the one defined in the `environment.yml` instead
 
+      - name: TMP; Report Conda Prefix
+        run: |
+          # TEMPORARY: Print the current prefix for debugging sake
+          echo "$CONDA_PREFIX"
+
       - name: Build Website Files
         run: |
           # Enter the documentation path
           cd SlicerCART/docs
           
-          # TEMPORARY: Print the current prefix for debugging sake
-          echo "$CONDA_PREFIX"
-          
           # Rebuild the website w/ Sphinx
-          sphinx-build source/ build/
+          make html
 
       - name: Deploy to GitHub Pages
         # Only update the official website if this was a change to 'main'
