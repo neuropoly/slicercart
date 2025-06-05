@@ -23,23 +23,22 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v3
 
-      - name: Install Python 3.13
-        uses: actions/setup-python@v4
-        with:
-          python-version: 3.13
-
       - name: Set up Miniconda
         uses: conda-incubator/setup-miniconda@v3
         with:
           python-version: 3.13
           environment-file: SlicerCART/docs/environment.yml
           activate-environment: slicer_cart_sphinx
-          auto-activate-base: false  # Load MiniConda by default
+          auto-activate-base: false
 
       - name: Build Website Files
         run: |
           # Enter the documentation path
           cd SlicerCART/docs
+          
+          # Activate the environment
+          conda activate slicer_cart_sphinx
+          
           # Rebuild the website w/ Sphinx
           make html
 
