@@ -26,12 +26,12 @@ jobs:
       - name: Install Python 3.12
         uses: actions/setup-python@v4
         with:
-          python-version: 3.12
+          python-version: 3.13
 
       - name: Set up Miniconda
         uses: conda-incubator/setup-miniconda@v3
         with:
-          python-version: 3.12
+          python-version: 3.13
           environment-file: SlicerCART/docs/environment.yml
           activate-environment: slicer_cart_sphinx
           auto-activate-base: false  # Load MiniConda by default
