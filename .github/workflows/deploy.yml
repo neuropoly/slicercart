@@ -26,12 +26,17 @@ jobs:
       - name: Set up Miniconda
         uses: conda-incubator/setup-miniconda@v3
         with:
-          environment-file: SlicerCART/docs/environment.yml
-          activate-environment: true  # Required by Python 3.13
-          auto-activate-base: true  # Load this environment by default
+          miniforge-version: latest
+
+      - name: Set up Conda Environment
+        run: |
+          mamba create --name slicercart_docs --file SlicerCART/docs/requirements.txt
 
       - name: Build Website Files
         run: |
+          # Load the environment
+          mamba activate slicercart_docs
+          
           # Enter the documentation path
           cd SlicerCART/docs
           
