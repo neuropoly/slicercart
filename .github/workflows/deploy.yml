@@ -32,10 +32,8 @@ jobs:
           auto-activate-base: false  # Don't load the default "test" environment by default...
           activate-environment: slicercart_docs # ... load the one defined in the `environment.yml` instead
 
-      - name: TMP; Report Conda Prefix
-        run: mamba env export
-
       - name: Build Website Files
+        shell: bash -l {0}  # Ensures the Conda environment is properly loaded
         run: |
           # Enter the documentation path
           cd SlicerCART/docs
