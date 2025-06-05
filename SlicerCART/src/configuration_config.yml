@@ -25,7 +25,6 @@ KEYBOARD_SHORTCUTS:
   shortcut: c
 checkboxes:
   Anoxic_injury_checkbox: Anoxic injury
-  Brain_edema_checkbox: Brain edema
   Craniectomy_checkbox: Craniectomy
   Craniotomy_checkbox: Craniotomy
   EDH_checkbox: EDH
