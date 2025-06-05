@@ -3,8 +3,18 @@ name: Deploy Docs to GitHub Pages
 on:
   push:
     branches: [main]
+    # Below will ensure this only runs when the website's contents changed
     paths:
-      - 'SlicerCART/docs/_build/html/**'
+      - 'SlicerCART/docs/_source/**'
+  workflow_dispatch:
+    inputs:
+      artifact_website:
+        description: "Save the website as an artifact to review?"
+        type: choice
+        options:
+          - "Yes"
+          - "No"
+        default: "Yes"
 
 jobs:
   deploy:
@@ -13,15 +23,42 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v3
 
-      - name: Copy built HTML to deployment dir
+      - name: Install Python 3.12
+        uses: actions/setup-python@v4
+        with:
+          python-version: 3.12
+
+      - name: Set up Miniconda
+        uses: conda-incubator/setup-miniconda@v3
+        with:
+          python-version: 3.12
+          environment-file: SlicerCART/docs/requirements.txt
+          activate-environment: slicer_cart_sphinx
+          auto-activate-base: false  # Load MiniConda by default
+
+      - name: Build Website Files
         run: |
-          mkdir public
-          cp -r SlicerCART/docs/_build/html/* public/
+          # Enter the documentation path
+          cd SlicerCART/docs
+          # Rebuild the website w/ Sphinx
+          make html
 
       - name: Deploy to GitHub Pages
+        # Only update the official website if this was a change to 'main'
+        # TODO: Update when a proper release management system is made
+        if: github.event_name == 'push'
         uses: peaceiris/actions-gh-pages@v3
         with:
           github_token: ${{ secrets.GITHUB_TOKEN }}
-          publish_dir: ./public
+          # Directory below is built in the prior step
+          publish_dir: ./SlicerCART/docs/_build
           publish_branch: gh-pages
           force_orphan: true
+
+      - name: Save Website as Artifact
+        # Only save the files as an artifact if requested
+        if: github.event_name == 'workflow_dispatch' && github.event.inputs.artifact_website == 'Yes'
+        uses: actions/upload-artifact@v4
+        with:
+          name: built_website
+          path: ./SlicerCART/docs/_build

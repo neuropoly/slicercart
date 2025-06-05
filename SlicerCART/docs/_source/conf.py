@@ -27,7 +27,7 @@ rst_prolog = f"""
 """
 
 
-sys.path.insert(0, os.path.abspath('../src'))
+sys.path.insert(0, os.path.abspath('../../src'))
 
 project = 'SlicerCART'
 copyright = '2025'
@@ -55,8 +55,7 @@ language = 'en'
 
 html_theme = 'sphinx_rtd_theme'
 html_static_path = ['_static']
-# html_static_path = ['_static', 'images']
-html_logo = '../src/Resources/Icons/SlicerCART.png'
+html_logo = '../../src/Resources/Icons/SlicerCART.png'
 html_theme_options = {
     'logo_only': True,
     'display_version': True,
