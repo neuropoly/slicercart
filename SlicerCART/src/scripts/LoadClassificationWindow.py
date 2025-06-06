@@ -1,4 +1,11 @@
-from utils import *
+import copy
+
+import qt
+from utils.ConfigPath import ConfigPath
+from utils.constants import CLASSIFICATION_BOXES_LIST
+from utils.debugging_helpers import enter_function, Debug
+
+
 class LoadClassificationWindow(qt.QWidget):
     @enter_function
     def __init__(self, segmenter, classificationInformation_df, parent=None):
