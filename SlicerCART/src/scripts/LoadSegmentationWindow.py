@@ -1,4 +1,9 @@
-from utils import *
+import os
+
+import qt
+from utils import ConfigPath
+from utils.debugging_helpers import enter_function
+
 
 class LoadSegmentationsWindow(qt.QWidget):
     @enter_function
