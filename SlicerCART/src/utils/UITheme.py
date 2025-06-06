@@ -1,4 +1,7 @@
-from utils import *
+from .debugging_helpers import enter_function
+
+from qt import QApplication, QPalette
+
 
 class Theme():
     def __init__(self):
@@ -17,7 +20,6 @@ class Theme():
 
         Args:
         """
-        # from qt import QApplication, QPalette
         # Get the current application's instance
         app = QApplication.instance()
         if not app:
