@@ -16,6 +16,8 @@
 import qt
 import slicer
 
+from importlib import import_module
+
 # Dictionary of required python packages and their import names
 # N.B. Some pip_name (like pandas) may require specific version
 REQUIRED_PYTHON_PACKAGES = {
@@ -37,7 +39,9 @@ def check_and_install_python_packages():
 
     for pip_name, import_name in REQUIRED_PYTHON_PACKAGES.items():
         try:
-            __import__(import_name)
+            # "Standard" way to import a package programmatically; for further details, see
+            #   https://docs.python.org/3/library/importlib.html#importlib.import_module
+            import_module(import_name)
         except ImportError:
             missing_packages.append(pip_name)
 
