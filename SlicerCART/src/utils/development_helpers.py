@@ -1,7 +1,9 @@
 import os
-import slicer
+
 import qt
-from utils.debugging_helpers import *
+import slicer
+from .debugging_helpers import enter_function
+
 
 class Dev:
     def __init__(self):
