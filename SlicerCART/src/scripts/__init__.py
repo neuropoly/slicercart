@@ -3,7 +3,6 @@ from .CompareSegmentVersionsWindow import *
 from .CustomInteractorStyle import *
 from .LoadClassificationWindow import *
 from .LoadSegmentationWindow import *
-from .OptionalMethods import *
 from .ShowSegmentVersionLegendWindow import *
 from .SlicerCARTLogic import *
 from .SlicerCARTTest import *
