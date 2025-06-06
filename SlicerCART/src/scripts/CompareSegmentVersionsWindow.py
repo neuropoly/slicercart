@@ -1,4 +1,8 @@
-from utils import *
+import os
+
+import qt
+from utils.ConfigPath import ConfigPath
+
 
 class CompareSegmentVersionsWindow(qt.QWidget):
     def __init__(self, segmenter, segmentationInformation_df, parent=None):
