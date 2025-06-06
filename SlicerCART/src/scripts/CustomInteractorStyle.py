@@ -1,4 +1,6 @@
-from utils import *
+import slicer
+import vtk
+
 
 # MB CODE BELOW: MOUSE CUSTOMIZATION CLASS
 class CustomInteractorStyle(vtk.vtkInteractorStyleImage):
