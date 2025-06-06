@@ -1,14 +1,47 @@
 """
-    This is the main file for SlicerCART.
-    That means the Slicer Python Interpreter always refer to the path of this
-    script when using SlicerCART.
+This is the main file for SlicerCART.
+That means the Slicer Python Interpreter always refer to the path of this
+script when using SlicerCART.
 """
 
-###############################################################################
-# Those imports are required to make the module working appropriately using
-# separated files
-from utils import *  # Import all modules, packages and global variables
-from scripts import *  # Import all classes
+import os
+import random
+from datetime import datetime
+from glob import glob
+import colorsys
+
+import pandas as pd
+# KO: VTK isn't a standard Python lib, being loaded by Slicer post-init; as a result
+#  it is not exposed as a library to IDEs. As such, we need to trust that slicer will
+#  instantiate it before we reach this point; hence the error suppression.
+import vtk  # noqa: F401
+from bids_validator import BIDSValidator
+
+# ~KO: Both QT and Slicer are only initialized when slicer boots, and by extension when
+#  some of their C++ code is imported. As a result, quite a few of their utilities are
+#  not visible to IDEs, and may cause a "Cannot find reference 'xyz'" style warning in
+#  our code base. For now, ignore it; will look into a workaround soon(tm)
+import qt
+import slicer
+from scripts.CompareSegmentVersionsWindow import CompareSegmentVersionsWindow
+from scripts.CustomInteractorStyle import CustomInteractorStyle
+from scripts.InteractingClasses import SlicerCARTConfigurationInitialWindow
+from scripts.InteractingClasses import SlicerCARTConfigurationSetupWindow
+from scripts.LoadClassificationWindow import LoadClassificationWindow
+from scripts.LoadSegmentationWindow import LoadSegmentationsWindow
+from scripts.SlicerCARTLogic import SlicerCARTLogic
+from scripts.ShowSegmentVersionLegendWindow import ShowSegmentVersionLegendWindow
+from scripts.Timer import Timer
+from scripts.WorkFiles import WorkFiles
+from slicer.ScriptedLoadableModule import *
+from slicer.util import VTKObservationMixin, childWidgetVariables, loadUI
+from utils.ConfigPath import ConfigPath
+from utils.UITheme import Theme
+from utils.UserPath import UserPath
+from utils.constants import CLASSIFICATION_BOXES_LIST, TIMER_MUTEX
+from utils.debugging_helpers import Debug, enter_function
+from utils.development_helpers import Dev
+
 
 ###############################################################################
 
@@ -129,9 +162,9 @@ class SlicerCARTWidget(ScriptedLoadableModuleWidget, VTKObservationMixin):
         # Load widget from .ui file (created by Qt Designer).
         # Additional widgets can be instantiated manually and added to
         # self.layout.
-        uiWidget = slicer.util.loadUI(self.resourcePath('UI/SlicerCART.ui'))
+        uiWidget = loadUI(self.resourcePath('UI/SlicerCART.ui'))
         self.layout.addWidget(uiWidget)
-        self.ui = slicer.util.childWidgetVariables(uiWidget)
+        self.ui = childWidgetVariables(uiWidget)
 
         # Set scene in MRML widgets. Make sure that in Qt designer the
         # top-level qMRMLWidget's
@@ -524,8 +557,7 @@ class SlicerCARTWidget(ScriptedLoadableModuleWidget, VTKObservationMixin):
             self.segmentEditorNode.SetMasterVolumeIntensityMask(False)
 
     @enter_function
-    def setupCheckboxes(self, number_of_columns, classif_label,
-                        flag_use_csv=False):
+    def setupCheckboxes(self, number_of_columns, classif_label, flag_use_csv=False):
         """
         SetupCheckboxes.
 
@@ -1736,7 +1768,6 @@ class SlicerCARTWidget(ScriptedLoadableModuleWidget, VTKObservationMixin):
         # not defined so it should return none (and not fail).
 
         if classif_label != None:
-
             try:
                 self.outputClassificationInformationFile = (
                     os.path.join(self.currentOutputPath,
@@ -2593,8 +2624,7 @@ class SlicerCARTWidget(ScriptedLoadableModuleWidget, VTKObservationMixin):
         return found_case
 
     @enter_function
-    def msg_warnig_delete_segm_node_clicked(self,
-                                            msg_warnig_delete_segm_node_button):
+    def msg_warnig_delete_segm_node_clicked(self, msg_warnig_delete_segm_node_button):
         """
         Msg_warnig_delete_segm_node_clicked.
 
@@ -2612,7 +2642,7 @@ class SlicerCARTWidget(ScriptedLoadableModuleWidget, VTKObservationMixin):
     def onLoadClassification(self):
         """
         OnLoadClassification.
-        
+
         Args:.
         """
         classificationInformationPath = (f'{self.currentOutputPath}{os.sep}'
