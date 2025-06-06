@@ -1,4 +1,6 @@
-from utils import *
+import qt
+from utils.debugging_helpers import enter_function
+
 
 class ShowSegmentVersionLegendWindow(qt.QWidget):
     @enter_function
