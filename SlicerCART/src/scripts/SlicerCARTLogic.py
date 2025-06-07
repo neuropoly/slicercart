@@ -1,4 +1,8 @@
-from utils import *
+import logging
+
+import slicer
+from slicer.ScriptedLoadableModule import ScriptedLoadableModuleLogic
+
 
 class SlicerCARTLogic(ScriptedLoadableModuleLogic):
     """This class should implement all the actual
