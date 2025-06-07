@@ -1,4 +1,9 @@
-from utils import *
+import slicer
+from slicer.ScriptedLoadableModule import ScriptedLoadableModuleTest
+
+from .SlicerCARTLogic import SlicerCARTLogic
+
+
 class SlicerCARTTest(ScriptedLoadableModuleTest):
     """
     This is the test case for your scripted module.
