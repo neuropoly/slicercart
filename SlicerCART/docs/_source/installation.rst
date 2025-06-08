@@ -10,7 +10,7 @@ Prerequisites
    
    SlicerCART is a module for 3D Slicer. You need to have 3D Slicer installed on your system:
 
-   * Download 3D Slicer from the `official website <https://download.slicer.org/>`_ (version 5.6.2 on macOS is recommended)
+   * Download 3D Slicer from the `official website <https://download.slicer.org/>`_ (version 5.8.1 on macOS is recommended)
    * Launch 3D Slicer to verify the installation
 
 
