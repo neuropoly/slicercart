@@ -24,8 +24,10 @@ KEYBOARD_SHORTCUTS:
   callback: onSaveClassificationButton
   shortcut: c
 checkboxes:
+  Anoxic_injury_checkbox: Anoxic injury
   Craniectomy_checkbox: Craniectomy
   Craniotomy_checkbox: Craniotomy
+  EDH_checkbox: EDH
   EVD_checkbox: EVD
   ICH_checkbox: ICH
   IVH_checkbox: IVH
@@ -41,7 +43,6 @@ checkboxes:
   SAH_checkbox: SAH
   SDH_checkbox: SDH
   Tonsillar_herniation_checkbox: Tonsillar herniation
-  test: Test
 comboboxes:
   v01:
     atrophy:
@@ -59,40 +60,13 @@ comboboxes:
       wmc_moderate: Moderate
       wmc_none: None
       wmc_severe: Severe
-  v02:
-    test:
-      '22': '22'
-      '222': '222'
-    ventricular_size:
-      ventricular_size_mild: Mild
-      ventricular_size_moderate: Moderate
-      ventricular_size_normal: Normal/proportional
-      ventricular_size_severe: Severe
-    white_matter_changes:
-      wmc_mild: Mild
-      wmc_moderate: Moderate
-      wmc_none: None
-      wmc_severe: Severe
-  v03:
-    test:
-      '111': '111'
-      '22': '22'
-    ventricular_size:
-      ventricular_size_mild: Mild
-      ventricular_size_moderate: Moderate
-      ventricular_size_normal: Normal/proportional
-      ventricular_size_severe: Severe
-    white_matter_changes:
-      wmc_mild: Mild
-      wmc_moderate: Moderate
-      wmc_none: None
-      wmc_severe: Severe
 ct_window_level: 45
 ct_window_width: 85
 default_segmentation_directory: ''
 default_volume_directory: ''
 enable_debug: true
 freetextboxes:
+  cheese: Cheese
   number_of_focal_points: Number of focal points
   other_comments: Comments
 impose_bids_format: false
@@ -106,27 +80,20 @@ is_segmentation_requested: true
 is_semi_automatic_phe_tool_requested: true
 keep_working_list: true
 labels:
-- color_b: 255
-  color_g: 255
-  color_r: 0
+- color_b: 10
+  color_g: 10
+  color_r: 255
   lower_bound_HU: 30
-  name: edema
+  name: ICH
   upper_bound_HU: 90
   value: 1
-- color_b: 255
-  color_g: 10
-  color_r: 10
+- color_b: 70
+  color_g: 230
+  color_r: 230
   lower_bound_HU: 30
-  name: hemorrhage
+  name: IVH
   upper_bound_HU: 90
   value: 2
-- color_b: 22
-  color_g: 222
-  color_r: 22
-  lower_bound_HU: 30
-  name: test_sc
-  upper_bound_HU: 90
-  value: 3
 modality: MRI
 remaining_list_filename: remaining_list.yaml
 require_empty: false

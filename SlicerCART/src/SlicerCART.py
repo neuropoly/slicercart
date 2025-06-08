@@ -1272,8 +1272,6 @@ class SlicerCARTWidget(ScriptedLoadableModuleWidget, VTKObservationMixin):
         
         Args:.
         """
-        print('self new labels', self.config_yaml["labels"])
-
         for label in self.config_yaml["labels"]:
             self.onNewLabelSegm(label["name"], label["color_r"],
                                 label["color_g"], label["color_b"],
@@ -1296,8 +1294,6 @@ class SlicerCARTWidget(ScriptedLoadableModuleWidget, VTKObservationMixin):
         segment_name: Description of segment_name.
         """
 
-
-
         self.segment_name = segment_name
         srcNode = slicer.util.getNodesByClass('vtkMRMLSegmentationNode')[0]
         self.srcSegmentation = srcNode.GetSegmentation()
@@ -1306,41 +1302,36 @@ class SlicerCARTWidget(ScriptedLoadableModuleWidget, VTKObservationMixin):
         # segmentation node, avoid overwriting existing segments
         if not self.srcSegmentation.GetSegmentIDs():  # if there are no
             # segments in the segmentation node
-            print('creating new segment since no segment id found')
             self.segmentationNode = \
                 slicer.util.getNodesByClass('vtkMRMLSegmentationNode')[0]
             self.segmentationNode.GetSegmentation().AddEmptySegment(
                 self.segment_name)
-
-        print('native segmentation namesss***', self.srcSegmentation.GetSegmentIDs())
-
 
         # if there are segments in the segmentation node, check if the
         # segment name is already in the segmentation node
         if any([self.segment_name in i for i in
                 self.srcSegmentation.GetSegmentIDs()]):
-            pass
-            print('there are segmentation in the node')
             self.ensure_segment_id_matches_name(self.segment_name)
-
         else:
-            print('there are no segmentation in the node add empty')
             self.segmentationNode = \
                 slicer.util.getNodesByClass('vtkMRMLSegmentationNode')[0]
             self.segmentationNode.GetSegmentation().AddEmptySegment(
                 self.segment_name)
             self.ensure_segment_id_matches_name(self.segment_name)
 
-
         return self.segment_name
 
     @enter_function
     def ensure_segment_id_matches_name(self, segment_name):
+        """
+        Ensure segment ID matches name when creating new segments.
+
+        Args:
+            segment_name: string that represents the wished segment name
+        """
         # Check if name matches ID; if not, rename
         segment = self.srcSegmentation.GetSegment(segment_name)
         if segment.GetName() != segment_name:
-            print(
-                f"Segment name '{segment.GetName()}' does not match ID '{segment_name}', updating name.")
             segment.SetName(segment_name)
 
     @enter_function
@@ -1357,24 +1348,18 @@ class SlicerCARTWidget(ScriptedLoadableModuleWidget, VTKObservationMixin):
         label_LB_HU: Description of label_LB_HU.
         label_UB_HU: Description of label_UB_HU.
         """
-        print('label name', label_name)
-
         segment_name = self.newSegment(label_name)
-        print('segment_name after', segment_name)
-
         self.segmentationNode = \
             slicer.util.getNodesByClass('vtkMRMLSegmentationNode')[0]
         self.segmentationNode.UndoEnabledOn()
-
-        # print('self segmentation node', self.segmentationNode)
-
         Segmentation = self.segmentationNode.GetSegmentation()
-        # print('Segmentation', Segmentation)
 
+        # Prior to version 5.8.1, the below line worked. In version 5.8.1,
+        # a segment id is settled by default and a generic name as well,
+        # requiring a slightly different approach for managing segments.
         # self.SegmentID = Segmentation.GetSegmentIdBySegmentName(segment_name)
-        self.SegmentID = self.get_segment_id_from_name(Segmentation, segment_name)
-
-        print('self segment ID', self.SegmentID)
+        self.SegmentID = self.get_segment_id_from_name(Segmentation,
+                                                       segment_name)
 
         segment = Segmentation.GetSegment(self.SegmentID)
         segment.SetColor(label_color_r / 255, label_color_g / 255,
@@ -1383,23 +1368,24 @@ class SlicerCARTWidget(ScriptedLoadableModuleWidget, VTKObservationMixin):
 
     @enter_function
     def get_segment_id_from_name(self, segmentation, segment_name):
+        """
+        Get the segment id from the segment name
+
+        Args:
+            segmentation: segmentation node
+            segment_name: string that is the segment name
+        """
         num_segments = segmentation.GetNumberOfSegments()
-        print(
-            f"Searching for segment name '{segment_name}' among {num_segments} segments.")
 
         for i in range(num_segments):
             current_segment_id = segmentation.GetNthSegmentID(i)
             current_segment = segmentation.GetSegment(current_segment_id)
             current_name = current_segment.GetName()
-            print(
-                f"Checking segment {i}: ID={current_segment_id}, Name='{current_name}'")
 
             if current_name == segment_name:
-                print(f"Found match: Segment ID = {current_segment_id}")
+                Debug.print(self, (f"Found match: Segment ID = "
+                                   f"{current_segment_id}"))
                 return current_segment_id
-
-        print(f"Segment name '{segment_name}' not found.")
-        return None
 
     @enter_function
     def onPushButton_select_label(self, segment_name, label_LB_HU, label_UB_HU):
@@ -1414,13 +1400,7 @@ class SlicerCARTWidget(ScriptedLoadableModuleWidget, VTKObservationMixin):
         self.segmentationNode = \
             slicer.util.getNodesByClass('vtkMRMLSegmentationNode')[0]
         Segmentation = self.segmentationNode.GetSegmentation()
-
-        print(' in on pushbutton seelct albe before')
-
         self.SegmentID = Segmentation.GetSegmentIdBySegmentName(segment_name)
-
-        print('self segmentID by segment name', self.SegmentID)
-
         self.segmentEditorNode.SetSelectedSegmentID(self.SegmentID)
         self.updateCurrentPath()
         self.LB_HU = label_LB_HU
@@ -2198,9 +2178,6 @@ class SlicerCARTWidget(ScriptedLoadableModuleWidget, VTKObservationMixin):
         is_valid = True
 
         segment_names = self.getAllSegmentNames()
-
-        print('segment_names in quality chek', segment_names)
-
         if len(segment_names) != len(self.config_yaml["labels"]):
             msg = qt.QMessageBox()
             msg.setIcon(qt.QMessageBox.Critical)
@@ -2227,6 +2204,14 @@ class SlicerCARTWidget(ScriptedLoadableModuleWidget, VTKObservationMixin):
 
     @enter_function
     def re_order_segments(self, segmentation_node):
+        """
+        Re-order the segments when reloaded since previous version could have
+        mistmatching number of non-empty segments (e.g. segment 1 and segment 3
+        but not 2, while the newest version has segment 1,2, and 3.
+
+        Args:
+             segmentation_node: segmentation node displayed in the viewer
+        """
         # Ensure final segment order matches the order in config_yaml["labels"]
         ordered_segment_ids = []
         segmentation = segmentation_node.GetSegmentation()
@@ -2239,8 +2224,6 @@ class SlicerCARTWidget(ScriptedLoadableModuleWidget, VTKObservationMixin):
 
         # Apply reordering
         segmentation.ReorderSegments(ordered_segment_ids)
-        print(
-            f"Segments reordered according to config_yaml: {ordered_segment_ids}")
 
     @enter_function
     def saveNrrdSegmentation(self, currentSegmentationVersion):
@@ -3141,7 +3124,7 @@ class SlicerCARTWidget(ScriptedLoadableModuleWidget, VTKObservationMixin):
             ).ImportLabelmapToSegmentationNode(
                 labelmapVolumeNode, self.segmentationNode)
 
-        # ✅ ⬇️ ADD THIS RIGHT AFTER LOADING SEGMENTATION
+        # Version 5.8.1 requires different handling of segment IDs than previous
         self.fix_segment_ids_and_names(self.segmentationNode,
                                         self.config_yaml["labels"])
 
@@ -3166,40 +3149,8 @@ class SlicerCARTWidget(ScriptedLoadableModuleWidget, VTKObservationMixin):
         loaded_segment_ids = (
             self.segmentationNode.GetSegmentation().GetSegmentIDs())
 
-        print('loaded_segment_ids', loaded_segment_ids)
-
-        # for i, segment_id in enumerate(loaded_segment_ids):
-        #     for label in self.config_yaml["labels"]:
-        #         if str(label['value']) == str(segment_id):
-        #             segment = (
-        #                 self.segmentationNode.GetSegmentation().GetSegment(
-        #                 segment_id))
-        #             segment.SetName(label["name"])
-        #             segment.SetColor(label["color_r"] / 255,
-        #                              label["color_g"] / 255,
-        #                              label["color_b"] / 255)
 
         list_of_segment_names = self.getAllSegmentNames()
-
-        print('list of segment names in load segm2222', list_of_segment_names)
-
-
-        # for i, segment_namee in enumerate(list_of_segment_names):
-        #     print('i', i)
-        #     print('segment_id', segment_name)
-        #     for label in self.config_yaml["labels"]:
-        #         print('label', label)
-        #         print('')
-        #         if str(label['value']) == str(segment_name):
-        #             segment = (
-        #                 self.segmentationNode.GetSegmentation().GetSegment(
-        #                 segment_id))
-        #             segment.SetName(label["name"])
-                    # segment.SetColor(label["color_r"] / 255,
-                    #                  label["color_g"] / 255,
-                    #                  label["color_b"] / 255)
-
-
         for label in self.config_yaml["labels"]:
             if label['name'] not in list_of_segment_names:
                 self.onNewLabelSegm(label["name"], label["color_r"],
@@ -3219,6 +3170,11 @@ class SlicerCARTWidget(ScriptedLoadableModuleWidget, VTKObservationMixin):
         """
         Fix segment IDs and names based on the YAML config.
         Replaces UID-based segment IDs with label['value'] (as string).
+
+        Args:
+            segmentationNode = segmentation node that is displayed
+            config_labels = labels in the config yaml file.
+
         """
         segmentation = segmentationNode.GetSegmentation()
         segments_to_add = []
@@ -3321,8 +3277,6 @@ class SlicerCARTWidget(ScriptedLoadableModuleWidget, VTKObservationMixin):
         # Loop over config labels, and if one is missing, add it as an empty segment
         for label in self.config_yaml["labels"]:
             if label["name"] not in existing_segment_names:
-                print(
-                    f"Adding empty segment for missing label: {label['name']}")
                 self.onNewLabelSegm(label["name"],
                                     label["color_r"],
                                     label["color_g"],
@@ -3332,67 +3286,13 @@ class SlicerCARTWidget(ScriptedLoadableModuleWidget, VTKObservationMixin):
 
         self.re_order_segments(segmentation_node)
 
-
-
-
-
-    @enter_function
-    # def getAllSegmentNames(self):
-        # """
-        # GetAllSegmentNames.
-        #
-        # Args:.
-        # """
-        #
-        # self.fix_segment_ids_and_names(self.segmentationNode,
-        #                                self.config_yaml["labels"])
-        #
-        # list_of_segment_ids = (
-        #     self.segmentationNode.GetSegmentation().GetSegmentIDs())
-        #
-        #
-        # print('list of segment ids in get all 2211', list_of_segment_ids)
-        #
-        #
-        # list_of_segment_names = []
-        # for segment_id in list_of_segment_ids:
-        #     segment = self.segmentationNode.GetSegmentation().GetSegment(
-        #         segment_id)
-        #     segment_name = segment.GetName()
-        #     print('segment name in get all segm', segment_name)
-        #     for label in self.config_yaml["labels"]:
-        #         print('label value', label['value'])
-        #         print('segment name', segment_name)
-        #         if str(label['value']) == str(segment_name):
-        #             real_name = label['name']
-        #             print('real_name', real_name)
-        #             segment.SetName(real_name)
-        #             list_of_segment_names.append(real_name)
-        #             segment.SetColor(label["color_r"] / 255,
-        #                              label["color_g"] / 255,
-        #                              label["color_b"] / 255)
-        #         # else:
-        #         #
-        #         #
-        #         #     list_of_segment_names.append(segment_name)
-        #
-        #
-        #     print('segment name after', segment_name)
-        #
-        #
-        #
-        # # Ensuring if gets the correct name
-        # # for segment_name in list_of_segment_names:
-        # #     for label in self.config_yaml["labels"]:
-        # #         if label['value'] == segment_name:
-        #
-        #
-        # print('list of segment names', list_of_segment_names)
-        #
-        # return list_of_segment_names
-
     @enter_function
     def getAllSegmentNames(self):
+        """
+        GetAllSegmentNames.
+
+        Args:.
+        """
         segment_ids = self.segmentationNode.GetSegmentation().GetSegmentIDs()
         segment_names = []
         for sid in segment_ids:
