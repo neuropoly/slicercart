@@ -1272,6 +1272,8 @@ class SlicerCARTWidget(ScriptedLoadableModuleWidget, VTKObservationMixin):
         
         Args:.
         """
+        print('self new labels', self.config_yaml["labels"])
+
         for label in self.config_yaml["labels"]:
             self.onNewLabelSegm(label["name"], label["color_r"],
                                 label["color_g"], label["color_b"],
@@ -1294,6 +1296,8 @@ class SlicerCARTWidget(ScriptedLoadableModuleWidget, VTKObservationMixin):
         segment_name: Description of segment_name.
         """
 
+
+
         self.segment_name = segment_name
         srcNode = slicer.util.getNodesByClass('vtkMRMLSegmentationNode')[0]
         self.srcSegmentation = srcNode.GetSegmentation()
@@ -1307,18 +1311,36 @@ class SlicerCARTWidget(ScriptedLoadableModuleWidget, VTKObservationMixin):
             self.segmentationNode.GetSegmentation().AddEmptySegment(
                 self.segment_name)
 
+        print('native segmentation namesss***', self.srcSegmentation.GetSegmentIDs())
+
+
         # if there are segments in the segmentation node, check if the
         # segment name is already in the segmentation node
         if any([self.segment_name in i for i in
                 self.srcSegmentation.GetSegmentIDs()]):
             pass
+            print('there are segmentation in the node')
+            self.ensure_segment_id_matches_name(self.segment_name)
+
         else:
+            print('there are no segmentation in the node add empty')
             self.segmentationNode = \
                 slicer.util.getNodesByClass('vtkMRMLSegmentationNode')[0]
             self.segmentationNode.GetSegmentation().AddEmptySegment(
                 self.segment_name)
+            self.ensure_segment_id_matches_name(self.segment_name)
+
 
         return self.segment_name
+
+    @enter_function
+    def ensure_segment_id_matches_name(self, segment_name):
+        # Check if name matches ID; if not, rename
+        segment = self.srcSegmentation.GetSegment(segment_name)
+        if segment.GetName() != segment_name:
+            print(
+                f"Segment name '{segment.GetName()}' does not match ID '{segment_name}', updating name.")
+            segment.SetName(segment_name)
 
     @enter_function
     def onNewLabelSegm(self, label_name, label_color_r, label_color_g,
@@ -1334,16 +1356,49 @@ class SlicerCARTWidget(ScriptedLoadableModuleWidget, VTKObservationMixin):
         label_LB_HU: Description of label_LB_HU.
         label_UB_HU: Description of label_UB_HU.
         """
+        print('label name', label_name)
+
         segment_name = self.newSegment(label_name)
+        print('segment_name after', segment_name)
+
         self.segmentationNode = \
             slicer.util.getNodesByClass('vtkMRMLSegmentationNode')[0]
         self.segmentationNode.UndoEnabledOn()
+
+        # print('self segmentation node', self.segmentationNode)
+
         Segmentation = self.segmentationNode.GetSegmentation()
-        self.SegmentID = Segmentation.GetSegmentIdBySegmentName(segment_name)
+        # print('Segmentation', Segmentation)
+
+        # self.SegmentID = Segmentation.GetSegmentIdBySegmentName(segment_name)
+        self.SegmentID = self.get_segment_id_from_name(Segmentation, segment_name)
+
+        print('self segment ID', self.SegmentID)
+
         segment = Segmentation.GetSegment(self.SegmentID)
         segment.SetColor(label_color_r / 255, label_color_g / 255,
                          label_color_b / 255)
         self.onPushButton_select_label(segment_name, label_LB_HU, label_UB_HU)
+
+    @enter_function
+    def get_segment_id_from_name(self, segmentation, segment_name):
+        num_segments = segmentation.GetNumberOfSegments()
+        print(
+            f"Searching for segment name '{segment_name}' among {num_segments} segments.")
+
+        for i in range(num_segments):
+            current_segment_id = segmentation.GetNthSegmentID(i)
+            current_segment = segmentation.GetSegment(current_segment_id)
+            current_name = current_segment.GetName()
+            print(
+                f"Checking segment {i}: ID={current_segment_id}, Name='{current_name}'")
+
+            if current_name == segment_name:
+                print(f"Found match: Segment ID = {current_segment_id}")
+                return current_segment_id
+
+        print(f"Segment name '{segment_name}' not found.")
+        return None
 
     @enter_function
     def onPushButton_select_label(self, segment_name, label_LB_HU, label_UB_HU):
@@ -1358,7 +1413,13 @@ class SlicerCARTWidget(ScriptedLoadableModuleWidget, VTKObservationMixin):
         self.segmentationNode = \
             slicer.util.getNodesByClass('vtkMRMLSegmentationNode')[0]
         Segmentation = self.segmentationNode.GetSegmentation()
+
+        print(' in on pushbutton seelct albe before')
+
         self.SegmentID = Segmentation.GetSegmentIdBySegmentName(segment_name)
+
+        print('self segmentID by segment name', self.SegmentID)
+
         self.segmentEditorNode.SetSelectedSegmentID(self.SegmentID)
         self.updateCurrentPath()
         self.LB_HU = label_LB_HU
