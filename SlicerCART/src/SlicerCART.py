@@ -2226,6 +2226,23 @@ class SlicerCARTWidget(ScriptedLoadableModuleWidget, VTKObservationMixin):
         return is_valid
 
     @enter_function
+    def re_order_segments(self, segmentation_node):
+        # Ensure final segment order matches the order in config_yaml["labels"]
+        ordered_segment_ids = []
+        segmentation = segmentation_node.GetSegmentation()
+
+        # First, collect current ID for each name in the right order
+        for label in self.config_yaml["labels"]:
+            segment_id = segmentation.GetSegmentIdBySegmentName(label["name"])
+            if segment_id:
+                ordered_segment_ids.append(segment_id)
+
+        # Apply reordering
+        segmentation.ReorderSegments(ordered_segment_ids)
+        print(
+            f"Segments reordered according to config_yaml: {ordered_segment_ids}")
+
+    @enter_function
     def saveNrrdSegmentation(self, currentSegmentationVersion):
         """
         Note that NRRD segmentation save in uint8 by default in contrast to
@@ -3312,6 +3329,8 @@ class SlicerCARTWidget(ScriptedLoadableModuleWidget, VTKObservationMixin):
                                     label["color_b"],
                                     label["lower_bound_HU"],
                                     label["upper_bound_HU"])
+
+        self.re_order_segments(segmentation_node)
 
 
 
