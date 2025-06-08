@@ -6,6 +6,7 @@ import slicer
 import qt
 from slicer.ScriptedLoadableModule import *
 from slicer.util import VTKObservationMixin
+from vtkSegmentationCorePython import vtkSegment
 from glob import glob
 import re
 import time
