@@ -1,0 +1,227 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Getting Started &mdash; SlicerCART  documentation</title>
+      <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="../_static/css/theme.css?v=e59714d7" />
+      <link rel="stylesheet" type="text/css" href="../_static/custom.css?v=e08e59c6" />
+
+  
+      <script src="../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../_static/documentation_options.js?v=5929fcd5"></script>
+      <script src="../_static/doctools.js?v=9bcbadda"></script>
+      <script src="../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search"  style="background: #2b2b2b" >
+
+          
+          
+          <a href="../index.html">
+            
+              <img src="../_static/SlicerCART.png" class="logo" alt="Logo"/>
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <ul>
+<li class="toctree-l1"><a class="reference internal" href="../installation.html">Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../quickstart.html">Quick Start</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../videotutorials.html">Video Tutorials</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../userguide.html">User Guide</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../contributing.html">Developer Guide</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu"  style="background: #2b2b2b" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../index.html">SlicerCART</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../index.html" class="icon icon-home" aria-label="Home"></a></li>
+      <li class="breadcrumb-item active">Getting Started</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="../_sources/user_guide/getting_started.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="getting-started">
+<h1>Getting Started<a class="headerlink" href="#getting-started" title="Link to this heading"></a></h1>
+<p>This guide will help you get started with SlicerCART and understand its basic functionality.</p>
+<section id="installation">
+<h2>Installation<a class="headerlink" href="#installation" title="Link to this heading"></a></h2>
+<p>Before using SlicerCART, make sure you have:</p>
+<ol class="arabic simple">
+<li><p>Installed 3D Slicer (see <a class="reference internal" href="../installation.html"><span class="doc">Installation</span></a>)</p></li>
+<li><p>Installed the SlicerCART module</p></li>
+<li><p>Restarted 3D Slicer</p></li>
+</ol>
+</section>
+<section id="opening-the-module">
+<h2>Opening the Module<a class="headerlink" href="#opening-the-module" title="Link to this heading"></a></h2>
+<ol class="arabic simple">
+<li><p>Launch 3D Slicer</p></li>
+<li><p>Click on the “Modules” dropdown menu</p></li>
+<li><p>Search for “SlicerCART”</p></li>
+<li><p>Click on SlicerCART to open the module</p></li>
+</ol>
+</section>
+<section id="initial-setup">
+<h2>Initial Setup<a class="headerlink" href="#initial-setup" title="Link to this heading"></a></h2>
+<section id="project-configuration">
+<h3>Project Configuration<a class="headerlink" href="#project-configuration" title="Link to this heading"></a></h3>
+<ol class="arabic simple">
+<li><p>Create a new project configuration file:</p>
+<ul class="simple">
+<li><p>Click “Edit Configuration”</p></li>
+<li><p>Set up your segmentation labels</p></li>
+<li><p>Configure classification categories</p></li>
+<li><p>Save the configuration</p></li>
+</ul>
+</li>
+<li><p>Select working directories:</p>
+<ul class="simple">
+<li><p>Choose your volume folder</p></li>
+<li><p>Set up an output directory</p></li>
+<li><p>Verify paths are correct</p></li>
+</ul>
+</li>
+</ol>
+</section>
+</section>
+<section id="basic-workflow">
+<h2>Basic Workflow<a class="headerlink" href="#basic-workflow" title="Link to this heading"></a></h2>
+<ol class="arabic simple">
+<li><p><strong>Loading Data</strong></p>
+<ul class="simple">
+<li><p>Select your volume folder</p></li>
+<li><p>Choose a case from the list</p></li>
+<li><p>Load existing segmentations (if any)</p></li>
+</ul>
+</li>
+<li><p><strong>Segmentation</strong></p>
+<ul class="simple">
+<li><p>Use the paint brush tool</p></li>
+<li><p>Apply interpolation between slices</p></li>
+<li><p>Save your work frequently</p></li>
+</ul>
+</li>
+<li><p><strong>Classification</strong></p>
+<ul class="simple">
+<li><p>Add classifications for each case</p></li>
+<li><p>Review and modify as needed</p></li>
+<li><p>Save classification data</p></li>
+</ul>
+</li>
+<li><p><strong>Quality Control</strong></p>
+<ul class="simple">
+<li><p>Compare segmentation versions</p></li>
+<li><p>Review classifications</p></li>
+<li><p>Export results</p></li>
+</ul>
+</li>
+</ol>
+</section>
+<section id="tips-for-success">
+<h2>Tips for Success<a class="headerlink" href="#tips-for-success" title="Link to this heading"></a></h2>
+<ol class="arabic simple">
+<li><p><strong>Regular Saving</strong></p>
+<ul class="simple">
+<li><p>Save your work frequently</p></li>
+<li><p>Use version control for segmentations</p></li>
+<li><p>Back up classification data</p></li>
+</ul>
+</li>
+<li><p><strong>Efficient Navigation</strong></p>
+<ul class="simple">
+<li><p>Learn keyboard shortcuts</p></li>
+<li><p>Use the quick access toolbar</p></li>
+<li><p>Organize your workspace</p></li>
+</ul>
+</li>
+<li><p><strong>Quality Assurance</strong></p>
+<ul class="simple">
+<li><p>Review your work regularly</p></li>
+<li><p>Use comparison tools</p></li>
+<li><p>Document your process</p></li>
+</ul>
+</li>
+</ol>
+</section>
+<section id="next-steps">
+<h2>Next Steps<a class="headerlink" href="#next-steps" title="Link to this heading"></a></h2>
+<p>After getting familiar with the basics, you can:</p>
+<ul class="simple">
+<li><p>Explore advanced features</p></li>
+<li><p>Customize your workflow</p></li>
+<li><p>Set up project-specific configurations</p></li>
+<li><p>Contribute to the project</p></li>
+</ul>
+<p>For more detailed information, see:</p>
+<ul class="simple">
+<li><p><a class="reference internal" href="configuration.html"><span class="doc">Configuration</span></a></p></li>
+<li><p><span class="xref std std-doc">segmentation</span></p></li>
+<li><p><span class="xref std std-doc">classification</span></p></li>
+<li><p><span class="xref std std-doc">visualization</span></p></li>
+</ul>
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2025.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

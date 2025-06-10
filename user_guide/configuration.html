@@ -1,0 +1,297 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Configuration &mdash; SlicerCART  documentation</title>
+      <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="../_static/css/theme.css?v=e59714d7" />
+      <link rel="stylesheet" type="text/css" href="../_static/custom.css?v=e08e59c6" />
+
+  
+      <script src="../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../_static/documentation_options.js?v=5929fcd5"></script>
+      <script src="../_static/doctools.js?v=9bcbadda"></script>
+      <script src="../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search"  style="background: #2b2b2b" >
+
+          
+          
+          <a href="../index.html">
+            
+              <img src="../_static/SlicerCART.png" class="logo" alt="Logo"/>
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <ul>
+<li class="toctree-l1"><a class="reference internal" href="../installation.html">Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../quickstart.html">Quick Start</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../videotutorials.html">Video Tutorials</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../userguide.html">User Guide</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../contributing.html">Developer Guide</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu"  style="background: #2b2b2b" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../index.html">SlicerCART</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../index.html" class="icon icon-home" aria-label="Home"></a></li>
+      <li class="breadcrumb-item active">Configuration</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="../_sources/user_guide/configuration.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="configuration">
+<h1>Configuration<a class="headerlink" href="#configuration" title="Link to this heading"></a></h1>
+<p>This guide explains how to configure SlicerCART for your specific project needs.</p>
+<section id="configuration-file">
+<h2>Configuration File<a class="headerlink" href="#configuration-file" title="Link to this heading"></a></h2>
+<p>SlicerCART uses a YAML configuration file to store project settings. The default location is:</p>
+<div class="highlight-text notranslate"><div class="highlight"><pre><span></span>SlicerCART/src/configuration_config.yml
+</pre></div>
+</div>
+</section>
+<section id="file-structure">
+<h2>File Structure<a class="headerlink" href="#file-structure" title="Link to this heading"></a></h2>
+<p>The configuration file has the following main sections:</p>
+<ol class="arabic">
+<li><p><strong>Labels</strong></p>
+<p>Define segmentation labels for your project:</p>
+<div class="highlight-yaml notranslate"><div class="highlight"><pre><span></span><span class="nt">labels</span><span class="p">:</span>
+<span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;ICH&quot;</span>
+<span class="w">    </span><span class="nt">value</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">1</span>
+<span class="w">    </span><span class="nt">color</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">[</span><span class="nv">255</span><span class="p p-Indicator">,</span><span class="w"> </span><span class="nv">0</span><span class="p p-Indicator">,</span><span class="w"> </span><span class="nv">0</span><span class="p p-Indicator">]</span><span class="w">  </span><span class="c1"># RGB values</span>
+<span class="w">    </span><span class="nt">description</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;Intracerebral</span><span class="nv"> </span><span class="s">hemorrhage&quot;</span>
+<span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;IVH&quot;</span>
+<span class="w">    </span><span class="nt">value</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">2</span>
+<span class="w">    </span><span class="nt">color</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">[</span><span class="nv">0</span><span class="p p-Indicator">,</span><span class="w"> </span><span class="nv">255</span><span class="p p-Indicator">,</span><span class="w"> </span><span class="nv">0</span><span class="p p-Indicator">]</span>
+<span class="w">    </span><span class="nt">description</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;Intraventricular</span><span class="nv"> </span><span class="s">hemorrhage&quot;</span>
+</pre></div>
+</div>
+</li>
+<li><p><strong>Classification</strong></p>
+<p>Set up classification categories:</p>
+<div class="highlight-yaml notranslate"><div class="highlight"><pre><span></span><span class="nt">classification</span><span class="p">:</span>
+<span class="w">  </span><span class="nt">categories</span><span class="p">:</span>
+<span class="w">    </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;Hemorrhage</span><span class="nv"> </span><span class="s">Type&quot;</span>
+<span class="w">      </span><span class="nt">options</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">[</span><span class="s">&quot;Primary&quot;</span><span class="p p-Indicator">,</span><span class="w"> </span><span class="s">&quot;Secondary&quot;</span><span class="p p-Indicator">]</span>
+<span class="w">    </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;Location&quot;</span>
+<span class="w">      </span><span class="nt">options</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">[</span><span class="s">&quot;Deep&quot;</span><span class="p p-Indicator">,</span><span class="w"> </span><span class="s">&quot;Lobar&quot;</span><span class="p p-Indicator">,</span><span class="w"> </span><span class="s">&quot;Mixed&quot;</span><span class="p p-Indicator">]</span>
+</pre></div>
+</div>
+</li>
+<li><p><strong>Visualization</strong></p>
+<p>Configure display settings:</p>
+<div class="highlight-yaml notranslate"><div class="highlight"><pre><span></span><span class="nt">visualization</span><span class="p">:</span>
+<span class="w">  </span><span class="nt">window_level</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">[</span><span class="nv">-20</span><span class="p p-Indicator">,</span><span class="w"> </span><span class="nv">180</span><span class="p p-Indicator">]</span>
+<span class="w">  </span><span class="nt">opacity</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">0.5</span>
+<span class="w">  </span><span class="nt">smoothing</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">true</span>
+</pre></div>
+</div>
+</li>
+</ol>
+</section>
+<section id="editing-configuration">
+<h2>Editing Configuration<a class="headerlink" href="#editing-configuration" title="Link to this heading"></a></h2>
+<p>There are two ways to edit the configuration:</p>
+<ol class="arabic simple">
+<li><p><strong>Using the GUI</strong></p>
+<ul class="simple">
+<li><p>Click “Edit Configuration” in the module</p></li>
+<li><p>Modify settings in the dialog</p></li>
+<li><p>Save changes</p></li>
+</ul>
+</li>
+<li><p><strong>Manual Editing</strong></p>
+<ul class="simple">
+<li><p>Open configuration_config.yml in a text editor</p></li>
+<li><p>Edit the YAML directly</p></li>
+<li><p>Save the file</p></li>
+<li><p>Restart the module</p></li>
+</ul>
+</li>
+</ol>
+</section>
+<section id="configuration-options">
+<h2>Configuration Options<a class="headerlink" href="#configuration-options" title="Link to this heading"></a></h2>
+<section id="labels">
+<h3>Labels<a class="headerlink" href="#labels" title="Link to this heading"></a></h3>
+<p>Each label requires:</p>
+<ul class="simple">
+<li><p><strong>name</strong>: Display name</p></li>
+<li><p><strong>value</strong>: Numeric value (1-based)</p></li>
+<li><p><strong>color</strong>: RGB values [0-255]</p></li>
+<li><p><strong>description</strong>: Optional description</p></li>
+</ul>
+</section>
+<section id="classification">
+<h3>Classification<a class="headerlink" href="#classification" title="Link to this heading"></a></h3>
+<p>Categories can have:</p>
+<ul class="simple">
+<li><p><strong>name</strong>: Category name</p></li>
+<li><p><strong>options</strong>: List of possible values</p></li>
+<li><p><strong>required</strong>: Boolean (true/false)</p></li>
+<li><p><strong>multiple</strong>: Allow multiple selections</p></li>
+</ul>
+</section>
+<section id="visualization">
+<h3>Visualization<a class="headerlink" href="#visualization" title="Link to this heading"></a></h3>
+<p>Available settings:</p>
+<ul class="simple">
+<li><p><strong>window_level</strong>: Default window/level</p></li>
+<li><p><strong>opacity</strong>: Label opacity</p></li>
+<li><p><strong>smoothing</strong>: Enable smoothing</p></li>
+<li><p><strong>interpolation</strong>: Interpolation method</p></li>
+</ul>
+</section>
+</section>
+<section id="advanced-configuration">
+<h2>Advanced Configuration<a class="headerlink" href="#advanced-configuration" title="Link to this heading"></a></h2>
+<ol class="arabic">
+<li><p><strong>Custom Scripts</strong></p>
+<p>Add custom processing scripts:</p>
+<div class="highlight-yaml notranslate"><div class="highlight"><pre><span></span><span class="nt">scripts</span><span class="p">:</span>
+<span class="w">  </span><span class="nt">pre_process</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;path/to/script.py&quot;</span>
+<span class="w">  </span><span class="nt">post_process</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;path/to/script.py&quot;</span>
+</pre></div>
+</div>
+</li>
+<li><p><strong>Export Settings</strong></p>
+<p>Configure export formats:</p>
+<div class="highlight-yaml notranslate"><div class="highlight"><pre><span></span><span class="nt">export</span><span class="p">:</span>
+<span class="w">  </span><span class="nt">format</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">[</span><span class="s">&quot;NRRD&quot;</span><span class="p p-Indicator">,</span><span class="w"> </span><span class="s">&quot;NIFTI&quot;</span><span class="p p-Indicator">]</span>
+<span class="w">  </span><span class="nt">compression</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">true</span>
+<span class="w">  </span><span class="nt">include_metadata</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">true</span>
+</pre></div>
+</div>
+</li>
+<li><p><strong>Keyboard Shortcuts</strong></p>
+<p>Define custom shortcuts:</p>
+<div class="highlight-yaml notranslate"><div class="highlight"><pre><span></span><span class="nt">shortcuts</span><span class="p">:</span>
+<span class="w">  </span><span class="nt">next_slice</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;Right&quot;</span>
+<span class="w">  </span><span class="nt">previous_slice</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;Left&quot;</span>
+<span class="w">  </span><span class="nt">save</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;Ctrl+S&quot;</span>
+</pre></div>
+</div>
+</li>
+</ol>
+</section>
+<section id="best-practices">
+<h2>Best Practices<a class="headerlink" href="#best-practices" title="Link to this heading"></a></h2>
+<ol class="arabic simple">
+<li><p><strong>Version Control</strong></p>
+<ul class="simple">
+<li><p>Keep configuration under version control</p></li>
+<li><p>Document changes</p></li>
+<li><p>Use descriptive comments</p></li>
+</ul>
+</li>
+<li><p><strong>Validation</strong></p>
+<ul class="simple">
+<li><p>Test configuration changes</p></li>
+<li><p>Verify label values</p></li>
+<li><p>Check color conflicts</p></li>
+</ul>
+</li>
+<li><p><strong>Documentation</strong></p>
+<ul class="simple">
+<li><p>Document custom settings</p></li>
+<li><p>Explain project-specific choices</p></li>
+<li><p>Share with team members</p></li>
+</ul>
+</li>
+</ol>
+</section>
+<section id="troubleshooting">
+<h2>Troubleshooting<a class="headerlink" href="#troubleshooting" title="Link to this heading"></a></h2>
+<section id="common-issues">
+<h3>Common Issues<a class="headerlink" href="#common-issues" title="Link to this heading"></a></h3>
+<ol class="arabic simple">
+<li><p><strong>Invalid YAML</strong></p>
+<ul class="simple">
+<li><p>Check syntax</p></li>
+<li><p>Verify indentation</p></li>
+<li><p>Use YAML validator</p></li>
+</ul>
+</li>
+<li><p><strong>Missing Values</strong></p>
+<ul class="simple">
+<li><p>Ensure required fields</p></li>
+<li><p>Check data types</p></li>
+<li><p>Verify paths</p></li>
+</ul>
+</li>
+<li><p><strong>Conflicts</strong></p>
+<ul class="simple">
+<li><p>Check label values</p></li>
+<li><p>Verify unique names</p></li>
+<li><p>Review color choices</p></li>
+</ul>
+</li>
+</ol>
+</section>
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2025.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>
