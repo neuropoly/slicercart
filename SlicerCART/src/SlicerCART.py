@@ -178,12 +178,10 @@ class SlicerCARTWidget(ScriptedLoadableModuleWidget, VTKObservationMixin):
         # 1): so, first index value = 1 -1 == 0
         self.current_label_index = (self.config_yaml['labels'][0]['value'] - 1)
         # self.current_label_index = self.config_yaml['labels'][0]['value']
-
+        
         self.ui.PauseTimerButton.setText('Pause')
         self.ui.SelectVolumeFolder.connect(
             'clicked(bool)', self.onSelectVolumesFolderButton)
-        self.ui.EditConfiguration.connect(
-            'clicked(bool)', self.onEditConfiguration)
         self.ui.SlicerDirectoryListView.clicked.connect(
             self.getCurrentTableItem)
         self.ui.SaveSegmentationButton.connect(
@@ -718,17 +716,6 @@ class SlicerCARTWidget(ScriptedLoadableModuleWidget, VTKObservationMixin):
         self.ui.LassoPaintButton.setEnabled(False)
         self.ui.pushButton_Erase.setEnabled(False)
         self.ui.placeMeasurementLine.setEnabled(False)
-
-    @enter_function
-    def onEditConfiguration(self):
-        """
-        OnEditConfiguration.
-        
-        Args:.
-        """
-        slicerCARTConfigurationSetupWindow = SlicerCARTConfigurationSetupWindow(
-            self, edit_conf=True)
-        slicerCARTConfigurationSetupWindow.show()
 
     @enter_function
     def onSelectVolumesFolderButton(self):
