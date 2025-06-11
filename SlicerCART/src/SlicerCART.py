@@ -114,6 +114,8 @@ class SlicerCARTWidget(ScriptedLoadableModuleWidget, VTKObservationMixin):
         # Auto-Detect the Slicer theme, so specific foreground can be used
         self.theme = Theme.get_mode(self)
         self.foreground = Theme.set_foreground(self, self.theme)
+        
+        
 
     @enter_function
     def setup(self):
@@ -2872,10 +2874,18 @@ class SlicerCARTWidget(ScriptedLoadableModuleWidget, VTKObservationMixin):
         Get the latest path of most recent segmentation version if available.
         """
         latest_version = self.get_latest_existing_version()
+        
+        file_extension = ConfigPath.INPUT_FILE_EXTENSION[1:]
+        
+        if file_extension == ".nrrd":
+            file_extension = ".seg.nrrd"
+        
         latest_path = os.path.join(
             self.currentOutputPath,
-            "{}_{}"f"{ConfigPath.INPUT_FILE_EXTENSION[1:]}".format(
+            "{}_{}"f"{file_extension}".format(
                 self.currentVolumeFilename, latest_version))
+        
+        Debug.print(self, f'latest_path: {latest_path}')
 
         if os.path.exists(latest_path):
             return latest_path
@@ -3372,37 +3382,9 @@ class SlicerCARTWidget(ScriptedLoadableModuleWidget, VTKObservationMixin):
         
         Args:.
         """
-        if self.previousAction == 'segmentation':
-            self.segmentEditorWidget.undo()
+        #to update once measurement line is functional since this cannot remove markups
+        self.segmentEditorWidget.undo()
 
-        elif self.previousAction == 'markups':
-            # Get the last added markup node (or customize based on specific
-            # markup type)
-            markupsNodeList = slicer.mrmlScene.GetNodesByClass(
-                "vtkMRMLMarkupsNode")
-            markupsNodeList.InitTraversal()
-
-            lastMarkupNode = None
-
-            while True:
-                markupNode = markupsNodeList.GetNextItemAsObject()
-                if markupNode:
-                    lastMarkupNode = markupNode  # Keep track of the last
-                    # markup node
-                else:
-                    break
-
-            # Remove the last control point from the markup node (or remove the
-            # whole node if needed)
-            if lastMarkupNode and lastMarkupNode.GetNumberOfControlPoints() > 0:
-                lastMarkupNode.RemoveNthControlPoint(
-                    lastMarkupNode.GetNumberOfControlPoints() - 1)
-            else:
-                slicer.mrmlScene.RemoveNode(
-                    lastMarkupNode)  # Remove the whole markup node if no
-                # points remain
-
-            removedNode = self.lineDetails.pop(lastMarkupNode.GetName())
 
 
     @enter_function
