@@ -3439,7 +3439,7 @@ class SlicerCARTWidget(ScriptedLoadableModuleWidget, VTKObservationMixin):
         self.previousAction = 'segmentation'
         self.ensure_active_segment_is_selected()
         self.segmentEditorWidget.setActiveEffectByName("Scissors")
-        self.segmentEditorNode.SetMasterVolumeIntensityMask(False)
+        self.segmentEditorNode.SetMasterVolumeIntensityMask(True)
         effect = self.segmentEditorWidget.activeEffect()
         effect.setParameter("Operation", "FillInside")
         effect.setParameter("Shape", "FreeForm")
