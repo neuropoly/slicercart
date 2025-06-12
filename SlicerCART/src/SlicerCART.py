@@ -3128,6 +3128,8 @@ class SlicerCARTWidget(ScriptedLoadableModuleWidget, VTKObservationMixin):
             slicer.util.loadSegmentation(absolute_path_to_segmentation_file)
             self.segmentationNode = \
                 slicer.util.getNodesByClass('vtkMRMLSegmentationNode')[0]
+                
+                
         elif 'nii' in ConfigPath.INPUT_FILE_EXTENSION:
             labelmapVolumeNode = slicer.util.loadLabelVolume(
                 absolute_path_to_segmentation_file)
@@ -3237,8 +3239,7 @@ class SlicerCARTWidget(ScriptedLoadableModuleWidget, VTKObservationMixin):
             "vtkMRMLSegmentationNode", "TemporarySegmentation")
 
         if latest_version_path.endswith(".nrrd"):
-            slicer.util.loadSegmentation(latest_version_path,
-                                         temporary_segmentation_node)
+            temporary_segmentation_node = slicer.util.loadSegmentation(latest_version_path)
 
         elif (latest_version_path.endswith(".nii")
               or latest_version_path.endswith(".nii.gz")):
