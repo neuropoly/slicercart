@@ -73,7 +73,7 @@ impose_bids_format: true
 input_filetype: '*.nii.gz'
 interpolate_value: false
 is_classification_requested: true
-is_display_timer_requested: false
+is_display_timer_requested: true
 is_keyboard_shortcuts_requested: true
 is_mouse_shortcuts_requested: true
 is_segmentation_requested: true
@@ -94,7 +94,7 @@ labels:
   name: IVH
   upper_bound_HU: 90
   value: 2
-modality: MRI
+modality: CT
 remaining_list_filename: remaining_list.yaml
 require_empty: false
 save_uint8: true
