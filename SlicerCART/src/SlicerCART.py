@@ -285,6 +285,19 @@ class SlicerCARTWidget(ScriptedLoadableModuleWidget, VTKObservationMixin):
         self.shortcut_objects = {}  # Maps shortcut key to QShortcut object
         self.shortcut_callbacks = {}
         self.set_keyboard_shortcuts()
+        
+        # Layout management on startup
+        # Closes Data Probe upon landing in SlicerCART
+        self.close_data_probe_on_startup()
+
+    @enter_function
+    def close_data_probe_on_startup(self):
+        mainWindow = slicer.util.mainWindow()
+        from ctk import ctkCollapsibleButton  # ensure CTK is imported
+        for widget in mainWindow.findChildren(ctkCollapsibleButton):
+            if widget.text == 'Data Probe':
+                widget.collapsed = True
+                Debug.print(self, "Data Probe collapsed")
 
     @enter_function
     def set_classification_version_labels(self, classif_label):
@@ -297,7 +310,7 @@ class SlicerCARTWidget(ScriptedLoadableModuleWidget, VTKObservationMixin):
     @enter_function
     def visibilityModifiedCallback(self, caller, event):
         """
-        Each time segments visibility is changed, this function ic called.
+        Each time segments visibility is changed, this function is called.
         caller: used to get segment visibility
         event: segment modified
         """
