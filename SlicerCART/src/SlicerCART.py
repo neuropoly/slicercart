@@ -10,12 +10,10 @@ from datetime import datetime
 from glob import glob
 import colorsys
 
-import pandas as pd
 # KO: VTK isn't a standard Python lib, being loaded by Slicer post-init; as a result
 #  it is not exposed as a library to IDEs. As such, we need to trust that slicer will
 #  instantiate it before we reach this point; hence the error suppression.
 import vtk  # noqa: F401
-from bids_validator import BIDSValidator
 
 # ~KO: Both QT and Slicer are only initialized when slicer boots, and by extension when
 #  some of their C++ code is imported. As a result, quite a few of their utilities are
@@ -41,6 +39,7 @@ from utils.UserPath import UserPath
 from utils.constants import CLASSIFICATION_BOXES_LIST, TIMER_MUTEX
 from utils.debugging_helpers import Debug, enter_function
 from utils.development_helpers import Dev
+from utils.install_python_packages import check_and_install_python_packages
 
 
 ###############################################################################
@@ -123,9 +122,14 @@ class SlicerCARTWidget(ScriptedLoadableModuleWidget, VTKObservationMixin):
         Args:
         parent: Parent widget for this widget.
         """
-        ScriptedLoadableModuleWidget.__init__(self, parent)
-        VTKObservationMixin.__init__(
-            self)  # needed for parameter node observation
+        # Run the initialization for this class's parents
+        super().__init__()
+
+        # Confirm we have everything we need installed; prompt the user otherwise
+        # KO: This technically breaks 3D Slicer's standards, but frankly the
+        #   alternatives are so terrible that this is the lesser evil. Sorry!
+        check_and_install_python_packages()
+
         self.logic = None
         self._parameterNode = None
         self._updatingGUIFromParameterNode = False
@@ -157,7 +161,7 @@ class SlicerCARTWidget(ScriptedLoadableModuleWidget, VTKObservationMixin):
         ### Segment editor widget
         self.layout.setContentsMargins(4, 0, 4, 0)
 
-        ScriptedLoadableModuleWidget.setup(self)
+        super().setup()
 
         # Load widget from .ui file (created by Qt Designer).
         # Additional widgets can be instantiated manually and added to
@@ -926,6 +930,8 @@ class SlicerCARTWidget(ScriptedLoadableModuleWidget, VTKObservationMixin):
         Args:
         path: Description of path.
         """
+        from bids_validator import BIDSValidator
+
         validator = BIDSValidator()
         is_structure_valid = True
 
@@ -1712,14 +1718,19 @@ class SlicerCARTWidget(ScriptedLoadableModuleWidget, VTKObservationMixin):
         information available to an updated dataframe.
         return: dataframe with all previous and actual classification labels.
         """
+        # TMP: Import locally, because Slicer's external dependency management is nuts
+        import pandas as pd
+
         self.outputClassificationInformationFile = (
             os.path.join(self.currentOutputPath,
                          '{}_ClassificationInformation.csv'.format(
                              self.currentVolumeFilename)))
         df = None
-        if os.path.exists(
-                self.outputClassificationInformationFile) and os.path.isfile(
-            self.outputClassificationInformationFile):
+        if (os.path.exists(
+                self.outputClassificationInformationFile)
+                and os.path.isfile(self.outputClassificationInformationFile)
+        ):
+
             df = pd.read_csv(self.outputClassificationInformationFile)
 
         label_string_slicer = ""
@@ -1804,6 +1815,9 @@ class SlicerCARTWidget(ScriptedLoadableModuleWidget, VTKObservationMixin):
         """
         Get all classification columns name from csv file.
         """
+
+        # TMP: Import locally, because Slicer's external dependency management is nuts
+        import pandas as pd
 
         # Try except required since this function can be used initially or
         # after output folder has been selected. If initial, the output path is
@@ -1985,6 +1999,9 @@ class SlicerCARTWidget(ScriptedLoadableModuleWidget, VTKObservationMixin):
 
     @enter_function
     def combine_dict(self, dict1, dict2):
+        # TMP: Import locally, because Slicer's external dependency management is nuts
+        import pandas as pd
+
         """
         Combine 2 dictionaries into a dataframe
         :param dict1 first dictionary to combine
@@ -2312,6 +2329,8 @@ class SlicerCARTWidget(ScriptedLoadableModuleWidget, VTKObservationMixin):
             slicer.util.saveNode(self.labelmapVolumeNode, temp_path)
 
             # Step 3: Load and cast to UINT8 with nibabel
+            import nibabel as nib
+            import numpy as np
             nii = nib.load(temp_path)
             data = nii.get_fdata().astype(np.uint8)
             new_nii = nib.Nifti1Image(data, affine=nii.affine,
@@ -2425,6 +2444,9 @@ class SlicerCARTWidget(ScriptedLoadableModuleWidget, VTKObservationMixin):
         
         Args:.
         """
+        # TMP: Import locally, because Slicer's external dependency management is nuts
+        import pandas as pd
+
         version = "v"
         classificationInformationPath = (f'{self.currentOutputPath}{os.sep}'
                                          f'{self.currentVolumeFilename}'
@@ -2629,6 +2651,9 @@ class SlicerCARTWidget(ScriptedLoadableModuleWidget, VTKObservationMixin):
         
         Args:.
         """
+        # TMP: Import locally, because Slicer's external dependency management is nuts
+        import pandas as pd
+
         if self.outputFolder is None or self.CurrentFolder is None:
             return
 
@@ -2710,6 +2735,9 @@ class SlicerCARTWidget(ScriptedLoadableModuleWidget, VTKObservationMixin):
 
         Args:.
         """
+        # TMP: Import locally, because Slicer's external dependency management is nuts
+        import pandas as pd
+
         classificationInformationPath = (f'{self.currentOutputPath}{os.sep}'
                                          f'{self.currentVolumeFilename}'
                                          f'_ClassificationInformation.csv')
@@ -2952,6 +2980,9 @@ class SlicerCARTWidget(ScriptedLoadableModuleWidget, VTKObservationMixin):
         
         Args:.
         """
+        # TMP: Import locally, because Slicer's external dependency management is nuts
+        import pandas as pd
+
         segmentationInformationPath = (f'{self.currentOutputPath}{os.sep}'
                                        f'{self.currentVolumeFilename}'
                                        f'_SegmentationInformation.csv')
@@ -2983,6 +3014,8 @@ class SlicerCARTWidget(ScriptedLoadableModuleWidget, VTKObservationMixin):
         
         Args:.
         """
+        import pandas as pd
+
         segmentationInformationPath = (f'{self.currentOutputPath}{os.sep}'
                                        f'{self.currentVolumeFilename}'
                                        f'_SegmentationInformation.csv')
@@ -3218,7 +3251,7 @@ class SlicerCARTWidget(ScriptedLoadableModuleWidget, VTKObservationMixin):
                 # If the name or old ID matches a label value or name
                 if old_name == str(label["value"]) or old_name == label["name"]:
                     # Deep copy the segment
-                    new_segment = vtkSegment()
+                    new_segment = vtk.vtkSegment()
                     new_segment.DeepCopy(segment)
 
                     # Set correct name and color
@@ -3372,6 +3405,8 @@ class SlicerCARTWidget(ScriptedLoadableModuleWidget, VTKObservationMixin):
         
         Args:.
         """
+        import pandas as pd
+
         segmentationInformationPath = (f'{self.currentOutputPath}{os.sep}'
                                        f'{self.currentVolumeFilename}'
                                        f'_SegmentationInformation.csv')
