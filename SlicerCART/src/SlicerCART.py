@@ -21,6 +21,12 @@ import vtk  # noqa: F401
 #  our code base. For now, ignore it; will look into a workaround soon(tm)
 import qt
 import slicer
+
+# Before importing our sub-modules, confirm we have everything installed
+# TODO (KO): Refactor everything to make external packages locally imported instead
+from utils.install_python_packages import check_and_install_python_packages
+check_and_install_python_packages()
+
 from scripts.CompareSegmentVersionsWindow import CompareSegmentVersionsWindow
 from scripts.CustomInteractorStyle import CustomInteractorStyle
 from scripts.InteractingClasses import SlicerCARTConfigurationInitialWindow
@@ -39,7 +45,6 @@ from utils.UserPath import UserPath
 from utils.constants import CLASSIFICATION_BOXES_LIST, TIMER_MUTEX
 from utils.debugging_helpers import Debug, enter_function
 from utils.development_helpers import Dev
-from utils.install_python_packages import check_and_install_python_packages
 
 
 ###############################################################################
@@ -124,11 +129,6 @@ class SlicerCARTWidget(ScriptedLoadableModuleWidget, VTKObservationMixin):
         """
         # Run the initialization for this class's parents
         super().__init__()
-
-        # Confirm we have everything we need installed; prompt the user otherwise
-        # KO: This technically breaks 3D Slicer's standards, but frankly the
-        #   alternatives are so terrible that this is the lesser evil. Sorry!
-        check_and_install_python_packages()
 
         self.logic = None
         self._parameterNode = None
