@@ -1,9 +1,18 @@
-from utils.requirements import *
-from utils.constants import *
-from utils.debugging_helpers import *
+import os
+import shutil
+import tempfile
+
+import yaml
+
+import qt
+from .constants import (CLASSIFICATION_BOXES_LIST, CONFIG_COPY_FILENAME, CONFIG_FILE_PATH, CONF_FOLDER_NAME,
+                        INITIAL_CONFIG_FILE)
+from .debugging_helpers import enter_function
+
 
 OUTPUT_CONFIG_PATH = 'output_path.txt' # Name of the temp file where the path
 # of the config file to use (from selected output folder). To use here only.
+
 
 class ConfigPath():
     @enter_function
