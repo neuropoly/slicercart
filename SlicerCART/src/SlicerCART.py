@@ -128,7 +128,11 @@ class SlicerCARTWidget(ScriptedLoadableModuleWidget, VTKObservationMixin):
         parent: Parent widget for this widget.
         """
         # Run the initialization for this class's parents
-        super().__init__()
+        # KO: Initialization needs to be run this way to prevent the resulting
+        #  modules becoming "isolated" from the main Slicer window. Thank
+        #  Slicer for this jank!
+        ScriptedLoadableModuleWidget.__init__(self, parent)
+        VTKObservationMixin.__init__(self)
 
         self.logic = None
         self._parameterNode = None
