@@ -10,7 +10,7 @@ The current version **IS NOT** able to:
 
 - Load multiple MRI contrasts at the same time for a given subject (`issue 8 <https://github.com/neuropoly/slicercart/issues/8>`__)
 - Load automatically the latest classification version (`issue 184 <https://github.com/neuropoly/slicercart/issues/184>`__)
-- Compare multiple segments to revise them (`issue 180 <https://github.com/neuropoly/slicercart/issues/180>`__)
+- Compare multiple segmentations to revise them (`issue 180 <https://github.com/neuropoly/slicercart/issues/180>`__)
 
 Start Segmentation and Classification
 ---------------
