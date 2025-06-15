@@ -14,6 +14,7 @@ import colorsys
 #  it is not exposed as a library to IDEs. As such, we need to trust that slicer will
 #  instantiate it before we reach this point; hence the error suppression.
 import vtk  # noqa: F401
+from ctk import ctkCollapsibleButton # noqa: F401
 
 # ~KO: Both QT and Slicer are only initialized when slicer boots, and by extension when
 #  some of their C++ code is imported. As a result, quite a few of their utilities are
@@ -46,16 +47,6 @@ from utils.constants import CLASSIFICATION_BOXES_LIST, TIMER_MUTEX
 from utils.debugging_helpers import Debug, enter_function
 from utils.development_helpers import Dev
 
-
-###############################################################################
-
-###############################################################################
-# This main script contains the following classes:
-#   SlicerCART --- main explanation script class
-#   SlicerCARTWidget --- SlicerCART graphical user interface class (mainly use)
-from ctk import ctkCollapsibleButton  
-
-###############################################################################
 
 class SlicerCART(ScriptedLoadableModule):
     """
