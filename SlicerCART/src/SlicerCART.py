@@ -1731,8 +1731,6 @@ class SlicerCARTWidget(ScriptedLoadableModuleWidget, VTKObservationMixin):
         information available to an updated dataframe.
         return: dataframe with all previous and actual classification labels.
         """
-        # TMP: Import locally, because Slicer's external dependency management
-        # is nuts
         import pandas as pd
 
         self.outputClassificationInformationFile = (
@@ -1829,9 +1827,6 @@ class SlicerCARTWidget(ScriptedLoadableModuleWidget, VTKObservationMixin):
         """
         Get all classification columns name from csv file.
         """
-
-        # TMP: Import locally, because Slicer's external
-        # dependency management is nuts
         import pandas as pd
 
         # Try except required since this function can be used initially or
@@ -2015,8 +2010,6 @@ class SlicerCARTWidget(ScriptedLoadableModuleWidget, VTKObservationMixin):
 
     @enter_function
     def combine_dict(self, dict1, dict2):
-        # TMP: Import locally, because Slicer's external dependency
-        # management is nuts
         import pandas as pd
 
         """
@@ -2461,8 +2454,6 @@ class SlicerCARTWidget(ScriptedLoadableModuleWidget, VTKObservationMixin):
         
         Args:.
         """
-        # TMP: Import locally, because Slicer's external dependency
-        # management is nuts
         import pandas as pd
 
         version = "v"
@@ -2669,8 +2660,6 @@ class SlicerCARTWidget(ScriptedLoadableModuleWidget, VTKObservationMixin):
         
         Args:.
         """
-        # TMP: Import locally, because Slicer's external dependency
-        # management is nuts
         import pandas as pd
 
         if self.outputFolder is None or self.CurrentFolder is None:
@@ -2755,8 +2744,6 @@ class SlicerCARTWidget(ScriptedLoadableModuleWidget, VTKObservationMixin):
 
         Args:.
         """
-        # TMP: Import locally, because Slicer's external dependency
-        # management is nuts
         import pandas as pd
 
         classificationInformationPath = (f'{self.currentOutputPath}{os.sep}'
@@ -3001,8 +2988,6 @@ class SlicerCARTWidget(ScriptedLoadableModuleWidget, VTKObservationMixin):
         
         Args:.
         """
-        # TMP: Import locally, because Slicer's external dependency
-        # management is nuts
         import pandas as pd
 
         segmentationInformationPath = (f'{self.currentOutputPath}{os.sep}'
