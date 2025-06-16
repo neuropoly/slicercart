@@ -24,7 +24,6 @@ import qt
 import slicer
 
 # Before importing our sub-modules, confirm we have everything installed
-# TODO (KO): Refactor everything to make external packages locally imported instead
 from utils.install_python_packages import check_and_install_python_packages
 check_and_install_python_packages()
 
