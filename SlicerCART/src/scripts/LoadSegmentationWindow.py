@@ -1,7 +1,7 @@
 import os
 
 import qt
-from utils import ConfigPath
+from utils.ConfigPath import ConfigPath
 from utils.debugging_helpers import enter_function
 
 
