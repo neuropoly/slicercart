@@ -11,7 +11,8 @@ from glob import glob
 import qt
 from utils.ConfigPath import ConfigPath
 from utils.UserPath import UserPath
-from utils.constants import CONFIG_COPY_FILENAME, CONFIG_FILE_PATH, CONF_FOLDER_NAME
+from utils.constants import (CONFIG_COPY_FILENAME, CONFIG_FILE_PATH,
+                             CONF_FOLDER_NAME)
 from utils.debugging_helpers import Debug
 from utils.debugging_helpers import enter_function
 from utils.development_helpers import Dev
@@ -1802,7 +1803,8 @@ class ConfigureClassificationWindow(qt.QWidget):
                     self.config_yaml["checkboxes"].items()):
                 remove_button = qt.QPushButton('Remove')
                 remove_button.clicked.connect(
-                    lambda _, cl=checkbox_label: self.push_remove_checkbox_button(cl))
+                    lambda _, cl=checkbox_label:
+                    self.push_remove_checkbox_button(cl))
                 remove_button_hbox = qt.QHBoxLayout()
                 remove_button_hbox.addWidget(remove_button)
                 remove_button_hbox.setAlignment(qt.Qt.AlignCenter)
@@ -1855,7 +1857,8 @@ class ConfigureClassificationWindow(qt.QWidget):
                     latest_combobox_dict.items()):
                 remove_button = qt.QPushButton('Remove')
                 remove_button.clicked.connect(
-                    lambda _, n=combo_box_name: self.push_remove_combobox_button(n))
+                    lambda _, n=combo_box_name:
+                    self.push_remove_combobox_button(n))
                 remove_button_hbox = qt.QHBoxLayout()
                 remove_button_hbox.addWidget(remove_button)
                 remove_button_hbox.setAlignment(qt.Qt.AlignCenter)
@@ -1914,7 +1917,9 @@ class ConfigureClassificationWindow(qt.QWidget):
                     self.config_yaml["freetextboxes"].items()):
                 remove_button = qt.QPushButton('Remove')
                 remove_button.clicked.connect(
-                    lambda _, l=freetextbox_label: self.push_remove_freetextbox_button(freetextbox_label))
+                    lambda _, l=
+                    freetextbox_label: self.push_remove_freetextbox_button(
+                        freetextbox_label))
                 remove_button_hbox = qt.QHBoxLayout()
                 remove_button_hbox.addWidget(remove_button)
                 remove_button_hbox.setAlignment(qt.Qt.AlignCenter)

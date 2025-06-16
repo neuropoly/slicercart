@@ -1,9 +1,7 @@
 import functools
 import inspect
 import os
-
 import yaml
-
 from .constants import CONFIG_FILE_PATH
 
 # Extracts ENABLE_DEBUG value from the initial configuration file. Can be set

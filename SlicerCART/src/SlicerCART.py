@@ -572,7 +572,10 @@ class SlicerCARTWidget(ScriptedLoadableModuleWidget, VTKObservationMixin):
             self.segmentEditorNode.SetMasterVolumeIntensityMask(False)
 
     @enter_function
-    def setupCheckboxes(self, number_of_columns, classif_label, flag_use_csv=False):
+    def setupCheckboxes(self,
+                        number_of_columns,
+                        classif_label,
+                        flag_use_csv=False):
         """
         SetupCheckboxes.
 
@@ -1729,7 +1732,8 @@ class SlicerCARTWidget(ScriptedLoadableModuleWidget, VTKObservationMixin):
         information available to an updated dataframe.
         return: dataframe with all previous and actual classification labels.
         """
-        # TMP: Import locally, because Slicer's external dependency management is nuts
+        # TMP: Import locally, because Slicer's external dependency management
+        # is nuts
         import pandas as pd
 
         self.outputClassificationInformationFile = (
@@ -1827,7 +1831,8 @@ class SlicerCARTWidget(ScriptedLoadableModuleWidget, VTKObservationMixin):
         Get all classification columns name from csv file.
         """
 
-        # TMP: Import locally, because Slicer's external dependency management is nuts
+        # TMP: Import locally, because Slicer's external
+        # dependency management is nuts
         import pandas as pd
 
         # Try except required since this function can be used initially or
@@ -1835,6 +1840,7 @@ class SlicerCARTWidget(ScriptedLoadableModuleWidget, VTKObservationMixin):
         # not defined so it should return none (and not fail).
 
         if classif_label != None:
+
             try:
                 self.outputClassificationInformationFile = (
                     os.path.join(self.currentOutputPath,
@@ -2010,7 +2016,8 @@ class SlicerCARTWidget(ScriptedLoadableModuleWidget, VTKObservationMixin):
 
     @enter_function
     def combine_dict(self, dict1, dict2):
-        # TMP: Import locally, because Slicer's external dependency management is nuts
+        # TMP: Import locally, because Slicer's external dependency
+        # management is nuts
         import pandas as pd
 
         """
@@ -2455,7 +2462,8 @@ class SlicerCARTWidget(ScriptedLoadableModuleWidget, VTKObservationMixin):
         
         Args:.
         """
-        # TMP: Import locally, because Slicer's external dependency management is nuts
+        # TMP: Import locally, because Slicer's external dependency
+        # management is nuts
         import pandas as pd
 
         version = "v"
@@ -2662,7 +2670,8 @@ class SlicerCARTWidget(ScriptedLoadableModuleWidget, VTKObservationMixin):
         
         Args:.
         """
-        # TMP: Import locally, because Slicer's external dependency management is nuts
+        # TMP: Import locally, because Slicer's external dependency
+        # management is nuts
         import pandas as pd
 
         if self.outputFolder is None or self.CurrentFolder is None:
@@ -2725,7 +2734,8 @@ class SlicerCARTWidget(ScriptedLoadableModuleWidget, VTKObservationMixin):
         return found_case
 
     @enter_function
-    def msg_warnig_delete_segm_node_clicked(self, msg_warnig_delete_segm_node_button):
+    def msg_warnig_delete_segm_node_clicked(self,
+                                            msg_warnig_delete_segm_node_button):
         """
         Msg_warnig_delete_segm_node_clicked.
 
@@ -2746,7 +2756,8 @@ class SlicerCARTWidget(ScriptedLoadableModuleWidget, VTKObservationMixin):
 
         Args:.
         """
-        # TMP: Import locally, because Slicer's external dependency management is nuts
+        # TMP: Import locally, because Slicer's external dependency
+        # management is nuts
         import pandas as pd
 
         classificationInformationPath = (f'{self.currentOutputPath}{os.sep}'
@@ -2991,7 +3002,8 @@ class SlicerCARTWidget(ScriptedLoadableModuleWidget, VTKObservationMixin):
         
         Args:.
         """
-        # TMP: Import locally, because Slicer's external dependency management is nuts
+        # TMP: Import locally, because Slicer's external dependency
+        # management is nuts
         import pandas as pd
 
         segmentationInformationPath = (f'{self.currentOutputPath}{os.sep}'

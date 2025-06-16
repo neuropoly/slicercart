@@ -1,5 +1,4 @@
 import os
-
 import qt
 import slicer
 from .debugging_helpers import enter_function

@@ -5,7 +5,10 @@ import tempfile
 import yaml
 
 import qt
-from .constants import (CLASSIFICATION_BOXES_LIST, CONFIG_COPY_FILENAME, CONFIG_FILE_PATH, CONF_FOLDER_NAME,
+from .constants import (CLASSIFICATION_BOXES_LIST,
+                        CONFIG_COPY_FILENAME,
+                        CONFIG_FILE_PATH,
+                        CONF_FOLDER_NAME,
                         INITIAL_CONFIG_FILE)
 from .debugging_helpers import enter_function
 

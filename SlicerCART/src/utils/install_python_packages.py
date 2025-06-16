@@ -38,7 +38,8 @@ def check_and_install_python_packages():
     missing_packages = []
 
     for pip_name, import_name in REQUIRED_PYTHON_PACKAGES.items():
-        # Check if a package with this name a valid specification in our installation
+        # Check if a package with this name a valid specification in
+        # our installation
         if find_spec(import_name) is None:
             print(f"SlicerCART dependency '{import_name}' is not installed...")
             missing_packages.append(pip_name)
