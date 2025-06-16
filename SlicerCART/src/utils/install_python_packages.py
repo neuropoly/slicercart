@@ -16,7 +16,7 @@
 import qt
 import slicer
 
-from importlib import import_module
+from importlib.util import find_spec
 
 # Dictionary of required python packages and their import names
 # N.B. Some pip_name (like pandas) may require specific version
@@ -38,11 +38,9 @@ def check_and_install_python_packages():
     missing_packages = []
 
     for pip_name, import_name in REQUIRED_PYTHON_PACKAGES.items():
-        try:
-            # "Standard" way to import a package programmatically; for further details, see
-            #   https://docs.python.org/3/library/importlib.html#importlib.import_module
-            import_module(import_name)
-        except ImportError:
+        # Check if a package with this name a valid specification in our installation
+        if find_spec(import_name) is None:
+            print(f"SlicerCART dependency '{import_name}' is not installed...")
             missing_packages.append(pip_name)
 
     if missing_packages:
