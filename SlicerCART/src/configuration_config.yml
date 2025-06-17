@@ -66,7 +66,6 @@ default_segmentation_directory: ''
 default_volume_directory: ''
 enable_debug: true
 freetextboxes:
-  cheese: Cheese
   number_of_focal_points: Number of focal points
   other_comments: Comments
 impose_bids_format: false
