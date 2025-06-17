@@ -1,24 +1,52 @@
 """
-    This is the main file for SlicerCART.
-    That means the Slicer Python Interpreter always refer to the path of this
-    script when using SlicerCART.
+This is the main file for SlicerCART.
+That means the Slicer Python Interpreter always refer to the path of this
+script when using SlicerCART.
 """
 
-###############################################################################
-# Those imports are required to make the module working appropriately using
-# separated files
-from utils import *  # Import all modules, packages and global variables
-from scripts import *  # Import all classes
+import os
+import random
+from datetime import datetime
+from glob import glob
+import colorsys
 
-###############################################################################
+# KO: VTK isn't a standard Python lib, being loaded by Slicer post-init; as a
+#  result it is not exposed as a library to IDEs. As such, we need to trust that
+#  slicer will instantiate it before we reach this point; hence the error
+#  suppression.
+import vtk  # noqa: F401
+from ctk import ctkCollapsibleButton # noqa: F401
 
-###############################################################################
-# This main script contains the following classes:
-#   SlicerCART --- main explanation script class
-#   SlicerCARTWidget --- SlicerCART graphical user interface class (mainly use)
-from ctk import ctkCollapsibleButton
+# ~KO: Both QT and Slicer are only initialized when slicer boots, and by
+#  extension when some of their C++ code is imported. As a result, quite a few
+#  of their utilities are not visible to IDEs, and may cause a "Cannot find
+#  reference 'xyz'" style warning in our code base. For now, ignore it;
+#  will look into a workaround soon(tm)
+import qt
+import slicer
 
-###############################################################################
+# Before importing our sub-modules, confirm we have everything installed
+from utils.install_python_packages import check_and_install_python_packages
+check_and_install_python_packages()
+
+from scripts.CompareSegmentVersionsWindow import CompareSegmentVersionsWindow
+from scripts.CustomInteractorStyle import CustomInteractorStyle
+from scripts.InteractingClasses import SlicerCARTConfigurationInitialWindow
+from scripts.LoadClassificationWindow import LoadClassificationWindow
+from scripts.LoadSegmentationWindow import LoadSegmentationsWindow
+from scripts.SlicerCARTLogic import SlicerCARTLogic
+from scripts.ShowSegmentVersionLegendWindow import ShowSegmentVersionLegendWindow  # noqa: E501
+from scripts.Timer import Timer
+from scripts.WorkFiles import WorkFiles
+from slicer.ScriptedLoadableModule import *
+from slicer.util import VTKObservationMixin, childWidgetVariables, loadUI
+from utils.ConfigPath import ConfigPath
+from utils.UITheme import Theme
+from utils.UserPath import UserPath
+from utils.constants import CLASSIFICATION_BOXES_LIST, TIMER_MUTEX
+from utils.debugging_helpers import Debug, enter_function
+from utils.development_helpers import Dev
+
 
 class SlicerCART(ScriptedLoadableModule):
     """
@@ -93,6 +121,10 @@ class SlicerCARTWidget(ScriptedLoadableModuleWidget, VTKObservationMixin):
         Args:
         parent: Parent widget for this widget.
         """
+        # Run the initialization for this class's parents
+        # KO: Initialization needs to be run this way to prevent the resulting
+        #  modules becoming "isolated" from the main Slicer window. Thank
+        #  Slicer for this jank!
         ScriptedLoadableModuleWidget.__init__(self, parent)
         VTKObservationMixin.__init__(
             self)  # needed for parameter node observation
@@ -127,14 +159,14 @@ class SlicerCARTWidget(ScriptedLoadableModuleWidget, VTKObservationMixin):
         ### Segment editor widget
         self.layout.setContentsMargins(4, 0, 4, 0)
 
-        ScriptedLoadableModuleWidget.setup(self)
+        super().setup()
 
         # Load widget from .ui file (created by Qt Designer).
         # Additional widgets can be instantiated manually and added to
         # self.layout.
-        uiWidget = slicer.util.loadUI(self.resourcePath('UI/SlicerCART.ui'))
+        uiWidget = loadUI(self.resourcePath('UI/SlicerCART.ui'))
         self.layout.addWidget(uiWidget)
-        self.ui = slicer.util.childWidgetVariables(uiWidget)
+        self.ui = childWidgetVariables(uiWidget)
 
         # Set scene in MRML widgets. Make sure that in Qt designer the
         # top-level qMRMLWidget's
@@ -294,7 +326,8 @@ class SlicerCARTWidget(ScriptedLoadableModuleWidget, VTKObservationMixin):
     @enter_function
     def close_data_probe_on_startup(self):
         """
-        Each time SlicerCARTWidget is loaded, this function is called to minimize Data Probe
+        Each time SlicerCARTWidget is loaded, this function is called to
+        minimize Data Probe
         """
         mainWindow = slicer.util.mainWindow()
         for widget in mainWindow.findChildren(ctkCollapsibleButton):
@@ -539,7 +572,9 @@ class SlicerCARTWidget(ScriptedLoadableModuleWidget, VTKObservationMixin):
             self.segmentEditorNode.SetMasterVolumeIntensityMask(False)
 
     @enter_function
-    def setupCheckboxes(self, number_of_columns, classif_label,
+    def setupCheckboxes(self,
+                        number_of_columns,
+                        classif_label,
                         flag_use_csv=False):
         """
         SetupCheckboxes.
@@ -898,6 +933,8 @@ class SlicerCARTWidget(ScriptedLoadableModuleWidget, VTKObservationMixin):
         Args:
         path: Description of path.
         """
+        from bids_validator import BIDSValidator
+
         validator = BIDSValidator()
         is_structure_valid = True
 
@@ -1684,14 +1721,18 @@ class SlicerCARTWidget(ScriptedLoadableModuleWidget, VTKObservationMixin):
         information available to an updated dataframe.
         return: dataframe with all previous and actual classification labels.
         """
+        import pandas as pd
+
         self.outputClassificationInformationFile = (
             os.path.join(self.currentOutputPath,
                          '{}_ClassificationInformation.csv'.format(
                              self.currentVolumeFilename)))
         df = None
-        if os.path.exists(
-                self.outputClassificationInformationFile) and os.path.isfile(
-            self.outputClassificationInformationFile):
+        if (os.path.exists(
+                self.outputClassificationInformationFile)
+                and os.path.isfile(self.outputClassificationInformationFile)
+        ):
+
             df = pd.read_csv(self.outputClassificationInformationFile)
 
         label_string_slicer = ""
@@ -1776,6 +1817,7 @@ class SlicerCARTWidget(ScriptedLoadableModuleWidget, VTKObservationMixin):
         """
         Get all classification columns name from csv file.
         """
+        import pandas as pd
 
         # Try except required since this function can be used initially or
         # after output folder has been selected. If initial, the output path is
@@ -1958,6 +2000,8 @@ class SlicerCARTWidget(ScriptedLoadableModuleWidget, VTKObservationMixin):
 
     @enter_function
     def combine_dict(self, dict1, dict2):
+        import pandas as pd
+
         """
         Combine 2 dictionaries into a dataframe
         :param dict1 first dictionary to combine
@@ -2285,6 +2329,8 @@ class SlicerCARTWidget(ScriptedLoadableModuleWidget, VTKObservationMixin):
             slicer.util.saveNode(self.labelmapVolumeNode, temp_path)
 
             # Step 3: Load and cast to UINT8 with nibabel
+            import nibabel as nib
+            import numpy as np
             nii = nib.load(temp_path)
             data = nii.get_fdata().astype(np.uint8)
             new_nii = nib.Nifti1Image(data, affine=nii.affine,
@@ -2398,6 +2444,8 @@ class SlicerCARTWidget(ScriptedLoadableModuleWidget, VTKObservationMixin):
         
         Args:.
         """
+        import pandas as pd
+
         version = "v"
         classificationInformationPath = (f'{self.currentOutputPath}{os.sep}'
                                          f'{self.currentVolumeFilename}'
@@ -2602,6 +2650,8 @@ class SlicerCARTWidget(ScriptedLoadableModuleWidget, VTKObservationMixin):
         
         Args:.
         """
+        import pandas as pd
+
         if self.outputFolder is None or self.CurrentFolder is None:
             return
 
@@ -2684,6 +2734,8 @@ class SlicerCARTWidget(ScriptedLoadableModuleWidget, VTKObservationMixin):
         
         Args:.
         """
+        import pandas as pd
+
         classificationInformationPath = (f'{self.currentOutputPath}{os.sep}'
                                          f'{self.currentVolumeFilename}'
                                          f'_ClassificationInformation.csv')
@@ -2760,7 +2812,7 @@ class SlicerCARTWidget(ScriptedLoadableModuleWidget, VTKObservationMixin):
             msg_warnig_delete_segm_node = (
                 self.warnAgainstDeletingCurrentSegmentation())
             msg_warnig_delete_segm_node.buttonClicked.connect(
-                self.onCompareSegmentVersionsWillEraseCurrentSegmentsWarningClicked)
+                self.onCompareSegmentVersionsWillEraseCurrentSegmentsWarningClicked)  # noqa: E501
             msg_warnig_delete_segm_node.exec()
 
     @enter_function
@@ -2770,7 +2822,8 @@ class SlicerCARTWidget(ScriptedLoadableModuleWidget, VTKObservationMixin):
         OnCompareSegmentVersionsWillEraseCurrentSegmentsWarningClicked.
         
         Args:
-        msg_warnig_delete_segm_node_button: Description of msg_warnig_delete_segm_node_button.
+        msg_warnig_delete_segm_node_button: The button which was selected on
+            the confirmation prompt.
         """
         if msg_warnig_delete_segm_node_button.text == 'OK':
             srcNode = slicer.util.getNodesByClass('vtkMRMLSegmentationNode')[0]
@@ -2818,9 +2871,10 @@ class SlicerCARTWidget(ScriptedLoadableModuleWidget, VTKObservationMixin):
             self, msg_warnig_delete_segm_node_button):
         """
         OnLoadSegmentationWillEraseCurrentSegmentsWarningClicked.
-        
+
         Args:
-        msg_warnig_delete_segm_node_button: Description of msg_warnig_delete_segm_node_button.
+        msg_warnig_delete_segm_node_button: The button which was selected on
+            the confirmation prompt.
         """
         if msg_warnig_delete_segm_node_button.text == 'OK':
             srcNode = slicer.util.getNodesByClass('vtkMRMLSegmentationNode')[0]
@@ -2934,6 +2988,8 @@ class SlicerCARTWidget(ScriptedLoadableModuleWidget, VTKObservationMixin):
         
         Args:.
         """
+        import pandas as pd
+
         segmentationInformationPath = (f'{self.currentOutputPath}{os.sep}'
                                        f'{self.currentVolumeFilename}'
                                        f'_SegmentationInformation.csv')
@@ -2965,6 +3021,8 @@ class SlicerCARTWidget(ScriptedLoadableModuleWidget, VTKObservationMixin):
         
         Args:.
         """
+        import pandas as pd
+
         segmentationInformationPath = (f'{self.currentOutputPath}{os.sep}'
                                        f'{self.currentVolumeFilename}'
                                        f'_SegmentationInformation.csv')
@@ -3120,14 +3178,14 @@ class SlicerCARTWidget(ScriptedLoadableModuleWidget, VTKObservationMixin):
         LoadSegmentation.
         
         Args:
-        absolute_path_to_segmentation_file: Description of absolute_path_to_segmentation_file.
+        absolute_path_to_segmentation_file: Path to the segmentation file which
+            we want to load into memory. Should include the file's name and
+            extension!
         """
         if 'nrrd' in ConfigPath.INPUT_FILE_EXTENSION:
             slicer.util.loadSegmentation(absolute_path_to_segmentation_file)
             self.segmentationNode = \
                 slicer.util.getNodesByClass('vtkMRMLSegmentationNode')[0]
-                
-                
         elif 'nii' in ConfigPath.INPUT_FILE_EXTENSION:
             labelmapVolumeNode = slicer.util.loadLabelVolume(
                 absolute_path_to_segmentation_file)
@@ -3202,7 +3260,7 @@ class SlicerCARTWidget(ScriptedLoadableModuleWidget, VTKObservationMixin):
                 # If the name or old ID matches a label value or name
                 if old_name == str(label["value"]) or old_name == label["name"]:
                     # Deep copy the segment
-                    new_segment = vtkSegment()
+                    new_segment = vtk.vtkSegment()
                     new_segment.DeepCopy(segment)
 
                     # Set correct name and color
@@ -3288,7 +3346,7 @@ class SlicerCARTWidget(ScriptedLoadableModuleWidget, VTKObservationMixin):
             existing_segment_names.add(
                 segmentation_node.GetSegmentation().GetSegment(sid).GetName())
 
-        # Loop over config labels, and if one is missing, add it as an empty segment
+        # Loop over config labels; if one is missing, add it as an empty segment
         for label in self.config_yaml["labels"]:
             if label["name"] not in existing_segment_names:
                 self.onNewLabelSegm(label["name"],
@@ -3356,6 +3414,8 @@ class SlicerCARTWidget(ScriptedLoadableModuleWidget, VTKObservationMixin):
         
         Args:.
         """
+        import pandas as pd
+
         segmentationInformationPath = (f'{self.currentOutputPath}{os.sep}'
                                        f'{self.currentVolumeFilename}'
                                        f'_SegmentationInformation.csv')

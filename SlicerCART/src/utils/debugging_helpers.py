@@ -1,11 +1,9 @@
 import functools
 import inspect
-import yaml
 import os
-import pandas as pd
+import yaml
+from .constants import CONFIG_FILE_PATH
 
-# Import initial configuration filepath associated with SlicerCART module.
-from utils.constants import CONFIG_FILE_PATH
 # Extracts ENABLE_DEBUG value from the initial configuration file. Can be set
 # and unset as the user wants to use it in different configurations by using
 # set_debug (described below).

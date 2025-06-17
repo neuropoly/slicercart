@@ -2,9 +2,15 @@
 This class manages hidden files when the user selects Continue from existing
 folder in the initial configuration setup window.
 """
-from utils import *
+import os
+from pathlib import Path
+
+import yaml
+
+from .debugging_helpers import enter_function
 
 SELECTED_EXISTING_FOLDER = False
+
 
 class UserPath():
 

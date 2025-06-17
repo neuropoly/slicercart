@@ -1,11 +1,11 @@
 """
 This python file contains all constants values used in SlicerCART.
 """
-###############################################################################
-# Import all required modules for correct use
-from utils.requirements import *
+import os
+from threading import RLock
 
-###############################################################################
+import yaml
+
 
 # Initial and default configuration filenames.
 CONFIG_FILENAME = "configuration_config.yml"
