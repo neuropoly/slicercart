@@ -187,6 +187,15 @@ class SlicerCARTConfigurationSetupWindow(qt.QWidget):
         ct_window_width_hbox.addWidget(self.ct_window_width_line_edit)
 
         layout.addLayout(ct_window_width_hbox)
+        
+        separator = qt.QFrame()
+        separator.setFrameShape(qt.QFrame.HLine)
+        separator.setFrameShadow(qt.QFrame.Sunken)
+        separator.setLineWidth(5)
+        
+        layout.addSpacing(15) 
+        layout.addWidget(separator)
+        layout.addSpacing(15) 
 
         keyboard_shortcuts_hbox = qt.QHBoxLayout()
 
@@ -325,17 +334,44 @@ class SlicerCARTConfigurationSetupWindow(qt.QWidget):
         mouse_shortcuts_hbox.addWidget(self.mouse_shortcuts_checkbox)
 
         layout.addLayout(mouse_shortcuts_hbox)
+        
+        separator2 = qt.QFrame()
+        separator2.setFrameShape(qt.QFrame.HLine)
+        separator2.setFrameShadow(qt.QFrame.Sunken)
+        separator2.setLineWidth(5)
+        
+        layout.addSpacing(15) 
+        layout.addWidget(separator2)
+        layout.addSpacing(15) 
+
+                
+        config_buttons_hbox = qt.QHBoxLayout()
+        
         self.configure_segmentation_button = qt.QPushButton(
             'Configure Segmentation...')
         self.configure_segmentation_button.setStyleSheet(
             "background-color : #A6A6A6")
-        layout.addWidget(self.configure_segmentation_button)
-
+        self.configure_segmentation_button.setSizePolicy(qt.QSizePolicy.Expanding, qt.QSizePolicy.Fixed)
+        
+        config_buttons_hbox.addWidget(self.configure_segmentation_button)
+        
         self.configure_classification_button = qt.QPushButton(
             'Configure Classification...')
         self.configure_classification_button.setStyleSheet(
             "background-color : #A6A6A6")
-        layout.addWidget(self.configure_classification_button)
+        self.configure_classification_button.setSizePolicy(qt.QSizePolicy.Expanding, qt.QSizePolicy.Fixed)
+
+        config_buttons_hbox.addWidget(self.configure_classification_button)
+        
+        self.impose_case_list_filters_button = qt.QPushButton(
+            'Impose case list filters')
+        self.impose_case_list_filters_button.setStyleSheet(
+            "background-color : #A6A6A6")
+        self.impose_case_list_filters_button.setSizePolicy(qt.QSizePolicy.Expanding, qt.QSizePolicy.Fixed)
+
+        config_buttons_hbox.addWidget(self.impose_case_list_filters_button)
+        
+        layout.addLayout(config_buttons_hbox)
 
         self.previous_button = qt.QPushButton('Previous')
         layout.addWidget(self.previous_button)
@@ -406,6 +442,8 @@ class SlicerCARTConfigurationSetupWindow(qt.QWidget):
         self.cancel_button.clicked.connect(self.push_cancel)
         self.configure_segmentation_button.clicked.connect(
             self.push_configure_segmentation)
+        self.impose_case_list_filters_button.clicked.connect(
+             self.push_impose_case_list_filters)
 
         if self.modality_selected == 'CT':
             self.ct_modality_radio_button.setChecked(True)
@@ -744,6 +782,13 @@ class SlicerCARTConfigurationSetupWindow(qt.QWidget):
         configureClassificationWindow.show()
         self.close()
 
+    @enter_function
+    def push_impose_case_list_filters(self):
+        self.imposeCaseListFiltersWindow = ImposeCaseListFiltersWindow(
+            self.segmenter)
+        self.imposeCaseListFiltersWindow.show()
+        self.close()
+    
     @enter_function
     def push_previous(self):
         """
@@ -2431,3 +2476,106 @@ class ConfigureSingleClassificationItemWindow(qt.QWidget):
             version_numbers = 0
 
         return version_numbers
+
+class ImposeCaseListFiltersWindow(qt.QWidget):
+    @enter_function
+    def __init__(self, segmenter, filter_config_yaml=None, parent=None):
+        
+        super(ImposeCaseListFiltersWindow, self).__init__(parent)
+        
+        self.segmenter = segmenter 
+        
+        #TODO: modify for starting with previous volumes
+        if filter_config_yaml is None:
+            self.config_yaml = ConfigPath.open_project_config_file()
+        else:
+            self.config_yaml = filter_config_yaml
+            
+        layout = qt.QVBoxLayout()
+
+        self.inclusion_table_view = qt.QTableWidget()
+        
+        inclusion_table_view_header_hbox = qt.QHBoxLayout()
+        
+        inclusion_title_label = qt.QLabel("Filters to include in the case list")
+        inclusion_title_label.setStyleSheet("font-weight: bold; font-size: 15px;")
+        inclusion_title_label.setSizePolicy(qt.QSizePolicy.Expanding, qt.QSizePolicy.Fixed)
+        
+        inclusion_table_view_header_hbox.addWidget(inclusion_title_label)
+        
+        add_inclusion_filter_button = qt.QPushButton('Add Inclusion Filter')
+        add_inclusion_filter_button.setFixedWidth(180)
+        add_inclusion_filter_button.setSizePolicy(qt.QSizePolicy.Fixed, qt.QSizePolicy.Fixed)
+        
+        inclusion_table_view_header_hbox.addWidget(add_inclusion_filter_button)
+        
+        layout.addLayout(inclusion_table_view_header_hbox)
+        layout.addSpacing(5) 
+        layout.addWidget(self.inclusion_table_view)
+
+        self.inclusion_table_view.setRowCount(5)
+        self.inclusion_table_view.setColumnCount(2)
+        
+        separator1 = qt.QFrame()
+        separator1.setFrameShape(qt.QFrame.HLine)
+        separator1.setFrameShadow(qt.QFrame.Sunken)
+        separator1.setLineWidth(5)
+        
+        layout.addSpacing(15) 
+        layout.addWidget(separator1)
+        layout.addSpacing(15) 
+        
+        self.exclusion_table_view = qt.QTableWidget()
+        
+        exclusion_table_view_header_hbox = qt.QHBoxLayout()
+        
+        exclusion_title_label = qt.QLabel("Filters to exclude in the case list")
+        exclusion_title_label.setStyleSheet("font-weight: bold; font-size: 15px;")
+        exclusion_title_label.setSizePolicy(qt.QSizePolicy.Expanding, qt.QSizePolicy.Fixed)
+
+        exclusion_table_view_header_hbox.addWidget(exclusion_title_label)
+        
+        add_exclusion_filter_button = qt.QPushButton('Add Exclusion Filter')
+        add_exclusion_filter_button.setFixedWidth(180)
+        add_exclusion_filter_button.setSizePolicy(qt.QSizePolicy.Fixed, qt.QSizePolicy.Fixed)
+        
+        exclusion_table_view_header_hbox.addWidget(add_exclusion_filter_button)
+        
+        layout.addLayout(exclusion_table_view_header_hbox)
+        layout.addWidget(self.exclusion_table_view)
+
+        self.exclusion_table_view.setRowCount(5)
+        self.exclusion_table_view.setColumnCount(2)
+    
+        self.inclusion_table_view.horizontalHeader().setStretchLastSection(
+        True)
+        self.inclusion_table_view.horizontalHeader().setSectionResizeMode(
+        qt.QHeaderView.Stretch)
+        
+        self.exclusion_table_view.horizontalHeader().setStretchLastSection(
+        True)
+        self.exclusion_table_view.horizontalHeader().setSectionResizeMode(
+        qt.QHeaderView.Stretch)
+        
+        separator2 = qt.QFrame()
+        separator2.setFrameShape(qt.QFrame.HLine)
+        separator2.setFrameShadow(qt.QFrame.Sunken)
+        separator2.setLineWidth(5)
+        
+        layout.addSpacing(15) 
+        layout.addWidget(separator2)
+        layout.addSpacing(15) 
+        
+        self.previous_button = qt.QPushButton('Previous')
+        layout.addWidget(self.previous_button)
+
+        self.apply_button = qt.QPushButton('Apply')
+        layout.addWidget(self.apply_button)
+
+        self.cancel_button = qt.QPushButton('Cancel')
+        layout.addWidget(self.cancel_button)
+
+        self.setLayout(layout)
+        self.setWindowTitle("Filter case list")
+        self.resize(500, 600)
+        
