@@ -10,16 +10,18 @@ from datetime import datetime
 from glob import glob
 import colorsys
 
-# KO: VTK isn't a standard Python lib, being loaded by Slicer post-init; as a result
-#  it is not exposed as a library to IDEs. As such, we need to trust that slicer will
-#  instantiate it before we reach this point; hence the error suppression.
+# KO: VTK isn't a standard Python lib, being loaded by Slicer post-init; as a
+#  result it is not exposed as a library to IDEs. As such, we need to trust that
+#  slicer will instantiate it before we reach this point; hence the error
+#  suppression.
 import vtk  # noqa: F401
 from ctk import ctkCollapsibleButton # noqa: F401
 
-# ~KO: Both QT and Slicer are only initialized when slicer boots, and by extension when
-#  some of their C++ code is imported. As a result, quite a few of their utilities are
-#  not visible to IDEs, and may cause a "Cannot find reference 'xyz'" style warning in
-#  our code base. For now, ignore it; will look into a workaround soon(tm)
+# ~KO: Both QT and Slicer are only initialized when slicer boots, and by
+#  extension when some of their C++ code is imported. As a result, quite a few
+#  of their utilities are not visible to IDEs, and may cause a "Cannot find
+#  reference 'xyz'" style warning in our code base. For now, ignore it;
+#  will look into a workaround soon(tm)
 import qt
 import slicer
 
@@ -30,11 +32,10 @@ check_and_install_python_packages()
 from scripts.CompareSegmentVersionsWindow import CompareSegmentVersionsWindow
 from scripts.CustomInteractorStyle import CustomInteractorStyle
 from scripts.InteractingClasses import SlicerCARTConfigurationInitialWindow
-from scripts.InteractingClasses import SlicerCARTConfigurationSetupWindow
 from scripts.LoadClassificationWindow import LoadClassificationWindow
 from scripts.LoadSegmentationWindow import LoadSegmentationsWindow
 from scripts.SlicerCARTLogic import SlicerCARTLogic
-from scripts.ShowSegmentVersionLegendWindow import ShowSegmentVersionLegendWindow
+from scripts.ShowSegmentVersionLegendWindow import ShowSegmentVersionLegendWindow  # noqa: E501
 from scripts.Timer import Timer
 from scripts.WorkFiles import WorkFiles
 from slicer.ScriptedLoadableModule import *
@@ -325,7 +326,8 @@ class SlicerCARTWidget(ScriptedLoadableModuleWidget, VTKObservationMixin):
     @enter_function
     def close_data_probe_on_startup(self):
         """
-        Each time SlicerCARTWidget is loaded, this function is called to minimize Data Probe
+        Each time SlicerCARTWidget is loaded, this function is called to
+        minimize Data Probe
         """
         mainWindow = slicer.util.mainWindow()
         for widget in mainWindow.findChildren(ctkCollapsibleButton):
@@ -2810,7 +2812,7 @@ class SlicerCARTWidget(ScriptedLoadableModuleWidget, VTKObservationMixin):
             msg_warnig_delete_segm_node = (
                 self.warnAgainstDeletingCurrentSegmentation())
             msg_warnig_delete_segm_node.buttonClicked.connect(
-                self.onCompareSegmentVersionsWillEraseCurrentSegmentsWarningClicked)
+                self.onCompareSegmentVersionsWillEraseCurrentSegmentsWarningClicked)  # noqa: E501
             msg_warnig_delete_segm_node.exec()
 
     @enter_function
@@ -2820,7 +2822,8 @@ class SlicerCARTWidget(ScriptedLoadableModuleWidget, VTKObservationMixin):
         OnCompareSegmentVersionsWillEraseCurrentSegmentsWarningClicked.
         
         Args:
-        msg_warnig_delete_segm_node_button: Description of msg_warnig_delete_segm_node_button.
+        msg_warnig_delete_segm_node_button: The button which was selected on
+            the confirmation prompt.
         """
         if msg_warnig_delete_segm_node_button.text == 'OK':
             srcNode = slicer.util.getNodesByClass('vtkMRMLSegmentationNode')[0]
@@ -2868,9 +2871,10 @@ class SlicerCARTWidget(ScriptedLoadableModuleWidget, VTKObservationMixin):
             self, msg_warnig_delete_segm_node_button):
         """
         OnLoadSegmentationWillEraseCurrentSegmentsWarningClicked.
-        
+
         Args:
-        msg_warnig_delete_segm_node_button: Description of msg_warnig_delete_segm_node_button.
+        msg_warnig_delete_segm_node_button: The button which was selected on
+            the confirmation prompt.
         """
         if msg_warnig_delete_segm_node_button.text == 'OK':
             srcNode = slicer.util.getNodesByClass('vtkMRMLSegmentationNode')[0]
@@ -3174,7 +3178,9 @@ class SlicerCARTWidget(ScriptedLoadableModuleWidget, VTKObservationMixin):
         LoadSegmentation.
         
         Args:
-        absolute_path_to_segmentation_file: Description of absolute_path_to_segmentation_file.
+        absolute_path_to_segmentation_file: Path to the segmentation file which
+            we want to load into memory. Should include the file's name and
+            extension!
         """
         if 'nrrd' in ConfigPath.INPUT_FILE_EXTENSION:
             slicer.util.loadSegmentation(absolute_path_to_segmentation_file)
@@ -3340,7 +3346,7 @@ class SlicerCARTWidget(ScriptedLoadableModuleWidget, VTKObservationMixin):
             existing_segment_names.add(
                 segmentation_node.GetSegmentation().GetSegment(sid).GetName())
 
-        # Loop over config labels, and if one is missing, add it as an empty segment
+        # Loop over config labels; if one is missing, add it as an empty segment
         for label in self.config_yaml["labels"]:
             if label["name"] not in existing_segment_names:
                 self.onNewLabelSegm(label["name"],
