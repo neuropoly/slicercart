@@ -16,6 +16,7 @@ from scripts import *  # Import all classes
 # This main script contains the following classes:
 #   SlicerCART --- main explanation script class
 #   SlicerCARTWidget --- SlicerCART graphical user interface class (mainly use)
+from ctk import ctkCollapsibleButton  
 
 ###############################################################################
 
@@ -24,6 +25,8 @@ class SlicerCART(ScriptedLoadableModule):
     Uses ScriptedLoadableModule base class, available at:
     https://github.com/Slicer/Slicer/blob/master/Base/Python/slicer
     /ScriptedLoadableModule.py
+    
+    This class is initialized when 3DSlicer starts
     """
 
     @enter_function
@@ -84,8 +87,7 @@ class SlicerCARTWidget(ScriptedLoadableModuleWidget, VTKObservationMixin):
     @enter_function
     def __init__(self, parent=None):
         """
-        Called when the user opens the module the first time and the widget
-        is initialized.
+        Called when the user opens the module the first time and initializes the module
         
         Args:
         parent: Parent widget for this widget.
@@ -142,7 +144,7 @@ class SlicerCARTWidget(ScriptedLoadableModuleWidget, VTKObservationMixin):
 
         # Create logic class. Logic implements all computations that should
         # be possible to run
-        # in batch mode, without a graphical user interface.
+        # in batch mode, without a graphical user interface. Only initialized once the SlicerCARTWidget class is initialized (when we enter the module)
         self.logic = SlicerCARTLogic()
 
         slicerCART_configuration_initial_window = (
@@ -283,6 +285,20 @@ class SlicerCARTWidget(ScriptedLoadableModuleWidget, VTKObservationMixin):
         self.shortcut_objects = {}  # Maps shortcut key to QShortcut object
         self.shortcut_callbacks = {}
         self.set_keyboard_shortcuts()
+        
+        # Layout management on startup
+        # Closes Data Probe upon landing in SlicerCART
+        self.close_data_probe_on_startup()
+
+    @enter_function
+    def close_data_probe_on_startup(self):
+        """
+        Each time SlicerCARTWidget is loaded, this function is called to minimize Data Probe
+        """
+        mainWindow = slicer.util.mainWindow()
+        for widget in mainWindow.findChildren(ctkCollapsibleButton):
+            if widget.text == 'Data Probe':
+                widget.collapsed = True
 
     @enter_function
     def set_classification_version_labels(self, classif_label):
@@ -295,7 +311,7 @@ class SlicerCARTWidget(ScriptedLoadableModuleWidget, VTKObservationMixin):
     @enter_function
     def visibilityModifiedCallback(self, caller, event):
         """
-        Each time segments visibility is changed, this function ic called.
+        Each time segments visibility is changed, this function is called.
         caller: used to get segment visibility
         event: segment modified
         """
