@@ -118,8 +118,6 @@ class SlicerCARTWidget(ScriptedLoadableModuleWidget, VTKObservationMixin):
         self.theme = Theme.get_mode(self)
         self.foreground = Theme.set_foreground(self, self.theme)
 
-
-
     @enter_function
     def setup(self):
         """
@@ -3239,7 +3237,8 @@ class SlicerCARTWidget(ScriptedLoadableModuleWidget, VTKObservationMixin):
             "vtkMRMLSegmentationNode", "TemporarySegmentation")
 
         if latest_version_path.endswith(".nrrd"):
-            temporary_segmentation_node = slicer.util.loadSegmentation(latest_version_path)
+            temporary_segmentation_node = slicer.util.loadSegmentation(
+                latest_version_path)
 
         elif (latest_version_path.endswith(".nii")
               or latest_version_path.endswith(".nii.gz")):
