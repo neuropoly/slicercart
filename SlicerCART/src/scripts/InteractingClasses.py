@@ -950,6 +950,7 @@ class SlicerCARTConfigurationInitialWindow(qt.QWidget):
 
         self.setLayout(layout)
         self.setWindowTitle("Configure SlicerCART")
+        self.setWindowFlags(qt.Qt.Window | qt.Qt.CustomizeWindowHint | qt.Qt.WindowMinimizeButtonHint | qt.Qt.WindowCloseButtonHint)
         self.resize(800, 100)
 
     @enter_function
@@ -2457,6 +2458,10 @@ class ConfigureSingleClassificationItemWindow(qt.QWidget):
 
         Args:
         """
+        configureClassificationWindow = ConfigureClassificationWindow(
+            self.segmenter, self.config_yaml)
+        configureClassificationWindow.show()
+        
         self.close()
 
     @enter_function
@@ -2491,6 +2496,8 @@ class ImposeCaseListFiltersWindow(qt.QWidget):
         else:
             self.config_yaml = filter_config_yaml
             
+        
+        # UI    
         layout = qt.QVBoxLayout()
 
         self.inclusion_table_view = qt.QTableWidget()
@@ -2513,7 +2520,7 @@ class ImposeCaseListFiltersWindow(qt.QWidget):
         layout.addSpacing(5) 
         layout.addWidget(self.inclusion_table_view)
 
-        self.inclusion_table_view.setRowCount(5)
+        self.inclusion_table_view.setRowCount(0)
         self.inclusion_table_view.setColumnCount(2)
         
         separator1 = qt.QFrame()
@@ -2544,7 +2551,7 @@ class ImposeCaseListFiltersWindow(qt.QWidget):
         layout.addLayout(exclusion_table_view_header_hbox)
         layout.addWidget(self.exclusion_table_view)
 
-        self.exclusion_table_view.setRowCount(5)
+        self.exclusion_table_view.setRowCount(0)
         self.exclusion_table_view.setColumnCount(2)
     
         self.inclusion_table_view.horizontalHeader().setStretchLastSection(
@@ -2557,13 +2564,6 @@ class ImposeCaseListFiltersWindow(qt.QWidget):
         self.exclusion_table_view.horizontalHeader().setSectionResizeMode(
         qt.QHeaderView.Stretch)
         
-        separator2 = qt.QFrame()
-        separator2.setFrameShape(qt.QFrame.HLine)
-        separator2.setFrameShadow(qt.QFrame.Sunken)
-        separator2.setLineWidth(5)
-        
-        layout.addSpacing(15) 
-        layout.addWidget(separator2)
         layout.addSpacing(15) 
 
         self.apply_button = qt.QPushButton('Apply')
@@ -2575,7 +2575,12 @@ class ImposeCaseListFiltersWindow(qt.QWidget):
         self.setLayout(layout)
         self.setWindowTitle("Filter case list")
         self.resize(500, 600)
-
+        
+        # Logic
+        self.inclusion_table_view.cellChanged.connect(self.register_cell_data)
+        
+        self.connect_buttons_to_callbacks()
+        
     @enter_function
     def connect_buttons_to_callbacks(self):
         """
@@ -2583,12 +2588,19 @@ class ImposeCaseListFiltersWindow(qt.QWidget):
 
         Args:
         """
-        self.add_inclusion_filter_button.clicked.connect()
-        self.add_exclusion_filter_button.clicked.connect()
+        self.add_inclusion_filter_button.clicked.connect(self.push_add_inclusion_filter)
+        # self.add_exclusion_filter_button.clicked.connect()
         
         self.apply_button.clicked.connect(self.push_apply)
         self.cancel_button.clicked.connect(self.push_cancel)
     
+    @enter_function
+    def register_cell_data(self):
+        row_position = self.inclusion_table_view.rowCount
+        filter_input = qt.QLineEdit()
+        self.inclusion_table_view.setCellWidget(row_position, 1, filter_input)
+        self.inclusion_table_view.setItem(row_position, 1, filter_input)
+
     @enter_function
     def push_add_inclusion_filter(self):
         """
@@ -2596,9 +2608,21 @@ class ImposeCaseListFiltersWindow(qt.QWidget):
 
         Args:
         """
-        addCaseListFiltersWindow = AddCaseListFiltersWindow(
-            self.segmenter, "include")
-        addCaseListFiltersWindow.show()
+        row_position = self.inclusion_table_view.rowCount
+        self.inclusion_table_view.insertRow(row_position)
+        
+        #Create the remove filter button
+        remove_button = qt.QPushButton("Remove")
+        remove_button.setFixedWidth(100)
+        button_widget = qt.QWidget()
+        button_layout = qt.QHBoxLayout()
+        button_layout.addWidget(remove_button)
+        button_layout.setAlignment(qt.Qt.AlignCenter)
+        button_layout.setContentsMargins(0, 0, 0, 0)
+        button_widget.setLayout(button_layout)
+        remove_button.clicked.connect(lambda _, row=row_position: self.remove_inclusion_filter_row(row))
+        
+        self.inclusion_table_view.setCellWidget(row_position, 0, button_widget)
         
     @enter_function
     def push_add_exclusion_filter(self):
@@ -2607,9 +2631,7 @@ class ImposeCaseListFiltersWindow(qt.QWidget):
 
         Args:
         """
-        addCaseListFiltersWindow = AddCaseListFiltersWindow(
-            self.segmenter, "exclude")
-        addCaseListFiltersWindow.show()
+        pass
 
     @enter_function
     def push_apply(self):
@@ -2618,6 +2640,27 @@ class ImposeCaseListFiltersWindow(qt.QWidget):
 
         Args:
         """
+        def check_no_empty_filters(table_widget: qt.QTableWidget) -> bool:
+            row_count = table_widget.rowCount
+            for row in range(row_count):
+                item = table_widget.item(row, 1)
+                Debug.print(self, "Item: " + str(item))
+                if not item:
+                    # at least one filter is empty
+                    return False 
+            # all filters are filled
+            return True 
+            
+        if check_no_empty_filters(self.inclusion_table_view) is False:
+            msg = qt.QMessageBox()
+            msg.setWindowTitle('Warning')
+            msg.setText(
+                "At least one inclusion filter is empty. \nPlease remove it or correct it before saving. \n")
+            msg.exec()
+        else:
+            pass
+            
+        
         
     @enter_function
     def push_cancel(self):
@@ -2631,24 +2674,3 @@ class ImposeCaseListFiltersWindow(qt.QWidget):
         slicerCARTConfigurationSetupWindow.show()
         self.close()
         
-class AddCaseListFiltersWindow(qt.QWidget):
-    @enter_function
-    def __init__(self, action, parent=None, ):
-        """
-        __init__
-
-        Args:
-            segmenter: Description of segmenter.
-            parent: Description of parent.
-        """
-        super(AddCaseListFiltersWindow, self).__init__(parent)
-
-        if action == "include":
-            pass
-        else:
-            pass
-            
-        layout = qt.QVBoxLayout()
-
-        self.setLayout(layout)
-        self.setWindowTitle("Add Case List Filters")
