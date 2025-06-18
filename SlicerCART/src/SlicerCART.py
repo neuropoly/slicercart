@@ -16,7 +16,7 @@ from scripts import *  # Import all classes
 # This main script contains the following classes:
 #   SlicerCART --- main explanation script class
 #   SlicerCARTWidget --- SlicerCART graphical user interface class (mainly use)
-from ctk import ctkCollapsibleButton  
+from ctk import ctkCollapsibleButton
 
 ###############################################################################
 
@@ -25,7 +25,7 @@ class SlicerCART(ScriptedLoadableModule):
     Uses ScriptedLoadableModule base class, available at:
     https://github.com/Slicer/Slicer/blob/master/Base/Python/slicer
     /ScriptedLoadableModule.py
-    
+
     This class is initialized when 3DSlicer starts
     """
 
@@ -87,7 +87,8 @@ class SlicerCARTWidget(ScriptedLoadableModuleWidget, VTKObservationMixin):
     @enter_function
     def __init__(self, parent=None):
         """
-        Called when the user opens the module the first time and initializes the module
+        Called when the user opens the module the first time and the widget
+        is initialized.
         
         Args:
         parent: Parent widget for this widget.
@@ -144,7 +145,7 @@ class SlicerCARTWidget(ScriptedLoadableModuleWidget, VTKObservationMixin):
 
         # Create logic class. Logic implements all computations that should
         # be possible to run
-        # in batch mode, without a graphical user interface. Only initialized once the SlicerCARTWidget class is initialized (when we enter the module)
+        # in batch mode, without a graphical user interface.
         self.logic = SlicerCARTLogic()
 
         slicerCART_configuration_initial_window = (
@@ -178,7 +179,7 @@ class SlicerCARTWidget(ScriptedLoadableModuleWidget, VTKObservationMixin):
         # 1): so, first index value = 1 -1 == 0
         self.current_label_index = (self.config_yaml['labels'][0]['value'] - 1)
         # self.current_label_index = self.config_yaml['labels'][0]['value']
-        
+
         self.ui.PauseTimerButton.setText('Pause')
         self.ui.SelectVolumeFolder.connect(
             'clicked(bool)', self.onSelectVolumesFolderButton)
@@ -285,7 +286,7 @@ class SlicerCARTWidget(ScriptedLoadableModuleWidget, VTKObservationMixin):
         self.shortcut_objects = {}  # Maps shortcut key to QShortcut object
         self.shortcut_callbacks = {}
         self.set_keyboard_shortcuts()
-        
+
         # Layout management on startup
         # Closes Data Probe upon landing in SlicerCART
         self.close_data_probe_on_startup()
@@ -2875,10 +2876,18 @@ class SlicerCARTWidget(ScriptedLoadableModuleWidget, VTKObservationMixin):
         Get the latest path of most recent segmentation version if available.
         """
         latest_version = self.get_latest_existing_version()
+
+        file_extension = ConfigPath.INPUT_FILE_EXTENSION[1:]
+
+        if file_extension == ".nrrd":
+            file_extension = ".seg.nrrd"
+
         latest_path = os.path.join(
             self.currentOutputPath,
-            "{}_{}"f"{ConfigPath.INPUT_FILE_EXTENSION[1:]}".format(
+            "{}_{}"f"{file_extension}".format(
                 self.currentVolumeFilename, latest_version))
+
+        Debug.print(self, f'latest_path: {latest_path}')
 
         if os.path.exists(latest_path):
             return latest_path
@@ -3117,6 +3126,8 @@ class SlicerCARTWidget(ScriptedLoadableModuleWidget, VTKObservationMixin):
             slicer.util.loadSegmentation(absolute_path_to_segmentation_file)
             self.segmentationNode = \
                 slicer.util.getNodesByClass('vtkMRMLSegmentationNode')[0]
+                
+                
         elif 'nii' in ConfigPath.INPUT_FILE_EXTENSION:
             labelmapVolumeNode = slicer.util.loadLabelVolume(
                 absolute_path_to_segmentation_file)
@@ -3226,8 +3237,8 @@ class SlicerCARTWidget(ScriptedLoadableModuleWidget, VTKObservationMixin):
             "vtkMRMLSegmentationNode", "TemporarySegmentation")
 
         if latest_version_path.endswith(".nrrd"):
-            slicer.util.loadSegmentation(latest_version_path,
-                                         temporary_segmentation_node)
+            temporary_segmentation_node = slicer.util.loadSegmentation(
+                latest_version_path)
 
         elif (latest_version_path.endswith(".nii")
               or latest_version_path.endswith(".nii.gz")):
@@ -3378,34 +3389,38 @@ class SlicerCARTWidget(ScriptedLoadableModuleWidget, VTKObservationMixin):
         if self.previousAction == 'segmentation':
             self.segmentEditorWidget.undo()
 
-        elif self.previousAction == 'markups':
-            # Get the last added markup node (or customize based on specific
-            # markup type)
-            markupsNodeList = slicer.mrmlScene.GetNodesByClass(
-                "vtkMRMLMarkupsNode")
-            markupsNodeList.InitTraversal()
+        # To uncomment or uncomment once measurement line is functional since
+        # this cannot remove markups
+        # elif self.previousAction == 'markups':
+        #     # Get the last added markup node (or customize based on specific
+        #     # markup type)
+        #     markupsNodeList = slicer.mrmlScene.GetNodesByClass(
+        #         "vtkMRMLMarkupsNode")
+        #     markupsNodeList.InitTraversal()
+        #
+        #     lastMarkupNode = None
+        #
+        #     while True:
+        #         markupNode = markupsNodeList.GetNextItemAsObject()
+        #         if markupNode:
+        #             lastMarkupNode = markupNode  # Keep track of the last
+        #             # markup node
+        #         else:
+        #             break
+        #
+        #     # Remove the last control point from the markup node
+        #     (or remove the whole node if needed)
+        #     if lastMarkupNode and
+        #     lastMarkupNode.GetNumberOfControlPoints() > 0:
+        #         lastMarkupNode.RemoveNthControlPoint(
+        #             lastMarkupNode.GetNumberOfControlPoints() - 1)
+        #     else:
+        #         slicer.mrmlScene.RemoveNode(
+        #             lastMarkupNode)  # Remove the whole markup node if no
+        #         # points remain
+        #
+        #     removedNode = self.lineDetails.pop(lastMarkupNode.GetName())
 
-            lastMarkupNode = None
-
-            while True:
-                markupNode = markupsNodeList.GetNextItemAsObject()
-                if markupNode:
-                    lastMarkupNode = markupNode  # Keep track of the last
-                    # markup node
-                else:
-                    break
-
-            # Remove the last control point from the markup node (or remove the
-            # whole node if needed)
-            if lastMarkupNode and lastMarkupNode.GetNumberOfControlPoints() > 0:
-                lastMarkupNode.RemoveNthControlPoint(
-                    lastMarkupNode.GetNumberOfControlPoints() - 1)
-            else:
-                slicer.mrmlScene.RemoveNode(
-                    lastMarkupNode)  # Remove the whole markup node if no
-                # points remain
-
-            removedNode = self.lineDetails.pop(lastMarkupNode.GetName())
 
 
     @enter_function
