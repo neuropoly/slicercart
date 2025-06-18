@@ -2503,11 +2503,11 @@ class ImposeCaseListFiltersWindow(qt.QWidget):
         
         inclusion_table_view_header_hbox.addWidget(inclusion_title_label)
         
-        add_inclusion_filter_button = qt.QPushButton('Add Inclusion Filter')
-        add_inclusion_filter_button.setFixedWidth(180)
-        add_inclusion_filter_button.setSizePolicy(qt.QSizePolicy.Fixed, qt.QSizePolicy.Fixed)
+        self.add_inclusion_filter_button = qt.QPushButton('Add Inclusion Filter')
+        self.add_inclusion_filter_button.setFixedWidth(180)
+        self.add_inclusion_filter_button.setSizePolicy(qt.QSizePolicy.Fixed, qt.QSizePolicy.Fixed)
         
-        inclusion_table_view_header_hbox.addWidget(add_inclusion_filter_button)
+        inclusion_table_view_header_hbox.addWidget(self.add_inclusion_filter_button)
         
         layout.addLayout(inclusion_table_view_header_hbox)
         layout.addSpacing(5) 
@@ -2535,11 +2535,11 @@ class ImposeCaseListFiltersWindow(qt.QWidget):
 
         exclusion_table_view_header_hbox.addWidget(exclusion_title_label)
         
-        add_exclusion_filter_button = qt.QPushButton('Add Exclusion Filter')
-        add_exclusion_filter_button.setFixedWidth(180)
-        add_exclusion_filter_button.setSizePolicy(qt.QSizePolicy.Fixed, qt.QSizePolicy.Fixed)
+        self.add_exclusion_filter_button = qt.QPushButton('Add Exclusion Filter')
+        self.add_exclusion_filter_button.setFixedWidth(180)
+        self.add_exclusion_filter_button.setSizePolicy(qt.QSizePolicy.Fixed, qt.QSizePolicy.Fixed)
         
-        exclusion_table_view_header_hbox.addWidget(add_exclusion_filter_button)
+        exclusion_table_view_header_hbox.addWidget(self.add_exclusion_filter_button)
         
         layout.addLayout(exclusion_table_view_header_hbox)
         layout.addWidget(self.exclusion_table_view)
@@ -2565,9 +2565,6 @@ class ImposeCaseListFiltersWindow(qt.QWidget):
         layout.addSpacing(15) 
         layout.addWidget(separator2)
         layout.addSpacing(15) 
-        
-        self.previous_button = qt.QPushButton('Previous')
-        layout.addWidget(self.previous_button)
 
         self.apply_button = qt.QPushButton('Apply')
         layout.addWidget(self.apply_button)
@@ -2578,4 +2575,80 @@ class ImposeCaseListFiltersWindow(qt.QWidget):
         self.setLayout(layout)
         self.setWindowTitle("Filter case list")
         self.resize(500, 600)
+
+    @enter_function
+    def connect_buttons_to_callbacks(self):
+        """
+        connect_buttons_to_callbacks
+
+        Args:
+        """
+        self.add_inclusion_filter_button.clicked.connect()
+        self.add_exclusion_filter_button.clicked.connect()
         
+        self.apply_button.clicked.connect(self.push_apply)
+        self.cancel_button.clicked.connect(self.push_cancel)
+    
+    @enter_function
+    def push_add_inclusion_filter(self):
+        """
+        push_add_inclusion_filter
+
+        Args:
+        """
+        addCaseListFiltersWindow = AddCaseListFiltersWindow(
+            self.segmenter, "include")
+        addCaseListFiltersWindow.show()
+        
+    @enter_function
+    def push_add_exclusion_filter(self):
+        """
+        push_add_exclusion_filter
+
+        Args:
+        """
+        addCaseListFiltersWindow = AddCaseListFiltersWindow(
+            self.segmenter, "exclude")
+        addCaseListFiltersWindow.show()
+
+    @enter_function
+    def push_apply(self):
+        """
+        push_apply
+
+        Args:
+        """
+        
+    @enter_function
+    def push_cancel(self):
+        """
+        push_cancel
+
+        Args:
+        """
+        slicerCARTConfigurationSetupWindow = SlicerCARTConfigurationSetupWindow(
+            self.segmenter)
+        slicerCARTConfigurationSetupWindow.show()
+        self.close()
+        
+class AddCaseListFiltersWindow(qt.QWidget):
+    @enter_function
+    def __init__(self, action, parent=None, ):
+        """
+        __init__
+
+        Args:
+            segmenter: Description of segmenter.
+            parent: Description of parent.
+        """
+        super(AddCaseListFiltersWindow, self).__init__(parent)
+
+        if action == "include":
+            pass
+        else:
+            pass
+            
+        layout = qt.QVBoxLayout()
+
+        self.setLayout(layout)
+        self.setWindowTitle("Add Case List Filters")
