@@ -766,6 +766,35 @@ class SlicerCARTWidget(ScriptedLoadableModuleWidget, VTKObservationMixin):
         # loading cases)
         self.CasesPaths = [item for item in self.CasesPaths if 'derivatives' not
                            in item]
+        
+        
+        if self.config_yaml["case_list_filters"]["inclusion"]:
+            filters_to_include = self.config_yaml["case_list_filters"]["inclusion"]
+        else:
+            # If no inclusion filters are set, we include all cases
+            filters_to_include = ['']
+            
+        if self.config_yaml["case_list_filters"]["exclusion"]:
+            filters_to_exclude = self.config_yaml["case_list_filters"]["exclusion"]
+        else:
+            # If no exclusion filters are set, we exclude nothing
+            filters_to_exclude = ['']
+        
+        temp_cases_paths = []
+        for case_path in self.CasesPaths:
+            for filter_i in filters_to_include:
+                for filter_e in filters_to_exclude:
+                    filter_e_lower = filter_e.lower()
+                    filter_i_lower = filter_i.lower()
+                    case_path_lower = case_path.lower()
+                    
+                    if filter_e_lower not in case_path_lower and \
+                       filter_i_lower in case_path_lower:
+                        temp_cases_paths.append(case_path)
+                
+        self.CasesPaths = temp_cases_paths
+        
+        Debug.print(self, self.CasesPaths)
 
         if not self.CasesPaths:
             message = ('No files found in the selected directory!'
