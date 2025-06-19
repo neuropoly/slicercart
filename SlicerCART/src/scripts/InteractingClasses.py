@@ -2763,6 +2763,8 @@ class ImposeCaseListFiltersWindow(qt.QWidget):
 
         Args:
         """
+        
+        # Make sure no empty filters are present
         def check_no_empty_filters(table_widget: qt.QTableWidget) -> bool:
             row_count = table_widget.rowCount
             for row in range(row_count):
@@ -2772,17 +2774,84 @@ class ImposeCaseListFiltersWindow(qt.QWidget):
                     return False 
             # all filters are filled
             return True 
-            
-        if not check_no_empty_filters(self.inclusion_table_view) or not check_no_empty_filters(self.exclusion_table_view):
+        
+        # Make sure no filter is present in both inclusion and exclusion
+        def check_no_duplicates_between(inclusion_table_widget: qt.QTableWidget,
+                                        exclusion_table_widget: qt.QTableWidget) -> bool:
+            inclusion_filters = [inclusion_table_widget.cellWidget(row, 1).text.lower() for row in range(inclusion_table_widget.rowCount)]
+            exclusion_filters = [exclusion_table_widget.cellWidget(row, 1).text.lower() for row in range(exclusion_table_widget.rowCount)]
+            duplicates = set(inclusion_filters) & set(exclusion_filters)
+            if duplicates:
+                Debug.print(self, f"Duplicates between inclusion and exclusion: {duplicates}")
+                Debug.print(self, str(type(duplicates)))
+                return (False, duplicates)
+            return (True, None)
+        
+        # Make sure no filter is present more than once within the same filtering category
+        def check_no_duplicates_within(table_widget: qt.QTableWidget) -> bool:
+            filters = [table_widget.cellWidget(row, 1).text.lower() for row in range(table_widget.rowCount)]
+            duplicates = set(filter for filter in filters if filters.count(filter) > 1)
+            if duplicates:
+                Debug.print(self, f"Duplicates within the same filtering category: {duplicates}")
+                Debug.print(self, str(type(duplicates)))
+                return (False, duplicates)
+            return (True, None)
+
+        def empty_filters_message():
             msg = qt.QMessageBox()
             msg.setWindowTitle('Warning')
             msg.setText(
                 "At least one inclusion filter is empty. \nPlease remove it or give it a value before proceeding. \n")
             msg.exec()
-        else:
+            
+        def duplicates_between_message(duplicates):
+            msg = qt.QMessageBox()
+            msg.setWindowTitle('Warning')
+            msg.setText(
+                f"Duplicate filters found between inclusion and exclusion: {', '.join(duplicates)}.\n"
+                "Please remove or adjust them before proceeding.")
+            msg.exec()
+    
+        def duplicates_within_message(duplicates):
+            msg = qt.QMessageBox()
+            msg.setWindowTitle('Warning')
+            msg.setText(
+                f"Duplicate filters found within the same filtering category: {', '.join(duplicates)}.\n"
+                "Please remove or adjust them before proceeding.")
+            msg.exec()
+        
+        def coordinate_messages(pointer, duplicates=None):
+            if pointer == 1:
+                empty_filters_message()
+            elif pointer == 2:
+                duplicates_between_message(duplicates)
+            else:
+                duplicates_within_message(duplicates)
+        
+        all_checks_pass = True
+        if not check_no_empty_filters(self.inclusion_table_view) or not check_no_empty_filters(self.exclusion_table_view):
+            all_checks_pass = False
+            coordinate_messages(1)
+        
+        flag_between, duplicates_between = check_no_duplicates_between(self.inclusion_table_view, self.exclusion_table_view)
+        if not flag_between:
+            all_checks_pass = False
+            coordinate_messages(2, duplicates_between)
+            
+        flag_within_inclusion, duplicates_within_inclusion = check_no_duplicates_within(self.inclusion_table_view)
+        if not flag_within_inclusion:
+            all_checks_pass = False
+            coordinate_messages(3, duplicates_within_inclusion)
+            
+        flag_within_exclusion, duplicates_within_exclusion = check_no_duplicates_within(self.exclusion_table_view)
+        if not flag_within_exclusion:
+            all_checks_pass = False
+            coordinate_messages(3, duplicates_within_exclusion)
+            
+        if all_checks_pass:
             self.config_yaml["case_list_filters"] = self.case_list_filters   
             ConfigPath.write_config_file()
-                     
+                        
             slicerCARTConfigurationSetupWindow = SlicerCARTConfigurationSetupWindow(
                 self.segmenter)
             slicerCARTConfigurationSetupWindow.show()
