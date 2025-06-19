@@ -2489,7 +2489,7 @@ class ImposeCaseListFiltersWindow(qt.QWidget):
     cell_updated_signal = qt.Signal(str)
     
     @enter_function
-    def __init__(self, segmenter, filter_config_yaml=None, parent=None):
+    def __init__(self, segmenter, case_list_filters=None, filter_config_yaml=None, parent=None):
         
         super(ImposeCaseListFiltersWindow, self).__init__(parent)
         
@@ -2503,7 +2503,10 @@ class ImposeCaseListFiltersWindow(qt.QWidget):
             self.config_yaml = filter_config_yaml
         
         # Load the case list filters from the config file => only modified when Apply is clicked
-        self.case_list_filters = self.config_yaml.get("case_list_filters", {})
+        if not case_list_filters:
+            self.case_list_filters = self.config_yaml.get("case_list_filters", {})
+        else:
+            self.case_list_filters = case_list_filters
         
         # UI    
         layout = qt.QVBoxLayout()
@@ -2650,6 +2653,8 @@ class ImposeCaseListFiltersWindow(qt.QWidget):
         row_position = self.inclusion_table_view.rowCount
         self.inclusion_table_view.insertRow(row_position)
         
+        self.case_list_filters["inclusion"].append("")
+        
         #Create the remove filter button
         remove_button = qt.QPushButton("Remove")
         remove_button.setFixedWidth(100)
@@ -2663,6 +2668,11 @@ class ImposeCaseListFiltersWindow(qt.QWidget):
         filter_input = qt.QLineEdit()
         self.inclusion_table_view.setCellWidget(row_position, 1, filter_input)
 
+        # When text changes, update the correct index in case_list_filters
+        filter_input.textChanged.connect(
+            lambda text, row=row_position: self.case_list_filters["inclusion"].__setitem__(row, text)
+        )
+        
         # Connect remove button, passing both row and filter value
         remove_button.clicked.connect(
             lambda _, row=row_position: self.remove_filter_row(
@@ -2711,6 +2721,7 @@ class ImposeCaseListFiltersWindow(qt.QWidget):
         Debug.print(self, "Removing filter: " + filter_value)
         self.case_list_filters[filter_type].remove(filter_value)
         
+        Debug.print(self, self.case_list_filters)
         imposeCaseListFiltersWindow = ImposeCaseListFiltersWindow(
             self.segmenter, self.case_list_filters)
         imposeCaseListFiltersWindow.show()
