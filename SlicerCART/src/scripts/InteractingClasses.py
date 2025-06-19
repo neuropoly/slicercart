@@ -2484,6 +2484,10 @@ class ConfigureSingleClassificationItemWindow(qt.QWidget):
         return version_numbers
 
 class ImposeCaseListFiltersWindow(qt.QWidget):
+    
+    # Signal for when a cell is updated
+    cell_updated_signal = qt.Signal(str)
+    
     @enter_function
     def __init__(self, segmenter, filter_config_yaml=None, parent=None):
         
@@ -2611,8 +2615,18 @@ class ImposeCaseListFiltersWindow(qt.QWidget):
         self.setWindowTitle("Filter case list")
         self.resize(500, 600)
         
+        # self.cell_updated_signal.connect(self.)
+        
         self.connect_buttons_to_callbacks()
         
+    @enter_function
+    def register_inclusion_cell_data(self, row, column):
+        value = self.inclusion_table_view.item(row, column)
+        if value is not None:
+            new_filter = value.text()
+            self.case_list_filters["inclusion"].append(new_filter)
+
+    
     @enter_function
     def connect_buttons_to_callbacks(self):
         """
