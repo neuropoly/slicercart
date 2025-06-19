@@ -1347,7 +1347,6 @@ class ConfigureSegmentationWindow(qt.QWidget):
             # msg.buttonClicked.connect(self.push_error_label_list_empty)
             msg.exec()
         else:
-            ConfigPath.write_config_file()
             self.close()
 
             configureSegmentationWindow = ConfigureSegmentationWindow(
@@ -2493,9 +2492,7 @@ class ImposeCaseListFiltersWindow(qt.QWidget):
         
         super(ImposeCaseListFiltersWindow, self).__init__(parent)
         
-        self.segmenter = segmenter 
-        self.config_yaml = ConfigPath.open_project_config_file()
-        
+        self.segmenter = segmenter         
         #TODO: modify for starting with previous volumes
         if filter_config_yaml is None:
             self.config_yaml = ConfigPath.open_project_config_file()
@@ -2507,6 +2504,8 @@ class ImposeCaseListFiltersWindow(qt.QWidget):
             self.case_list_filters = self.config_yaml.get("case_list_filters", {})
         else:
             self.case_list_filters = case_list_filters
+            
+        Debug.print(self, case_list_filters)
         
         # UI    
         layout = qt.QVBoxLayout()
@@ -2534,36 +2533,39 @@ class ImposeCaseListFiltersWindow(qt.QWidget):
         self.inclusion_table_view.setColumnCount(2)
         
         # Load existing inclusion filters from the config file
-        if self.case_list_filters.get("inclusion") is not None:
-            number_of_inclusion_filters = len(self.case_list_filters["inclusion"])
-            self.inclusion_table_view.setRowCount(number_of_inclusion_filters)
+        if self.case_list_filters.get("inclusion") != []:
+            num_inclusion_filters = len(self.case_list_filters["inclusion"])
+            self.inclusion_table_view.setRowCount(num_inclusion_filters)
             
-            
-            for index, filter_value in enumerate(self.case_list_filters["inclusion"]):
-                #This could be merged with the push_add_inclusion_filter / push_add_exclusion_filter
+            for incl_idx, incl_filter_value in enumerate(self.case_list_filters["inclusion"]):
                 # Create the remove filter button
-                remove_button = qt.QPushButton("Remove")
-                remove_button.setFixedWidth(100)
-                button_widget = qt.QWidget()
-                button_layout = qt.QHBoxLayout()
-                button_layout.addWidget(remove_button)
-                button_layout.setAlignment(qt.Qt.AlignCenter)
-                button_layout.setContentsMargins(0, 0, 0, 0)
-                button_widget.setLayout(button_layout)
+                incl_remove_button = qt.QPushButton("Remove")
+                incl_remove_button.setFixedWidth(100)
+                incl_button_widget = qt.QWidget()
+                incl_button_layout = qt.QHBoxLayout()
+                incl_button_layout.addWidget(incl_remove_button)
+                incl_button_layout.setAlignment(qt.Qt.AlignCenter)
+                incl_button_layout.setContentsMargins(0, 0, 0, 0)
+                incl_button_widget.setLayout(incl_button_layout)
                 
                 # Get the QLineEdit for the filter input (column 1)
-                filter_input = qt.QLineEdit(filter_value)
+                incl_filter_input = qt.QLineEdit(incl_filter_value)
+                self.inclusion_table_view.setCellWidget(incl_idx, 1, incl_filter_input)
                 
-                self.inclusion_table_view.setCellWidget(index, 1, filter_input)
+                # When text changes, update the correct index in case_list_filters
+            
+                incl_filter_input.textChanged.connect(
+                    lambda text, row=incl_idx: self.case_list_filters["inclusion"].__setitem__(row, text)
+                )
                 
                 # Connect remove button, passing both row and filter value
-                remove_button.clicked.connect(
-                    lambda _, row=index, value=filter_value: self.remove_filter_row(
-                        row, "inclusion", value
+                incl_remove_button.clicked.connect(
+                    lambda _, row=incl_idx, value=incl_filter_value: self.remove_filter_row(
+                    row, "inclusion", value
                     )
                 )
                 
-                self.inclusion_table_view.setCellWidget(index, 0, button_widget)
+                self.inclusion_table_view.setCellWidget(incl_idx, 0, incl_button_widget)
 
         separator1 = qt.QFrame()
         separator1.setFrameShape(qt.QFrame.HLine)
@@ -2592,9 +2594,41 @@ class ImposeCaseListFiltersWindow(qt.QWidget):
         
         layout.addLayout(exclusion_table_view_header_hbox)
         layout.addWidget(self.exclusion_table_view)
-
-        self.exclusion_table_view.setRowCount(5)
+        
         self.exclusion_table_view.setColumnCount(2)
+        
+        if self.case_list_filters.get("exclusion") != []:
+            num_exclusion_filters = len(self.case_list_filters["exclusion"])
+            self.exclusion_table_view.setRowCount(num_exclusion_filters)
+
+            for excl_idx, excl_filter_value in enumerate(self.case_list_filters["exclusion"]):
+                # Create the remove filter button
+                excl_remove_button = qt.QPushButton("Remove")
+                excl_remove_button.setFixedWidth(100)
+                excl_button_widget = qt.QWidget()
+                excl_button_layout = qt.QHBoxLayout()
+                excl_button_layout.addWidget(excl_remove_button)
+                excl_button_layout.setAlignment(qt.Qt.AlignCenter)
+                excl_button_layout.setContentsMargins(0, 0, 0, 0)
+                excl_button_widget.setLayout(excl_button_layout)
+
+                # Get the QLineEdit for the filter input (column 1)
+                excl_filter_input = qt.QLineEdit(excl_filter_value)
+                self.exclusion_table_view.setCellWidget(excl_idx, 1, excl_filter_input)
+                
+                # When text changes, update the correct index in case_list_filters
+                excl_filter_input.textChanged.connect(
+                    lambda text, row=excl_idx: self.case_list_filters["exclusion"].__setitem__(row, text)
+                )
+
+                # Connect remove button, passing both row and filter value
+                excl_remove_button.clicked.connect(
+                    lambda _, row=excl_idx, value=excl_filter_value: self.remove_filter_row(
+                    row, "exclusion", value
+                    )
+                )
+
+                self.exclusion_table_view.setCellWidget(excl_idx, 0, excl_button_widget)
     
         self.inclusion_table_view.horizontalHeader().setStretchLastSection(
         True)
@@ -2618,18 +2652,8 @@ class ImposeCaseListFiltersWindow(qt.QWidget):
         self.setWindowTitle("Filter case list")
         self.resize(500, 600)
         
-        # self.cell_updated_signal.connect(self.)
-        
         self.connect_buttons_to_callbacks()
-        
-    @enter_function
-    def register_inclusion_cell_data(self, row, column):
-        value = self.inclusion_table_view.item(row, column)
-        if value is not None:
-            new_filter = value.text()
-            self.case_list_filters["inclusion"].append(new_filter)
-
-    
+  
     @enter_function
     def connect_buttons_to_callbacks(self):
         """
@@ -2638,7 +2662,7 @@ class ImposeCaseListFiltersWindow(qt.QWidget):
         Args:
         """
         self.add_inclusion_filter_button.clicked.connect(self.push_add_inclusion_filter)
-        # self.add_exclusion_filter_button.clicked.connect()
+        self.add_exclusion_filter_button.clicked.connect(self.push_add_exclusion_filter)
         
         self.apply_button.clicked.connect(self.push_apply)
         self.cancel_button.clicked.connect(self.push_cancel)
@@ -2692,6 +2716,8 @@ class ImposeCaseListFiltersWindow(qt.QWidget):
         row_position = self.exclusion_table_view.rowCount
         self.exclusion_table_view.insertRow(row_position)
         
+        self.case_list_filters["exclusion"].append("")
+        
         # Create the remove filter button
         remove_button = qt.QPushButton("Remove")
         remove_button.setFixedWidth(100)
@@ -2704,6 +2730,11 @@ class ImposeCaseListFiltersWindow(qt.QWidget):
         # Get the QLineEdit for the filter input (column 1)
         filter_input = qt.QLineEdit()
         self.exclusion_table_view.setCellWidget(row_position, 1, filter_input)
+        
+        # When text changes, update the correct index in case_list_filters
+        filter_input.textChanged.connect(
+            lambda text, row=row_position: self.case_list_filters["exclusion"].__setitem__(row, text)
+        )
 
         # Connect remove button, passing both row and filter value
         remove_button.clicked.connect(
@@ -2717,11 +2748,10 @@ class ImposeCaseListFiltersWindow(qt.QWidget):
     @enter_function
     def remove_filter_row(self, row, filter_type, filter_value):
         self.close()
-        
-        Debug.print(self, "Removing filter: " + filter_value)
-        self.case_list_filters[filter_type].remove(filter_value)
-        
-        Debug.print(self, self.case_list_filters)
+
+        self.case_list_filters[filter_type].remove(filter_value)         
+        Debug.print(self, self.case_list_filters[filter_type])
+               
         imposeCaseListFiltersWindow = ImposeCaseListFiltersWindow(
             self.segmenter, self.case_list_filters)
         imposeCaseListFiltersWindow.show()
@@ -2736,25 +2766,26 @@ class ImposeCaseListFiltersWindow(qt.QWidget):
         def check_no_empty_filters(table_widget: qt.QTableWidget) -> bool:
             row_count = table_widget.rowCount
             for row in range(row_count):
-                item = table_widget.item(row, 1)
-                Debug.print(self, "Item: " + str(item))
-                if not item:
+                item = table_widget.cellWidget(row, 1).text
+                if item == "":
                     # at least one filter is empty
                     return False 
             # all filters are filled
             return True 
             
-        if check_no_empty_filters(self.inclusion_table_view) is False:
+        if not check_no_empty_filters(self.inclusion_table_view) or not check_no_empty_filters(self.exclusion_table_view):
             msg = qt.QMessageBox()
             msg.setWindowTitle('Warning')
             msg.setText(
-                "At least one inclusion filter is empty. \nPlease remove it or correct it before saving. \n")
+                "At least one inclusion filter is empty. \nPlease remove it or give it a value before proceeding. \n")
             msg.exec()
         else:
-            self.config_yaml["case_list_filters"] = self.case_list_filters
-            configureClassificationWindow = ConfigureClassificationWindow(
-                self.segmenter, self.config_yaml)
-            configureClassificationWindow.show()
+            self.config_yaml["case_list_filters"] = self.case_list_filters   
+            ConfigPath.write_config_file()
+                     
+            slicerCARTConfigurationSetupWindow = SlicerCARTConfigurationSetupWindow(
+                self.segmenter)
+            slicerCARTConfigurationSetupWindow.show()
             self.close()
                
     @enter_function
