@@ -24,8 +24,10 @@ KEYBOARD_SHORTCUTS:
   callback: onSaveClassificationButton
   shortcut: c
 case_list_filters:
-  exclusion: []
-  inclusion: []
+  exclusion:
+  - t2
+  inclusion:
+  - t1
 checkboxes:
   Anoxic_injury_checkbox: Anoxic injury
   Craniectomy_checkbox: Craniectomy

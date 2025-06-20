@@ -771,32 +771,35 @@ class SlicerCARTWidget(ScriptedLoadableModuleWidget, VTKObservationMixin):
         if self.config_yaml["case_list_filters"]["inclusion"]:
             filters_to_include = self.config_yaml["case_list_filters"]["inclusion"]
         else:
-            # If no inclusion filters are set, we include all cases
-            filters_to_include = ['']
+            filters_to_include = []
             
         if self.config_yaml["case_list_filters"]["exclusion"]:
             filters_to_exclude = self.config_yaml["case_list_filters"]["exclusion"]
         else:
-            # If no exclusion filters are set, we exclude nothing
-            filters_to_exclude = ['']
+            filters_to_exclude = []
         
-        temp_cases_paths = []
-        for case_path in self.CasesPaths:
-            for filter_i in filters_to_include:
-                for filter_e in filters_to_exclude:
-                    filter_e_lower = filter_e.lower()
-                    filter_i_lower = filter_i.lower()
-                    case_path_lower = case_path.lower()
-                    Debug.print(self, case_path_lower)
+        temp_cases = []
+        
+        e = 0
+        while e < len(filters_to_exclude):
+            thisFilter = filters_to_exclude[e].lower()
+            for index, case in enumerate(self.CasesPaths):
+                thisCase = case.lower()
+                if thisFilter not in thisCase:
+                    temp_cases.append(case)
+            e += 1
                     
-                    if filters_to_exclude != [""] and filter_e_lower not in case_path_lower and \
-                       filter_i_lower in case_path_lower:
-                        temp_cases_paths.append(case_path)
+        i = 0
+        while i < len(filters_to_include):
+            thisFilter = filters_to_include[i].lower()
+            for index, case in enumerate(self.CasesPaths):
+                thisCase = case.lower()
+                if thisFilter in thisCase and case not in temp_cases:
+                    temp_cases.append(case)
+            i += 1
+                    
+        self.CasesPaths = temp_cases
         
-        self.CasesPaths = temp_cases_paths
-        
-        Debug.print(self, self.CasesPaths)
-
         if not self.CasesPaths:
             message = ('No files found in the selected directory!'
                        f'\n\nCurrent file extension configuration: '
