@@ -787,11 +787,12 @@ class SlicerCARTWidget(ScriptedLoadableModuleWidget, VTKObservationMixin):
                     filter_e_lower = filter_e.lower()
                     filter_i_lower = filter_i.lower()
                     case_path_lower = case_path.lower()
+                    Debug.print(self, case_path_lower)
                     
-                    if filter_e_lower not in case_path_lower and \
+                    if filters_to_exclude != [""] and filter_e_lower not in case_path_lower and \
                        filter_i_lower in case_path_lower:
                         temp_cases_paths.append(case_path)
-                
+        
         self.CasesPaths = temp_cases_paths
         
         Debug.print(self, self.CasesPaths)
