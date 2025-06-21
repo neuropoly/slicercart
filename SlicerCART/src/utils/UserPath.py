@@ -11,7 +11,6 @@ from .debugging_helpers import enter_function
 
 SELECTED_EXISTING_FOLDER = False
 
-
 class UserPath():
 
     def __init__(self):

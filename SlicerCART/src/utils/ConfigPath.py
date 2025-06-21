@@ -16,7 +16,6 @@ from .debugging_helpers import enter_function
 OUTPUT_CONFIG_PATH = 'output_path.txt' # Name of the temp file where the path
 # of the config file to use (from selected output folder). To use here only.
 
-
 class ConfigPath():
     @enter_function
     def __init__(self):
