@@ -4,6 +4,7 @@ That means the Slicer Python Interpreter always refer to the path of this
 script when using SlicerCART.
 """
 
+from copy import deepcopy
 import os
 import random
 from datetime import datetime
@@ -3248,33 +3249,33 @@ class SlicerCARTWidget(ScriptedLoadableModuleWidget, VTKObservationMixin):
             config_labels = labels in the config yaml file.
 
         """
+        # TODO Kalum: This can be re-written from a nested for loop to loop-
+        #  over-set operation, which would make segmentation loading *much*
+        #  faster for large datasets.
         segmentation = segmentationNode.GetSegmentation()
         segments_to_add = []
+        segment_ids = set(segmentation.GetSegmentIDs())
 
-        segment_ids = list(segmentation.GetSegmentIDs())
-        for old_id in segment_ids:
-            segment = segmentation.GetSegment(old_id)
-            old_name = segment.GetName()
+        for segment_id in segment_ids:
+            # Try to read the details of the matching segment within the segmentation
+            segment = segmentation.GetSegment(segment_id)
+            segment_name = segment.GetName()
 
             for label in config_labels:
-                # If the name or old ID matches a label value or name
-                if old_name == str(label["value"]) or old_name == label["name"]:
-                    # Deep copy the segment
-                    new_segment = vtk.vtkSegment()
-                    new_segment.DeepCopy(segment)
-
+                # Only attempt to load a segmentation if it matches out current label
+                if segment_name == str(label["value"]) or segment_name == label["name"]:
                     # Set correct name and color
-                    new_segment.SetName(label["name"])
-                    new_segment.SetColor(label["color_r"] / 255,
+                    segment.SetName(label["name"])
+                    segment.SetColor(label["color_r"] / 255,
                                          label["color_g"] / 255,
                                          label["color_b"] / 255)
 
                     # Use the label value as the segment ID (string)
                     new_id = str(label["value"])
-                    segments_to_add.append((new_id, new_segment))
+                    segments_to_add.append((new_id, segment))
 
                     # Remove the old segment
-                    segmentation.RemoveSegment(old_id)
+                    segmentation.RemoveSegment(segment_id)
                     break  # stop checking labels once matched
 
         for new_id, segment in segments_to_add:
