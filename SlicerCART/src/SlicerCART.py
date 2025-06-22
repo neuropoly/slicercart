@@ -767,7 +767,6 @@ class SlicerCARTWidget(ScriptedLoadableModuleWidget, VTKObservationMixin):
         self.CasesPaths = [item for item in self.CasesPaths if 'derivatives' not
                            in item]
         
-        
         if self.config_yaml["case_list_filters"]["inclusion"]:
             filters_to_include = self.config_yaml["case_list_filters"]["inclusion"]
         else:
@@ -778,27 +777,28 @@ class SlicerCARTWidget(ScriptedLoadableModuleWidget, VTKObservationMixin):
         else:
             filters_to_exclude = []
         
-        temp_cases = []
+        def filter_cases(master_list, inclusion=None, exclusion=None):
+            if inclusion == []:
+                inclusion = None
+            if exclusion == []:
+                exclusion = None
+            
+            # Case insensitiveness
+            master_list = [item.lower() for item in master_list]
+            inclusion = [item.lower() for item in (inclusion or [])]
+            exclusion = [item.lower() for item in (exclusion or [])]
+
+            filtered_cases = []
+            for case in master_list:
+                if exclusion and any(ex in case for ex in exclusion):
+                    continue
+                if inclusion and not all(inc in case for inc in inclusion):
+                    continue
+                filtered_cases.append(case)
+
+            return filtered_cases
         
-        e = 0
-        while e < len(filters_to_exclude):
-            thisFilter = filters_to_exclude[e].lower()
-            for index, case in enumerate(self.CasesPaths):
-                thisCase = case.lower()
-                if thisFilter not in thisCase:
-                    temp_cases.append(case)
-            e += 1
-                    
-        i = 0
-        while i < len(filters_to_include):
-            thisFilter = filters_to_include[i].lower()
-            for index, case in enumerate(self.CasesPaths):
-                thisCase = case.lower()
-                if thisFilter in thisCase and case not in temp_cases:
-                    temp_cases.append(case)
-            i += 1
-                    
-        self.CasesPaths = temp_cases
+        self.CasesPaths = filter_cases(self.CasesPaths, filters_to_include, filters_to_exclude)
         
         if not self.CasesPaths:
             message = ('No files found in the selected directory!'
@@ -810,6 +810,7 @@ class SlicerCARTWidget(ScriptedLoadableModuleWidget, VTKObservationMixin):
                        "in "
                        "SlicerCART project or in output folder under _conf "
                        "folder."
+                       "\nNote: Please check your case list filters. "
                        "\n\nThen restart the module.")
             Dev.show_message_box(self, message, box_title='ATTENTION!')
             return
