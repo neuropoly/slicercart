@@ -792,7 +792,7 @@ class SlicerCARTWidget(ScriptedLoadableModuleWidget, VTKObservationMixin):
             for case in master_list:
                 if exclusion and any(ex in case for ex in exclusion):
                     continue
-                if inclusion and not all(inc in case for inc in inclusion):
+                if inclusion and not any(inc in case for inc in inclusion):
                     continue
                 filtered_cases.append(case)
 

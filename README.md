@@ -30,4 +30,3 @@ versions (e.g. segmentations generated automatically using models). This open-so
    * Delphine Pilon
    * Neuropoly Team
 
-https://drive.google.com/drive/folders/1xVPfhznA60xt0YCgDhgdMWWbDP8-3LTK?usp=sharing

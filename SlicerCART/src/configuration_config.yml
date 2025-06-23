@@ -25,7 +25,9 @@ KEYBOARD_SHORTCUTS:
   shortcut: c
 case_list_filters:
   exclusion: []
-  inclusion: []
+  inclusion:
+  - t1
+  - t2
 checkboxes:
   Anoxic_injury_checkbox: Anoxic injury
   Craniectomy_checkbox: Craniectomy
@@ -96,7 +98,7 @@ labels:
   name: IVH
   upper_bound_HU: 90
   value: 2
-modality: CT
+modality: MRI
 remaining_list_filename: remaining_list.yaml
 require_empty: false
 save_uint8: true
