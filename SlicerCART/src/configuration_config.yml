@@ -96,9 +96,9 @@ labels:
   name: IVH
   upper_bound_HU: 90
   value: 2
-modality: MRI
+modality: CT
 remaining_list_filename: remaining_list.yaml
 require_empty: false
 save_uint8: true
-slice_view_color: Yellow
+slice_view_color: Red
 working_list_filename: working_list.yaml
