@@ -1347,6 +1347,7 @@ class ConfigureSegmentationWindow(qt.QWidget):
             # msg.buttonClicked.connect(self.push_error_label_list_empty)
             msg.exec()
         else:
+            ConfigPath.write_config_file()
             self.close()
 
             configureSegmentationWindow = ConfigureSegmentationWindow(
