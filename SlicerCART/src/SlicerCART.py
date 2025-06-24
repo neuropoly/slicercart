@@ -4,7 +4,6 @@ That means the Slicer Python Interpreter always refer to the path of this
 script when using SlicerCART.
 """
 
-from copy import deepcopy
 import os
 import random
 from datetime import datetime
