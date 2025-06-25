@@ -13,7 +13,7 @@ from utils.ConfigPath import ConfigPath
 from utils.UserPath import UserPath
 from utils.constants import (CONFIG_COPY_FILENAME, CONFIG_FILE_PATH,
                              CONF_FOLDER_NAME)
-from utils.debugging_helpers import Debug
+from utils.debugging_helpers import DEBUG_HELPER
 from utils.debugging_helpers import enter_function
 from utils.development_helpers import Dev
 
@@ -1106,11 +1106,11 @@ class ConfigureSegmentationWindow(qt.QWidget):
         super(ConfigureSegmentationWindow, self).__init__(parent)
 
         if label_config_yaml is None:
-            Debug.print(self, 'label_config_yaml is None in '
+            DEBUG_HELPER.print('label_config_yaml is None in '
                               'ConfigureSegmentationwindow')
             self.config_yaml = ConfigPath.open_project_config_file()
         else:
-            Debug.print(self, 'else meaning label_config_yaml is NOT None in '
+            DEBUG_HELPER.print('else meaning label_config_yaml is NOT None in '
                               'ConfigureSegmentationwindow')
             self.config_yaml = label_config_yaml
 
@@ -1294,7 +1294,7 @@ class ConfigureSegmentationWindow(qt.QWidget):
         # If there is no remaining button, the last segmentation label is not
         # remove
         if len(self.config_yaml['labels']) == 0:
-            Debug.print(self, "len(self.config_yaml['labels']) == 0")
+            DEBUG_HELPER.print("len(self.config_yaml['labels']) == 0")
             msg = qt.QMessageBox()
             msg.setWindowTitle('ERROR : Label list is empty')
             msg.setText(
@@ -1358,7 +1358,7 @@ class ConfigureSegmentationWindow(qt.QWidget):
             'is_display_timer_requested'] = (
             self.display_timer_checkbox.isChecked())
 
-        Debug.print(self, 'in else push_apply in '
+        DEBUG_HELPER.print('in else push_apply in '
                           'ConfigureSegmentationWindow')
         ConfigPath.write_config_file()
 
@@ -1669,7 +1669,7 @@ class ConfigureSingleLabelWindow(qt.QWidget):
             return
 
         current_label_name = self.name_line_edit.text
-        Debug.print(self, f'currrent_label_name: {current_label_name}')
+        DEBUG_HELPER.print(f'currrent_label_name: {current_label_name}')
 
         for label in self.config_yaml['labels']:
             if label['name'] == current_label_name:
@@ -1684,7 +1684,7 @@ class ConfigureSingleLabelWindow(qt.QWidget):
                     label['upper_bound_HU'] = int(self.max_hu_line_edit.text)
 
         if label_found == False:
-            Debug.print(self, 'label_found==False')
+            DEBUG_HELPER.print('label_found==False')
             # append
             new_label = {'color_b': 10,
                          'color_g': 10,

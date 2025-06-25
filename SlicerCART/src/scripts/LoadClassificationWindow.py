@@ -3,7 +3,7 @@ import copy
 import qt
 from utils.ConfigPath import ConfigPath
 from utils.constants import CLASSIFICATION_BOXES_LIST
-from utils.debugging_helpers import enter_function, Debug
+from utils.debugging_helpers import enter_function, DEBUG_HELPER
 
 
 class LoadClassificationWindow(qt.QWidget):
@@ -249,7 +249,7 @@ class LoadClassificationWindow(qt.QWidget):
                     print("The string did not evaluate to a dictionary.")
             except (SyntaxError, NameError) as e:
                 print("Failed to convert string to dictionary:", e)
-        Debug.print('list up to date:', classification_labels)
+        DEBUG_HELPER.print('list up to date:', classification_labels)
 
         # Convert strings to dictionaries and combine them
         result_dict = {}

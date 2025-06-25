@@ -44,7 +44,7 @@ from utils.ConfigPath import ConfigPath
 from utils.UITheme import Theme
 from utils.UserPath import UserPath
 from utils.constants import CLASSIFICATION_BOXES_LIST, TIMER_MUTEX
-from utils.debugging_helpers import Debug, enter_function
+from utils.debugging_helpers import DEBUG_HELPER, enter_function
 from utils.development_helpers import Dev
 
 
@@ -142,7 +142,7 @@ class SlicerCARTWidget(ScriptedLoadableModuleWidget, VTKObservationMixin):
         # Create a temp file that serves as a flag to determine if output folder
         # has been selected or not.
         ConfigPath.create_temp_file()
-        Debug.print(self, '*** temp file created. BE CAREFUL! ***')
+        DEBUG_HELPER.print('*** temp file created. BE CAREFUL! ***')
         self.config_yaml = ConfigPath.open_project_config_file()
         self.DefaultDir = ConfigPath.DEFAULT_VOLUMES_DIRECTORY
 
@@ -363,17 +363,14 @@ class SlicerCARTWidget(ScriptedLoadableModuleWidget, VTKObservationMixin):
         for i in range(segmentIDs.GetNumberOfValues()):
             segmentID = segmentIDs.GetValue(i)
             isVisible = caller.GetSegmentVisibility(segmentID)
-            Debug.print(self,
-                        f"Segment '{segmentID}' visibility: {isVisible}")
+            DEBUG_HELPER.print(f"Segment '{segmentID}' visibility: {isVisible}")
 
             if isVisible:
                 self.ui.pushButton_ToggleVisibility.setStyleSheet(
                     f"background-color : {self.color_active}")
                 toggle_to_set = True
 
-        Debug.print(
-            self,f'Final state of toggle segments visibility button: '
-                    f'{toggle_to_set}')
+        DEBUG_HELPER.print(f"Final state of toggle segments visibility button: {toggle_to_set}")
 
         self.ui.pushButton_ToggleVisibility.setChecked(toggle_to_set)
 
@@ -761,7 +758,7 @@ class SlicerCARTWidget(ScriptedLoadableModuleWidget, VTKObservationMixin):
         Args:.
         """
 
-        Debug.print(self,
+        DEBUG_HELPER.print(
                     f'value of UserPath.get_selected_existing_folder: '
                     f'{UserPath.get_selected_existing_folder(self)}')
 
@@ -910,11 +907,11 @@ class SlicerCARTWidget(ScriptedLoadableModuleWidget, VTKObservationMixin):
 
         if self.WorkFiles.check_remaining_first_element(
                 remaining_list_filenames):
-            Debug.print(self, 'First case in remaining list ok.')
+            DEBUG_HELPER.print('First case in remaining list ok.')
             remaining_list_first = self.WorkFiles.get_remaining_list_filenames(
                 self)[0]
         else:
-            Debug.print(self, 'Remaining list empty. Select case from working '
+            DEBUG_HELPER.print('Remaining list empty. Select case from working '
                               'list (working list should never be empty).')
             remaining_list_first = self.select_next_working_case()
 
@@ -1105,7 +1102,7 @@ class SlicerCARTWidget(ScriptedLoadableModuleWidget, VTKObservationMixin):
 
         Vol_displayNode.AutoWindowLevelOff()
         if ConfigPath.MODALITY == 'CT':
-            Debug.print(self, 'MODALITY==CT')
+            DEBUG_HELPER.print('MODALITY==CT')
             Vol_displayNode.SetWindow(ConfigPath.CT_WINDOW_WIDTH)
             Vol_displayNode.SetLevel(ConfigPath.CT_WINDOW_LEVEL)
         Vol_displayNode.SetInterpolate(ConfigPath.INTERPOLATE_VALUE)
@@ -1424,7 +1421,7 @@ class SlicerCARTWidget(ScriptedLoadableModuleWidget, VTKObservationMixin):
             current_name = current_segment.GetName()
 
             if current_name == segment_name:
-                Debug.print(self, (f"Found match: Segment ID = "
+                DEBUG_HELPER.print((f"Found match: Segment ID = "
                                    f"{current_segment_id}"))
                 return current_segment_id
 
@@ -1740,14 +1737,13 @@ class SlicerCARTWidget(ScriptedLoadableModuleWidget, VTKObservationMixin):
 
         if df is not None:
             # Means that classification csv file already exists.
-            Debug.print(
-                self, 'Classification csv file already exists. To '
-                              'update.')
+            DEBUG_HELPER.print(
+                'Classification csv file already exists. To update.')
 
             # Get Slicer Classification data only
             label_string_slicer, data_string_slicer = (
                 self.get_classif_config_data())
-            Debug.print(self,
+            DEBUG_HELPER.print(
                         'Got classification details from Slicer.')
 
             # Add Slicer Classification data header to csv df
@@ -2145,10 +2141,10 @@ class SlicerCARTWidget(ScriptedLoadableModuleWidget, VTKObservationMixin):
         
         Args:.
         """
-        Debug.print(self, f'self.currentCase_index: {self.currentCase_index}')
-        Debug.print(self, f'self.currentCase: {self.currentCase}')
-        Debug.print(self, f'self.currentCasePath: {self.currentCasePath}')
-        Debug.print(self,
+        DEBUG_HELPER.print(f'self.currentCase_index: {self.currentCase_index}')
+        DEBUG_HELPER.print(f'self.currentCase: {self.currentCase}')
+        DEBUG_HELPER.print(f'self.currentCasePath: {self.currentCasePath}')
+        DEBUG_HELPER.print(
                     f'self.currentCase_index + 1 = '
                     f'{self.currentCase_index + 1}')
 
@@ -2157,7 +2153,7 @@ class SlicerCARTWidget(ScriptedLoadableModuleWidget, VTKObservationMixin):
         if ((remaining_list_filenames == [])
                 or (remaining_list_filenames == None)
                 or (len(remaining_list_filenames) == 0)):
-            Debug.print(self, 'Remaining list empty!')
+            DEBUG_HELPER.print('Remaining list empty!')
             next_case_name = self.select_next_working_case()
 
             # Update SlicerCART UI with the appropriate case.
@@ -2172,7 +2168,7 @@ class SlicerCARTWidget(ScriptedLoadableModuleWidget, VTKObservationMixin):
             next_case_index = current_case_index + 1
 
             if next_case_index >= len(remaining_list_filenames):
-                Debug.print(self, 'This is the last case!')
+                DEBUG_HELPER.print('This is the last case!')
                 next_case_name = self.currentCase  # So, remain on the last
                 # case.
 
@@ -2208,7 +2204,7 @@ class SlicerCARTWidget(ScriptedLoadableModuleWidget, VTKObservationMixin):
             next_case_index = index_in_working_list
 
         if next_case_index >= len(working_list_filenames):
-            Debug.print(self, 'This is the last case of working list.')
+            DEBUG_HELPER.print('This is the last case of working list.')
             next_case_name = self.currentCase
 
         else:
@@ -2322,7 +2318,7 @@ class SlicerCARTWidget(ScriptedLoadableModuleWidget, VTKObservationMixin):
             f"{self.currentVolumeFilename}_{currentSegmentationVersion}.nii.gz"
         )
         if ConfigPath.SAVE_UINT8:
-            Debug.print(self, "Save segmentation to UINT8.")
+            DEBUG_HELPER.print("Save segmentation to UINT8.")
             # Save to a temporary file (optimal for uint8 type)
             temp_path = os.path.join(slicer.app.temporaryPath,
                                      "temp_seg.nii.gz")
@@ -2339,7 +2335,7 @@ class SlicerCARTWidget(ScriptedLoadableModuleWidget, VTKObservationMixin):
 
             if not os.path.isfile(self.outputSegmFileNifti):
                 nib.save(new_nii, self.outputSegmFileNifti)
-                Debug.print(self, f"Saved UINT8 segmentation to:"
+                DEBUG_HELPER.print(f"Saved UINT8 segmentation to:"
                                   f" {self.outputSegmFileNifti}")
 
             # Remove temp file
@@ -2347,11 +2343,11 @@ class SlicerCARTWidget(ScriptedLoadableModuleWidget, VTKObservationMixin):
                 os.remove(temp_path)
 
         else:
-            Debug.print(self, "Save segmentation to UINT16.")
+            DEBUG_HELPER.print("Save segmentation to UINT16.")
             if not os.path.isfile(self.outputSegmFileNifti):
                 slicer.util.saveNode(self.labelmapVolumeNode,
                                      self.outputSegmFileNifti)
-                Debug.print(self, f"Saved INT16 segmentation to:"
+                DEBUG_HELPER.print(f"Saved INT16 segmentation to:"
                                   f" {self.outputSegmFileNifti}")
 
     @enter_function
@@ -2538,7 +2534,7 @@ class SlicerCARTWidget(ScriptedLoadableModuleWidget, VTKObservationMixin):
         
         Args:.
         """
-        Debug.print(self, f'self.Currentfolder: {self.CurrentFolder}')
+        DEBUG_HELPER.print(f'self.Currentfolder: {self.CurrentFolder}')
         if self.CurrentFolder != None:
             return True
         return False
@@ -2636,7 +2632,7 @@ class SlicerCARTWidget(ScriptedLoadableModuleWidget, VTKObservationMixin):
                     os.path.join(self.outputFolder,
                                  f'{ConfigPath.INPUT_FILE_EXTENSION}')))
         else:
-            Debug.print(self, 'No output folder selected.')
+            DEBUG_HELPER.print('No output folder selected.')
 
     ### N.B. MB: All calling of the function belows have been disabled because
     # if there is a large UI case list (ex 1000 cases), the module becomes very
@@ -2901,10 +2897,10 @@ class SlicerCARTWidget(ScriptedLoadableModuleWidget, VTKObservationMixin):
 
             latest_version_path = self.get_latest_path()
 
-            Debug.print(self, f'latest_version_path: {latest_version_path}')
+            DEBUG_HELPER.print(f'latest_version_path: {latest_version_path}')
 
             if latest_version_path is None:
-                Debug.print(self, 'No segmentation found. Nothing to do.')
+                DEBUG_HELPER.print('No segmentation found. Nothing to do.')
                 return
 
             # Replace current segments in the segmentation node so they can be
@@ -2941,7 +2937,7 @@ class SlicerCARTWidget(ScriptedLoadableModuleWidget, VTKObservationMixin):
             "{}_{}"f"{file_extension}".format(
                 self.currentVolumeFilename, latest_version))
 
-        Debug.print(self, f'latest_path: {latest_path}')
+        DEBUG_HELPER.print(f'latest_path: {latest_path}')
 
         if os.path.exists(latest_path):
             return latest_path
@@ -2959,7 +2955,7 @@ class SlicerCARTWidget(ScriptedLoadableModuleWidget, VTKObservationMixin):
             version = version
         else:
             version = self.parse_version_int_to_str(version_int)
-        Debug.print(self, f'version: {version}')
+        DEBUG_HELPER.print(f'version: {version}')
         return version
 
 
@@ -3074,7 +3070,7 @@ class SlicerCARTWidget(ScriptedLoadableModuleWidget, VTKObservationMixin):
         Vol_displayNode = self.VolumeNode.GetDisplayNode()
         Vol_displayNode.AutoWindowLevelOff()
         if ConfigPath.MODALITY == 'CT':
-            Debug.print(self, 'MODALITY==CT')
+            DEBUG_HELPER.print('MODALITY==CT')
             Vol_displayNode.SetWindow(ConfigPath.CT_WINDOW_WIDTH)
             Vol_displayNode.SetLevel(ConfigPath.CT_WINDOW_LEVEL)
         Vol_displayNode.SetInterpolate(ConfigPath.INTERPOLATE_VALUE)
@@ -3597,7 +3593,7 @@ class SlicerCARTWidget(ScriptedLoadableModuleWidget, VTKObservationMixin):
         Toggle visibility of segments in the slicer viewer.
         """
 
-        Debug.print(self, f'ToggleVisibility: '
+        DEBUG_HELPER.print(f'ToggleVisibility: '
                           f' {self.ui.pushButton_ToggleVisibility.isChecked()}')
 
         if self.ui.pushButton_ToggleVisibility.isChecked():

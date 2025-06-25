@@ -10,7 +10,7 @@ from .constants import (CLASSIFICATION_BOXES_LIST,
                         CONFIG_FILE_PATH,
                         CONF_FOLDER_NAME,
                         INITIAL_CONFIG_FILE)
-from .debugging_helpers import enter_function
+from .debugging_helpers import enter_function, DEBUG_HELPER
 
 
 OUTPUT_CONFIG_PATH = 'output_path.txt' # Name of the temp file where the path
@@ -230,7 +230,9 @@ class ConfigPath():
 
         self.INTERPOLATE_VALUE = config["interpolate_value"]
         self.REQUIRE_EMPTY = config["require_empty"]
-        self.ENABLE_DEBUG = config["enable_debug"]
+
+        # Toggle our Debug Mode to that dictated within the debugger
+        DEBUG_HELPER.set_debug(config["enable_debug"])
 
         self.WORKING_LIST_FILENAME = config["working_list_filename"]
         self.REMAINING_LIST_FILENAME = config["remaining_list_filename"]

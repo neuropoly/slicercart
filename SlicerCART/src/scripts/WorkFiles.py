@@ -5,7 +5,7 @@ from glob import glob
 import yaml
 
 from utils.ConfigPath import ConfigPath
-from utils.debugging_helpers import enter_function, Debug
+from utils.debugging_helpers import enter_function, DEBUG_HELPER
 from utils.development_helpers import Dev
 
 
@@ -54,12 +54,12 @@ class WorkFiles():
             if good_match:
                 if self.check_remaining_list(
                         self.all_cases_filenames):
-                    Debug.print(self, ('Working list corresponds to the '
+                    DEBUG_HELPER.print(('Working list corresponds to the '
                                        'filtered list from volumes folder. '
                                        'READY TO START!'))
                     pass
                 else:
-                    Debug.print(self, ('Good match of working list with '
+                    DEBUG_HELPER.print(('Good match of working list with '
                                        'filtered list from volumes folder. '
                                        'However, the remaining list is '
                                        'incorrect.'))
@@ -73,20 +73,20 @@ class WorkFiles():
                 if ConfigPath.KEEP_WORKING_LIST:
                     if WorkFiles.check_working_list_in_volumes(
                             self, self.all_cases_filenames):
-                        Debug.print(self, 'All elements in working list are '
+                        DEBUG_HELPER.print('All elements in working list are '
                                           'in the filtered list from volumes '
                                           'folder.')
                         working_list_filenames = (
                             WorkFiles.get_working_list_filenames(self))
                         if WorkFiles.check_remaining_list(self,
                                 working_list_filenames):
-                            Debug.print(self,
+                            DEBUG_HELPER.print(
                                         'All elements in remaining list are '
                                         'in the working list from volumes. '
                                         'READY TO START!')
                             pass
                     else:
-                        Debug.print(self, 'Some elements in the working list '
+                        DEBUG_HELPER.print('Some elements in the working list '
                                     'is/are not in the volumes folder.')
                         Dev.show_message_box(self, f'INVALID WORKING LIST FILE')
                         return False
@@ -118,18 +118,18 @@ class WorkFiles():
 
             if os.path.exists(self.remaining_list_filepath):
                 if self.check_remaining_list(working_list_filenames):
-                    Debug.print(self, 'Cases in remaining list are in the '
+                    DEBUG_HELPER.print('Cases in remaining list are in the '
                                       'working list. READY TO START!')
                     pass
                 else:
-                    Debug.print(self, ('There is a remaining list file in the '
+                    DEBUG_HELPER.print(('There is a remaining list file in the '
                                    'output folder, but it is inconsistent with'
                                        ' working list. \n\n Please double '
                                        'check.'))
                     return False
 
             else:
-                Debug.print(self, 'No remaining file exists. One is being '
+                DEBUG_HELPER.print('No remaining file exists. One is being '
                                  'created.')
                 self.write_file_list(self.remaining_list_filepath,
                                      self.all_cases_filenames)
@@ -181,7 +181,7 @@ class WorkFiles():
 
         if working_list_filenames == all_cases_filenames:
             if WorkFiles.check_remaining_list(self, working_list_filenames):
-                Debug.print(self, 'All files in the working list are in the '
+                DEBUG_HELPER.print('All files in the working list are in the '
                                   'volumes folder. READY TO START!')
                 pass
 
@@ -191,14 +191,14 @@ class WorkFiles():
                 if WorkFiles.check_remaining_first_element(
                         self, remaining_list_filenames):
 
-                    Debug.print(
-                        self, ('Issues with remaining list. Creating one '
-                                       'from the working list.'))
+                    DEBUG_HELPER.print(
+                        'Issues with remaining list. Creating one from the '
+                        'working list.')
                     WorkFiles.write_file_list(
                         self, self.remaining_list_filepath,
                                               all_cases_filenames)
                 else:
-                    Debug.print(self, 'Remaining list is empty, but a new one '
+                    DEBUG_HELPER.print('Remaining list is empty, but a new one '
                                       'will not be created '
                                       '(according to user preferences).')
                     pass
@@ -264,18 +264,18 @@ class WorkFiles():
                 if WorkFiles.check_remaining_first_element(self, elements):
                     first_element = elements[0]
                 else:
-                    Debug.print(self, 'First element in remaining list is '
+                    DEBUG_HELPER.print('First element in remaining list is '
                                       'none.')
                     if len(elements) > 1:
                         message = (' !!! PROBLEM !!! Remaining list might be '
                                    'corrupted. Please double check.')
-                        Debug.print(self, message)
+                        DEBUG_HELPER.print(message)
                         # Dev.show_message_box(self, message,
                         #                      box_title='ATTENTION!')
                         pass
                         return False
                     else:
-                        Debug.print(self, 'Remaining list is empty, but this '
+                        DEBUG_HELPER.print('Remaining list is empty, but this '
                                           'is ok for now.')
                         pass
                         return True
@@ -285,7 +285,7 @@ class WorkFiles():
             if first_element in working_list_filenames:
                 if Dev.check_list_in_another(self, elements,
                                           working_list_filenames):
-                    Debug.print(self, 'All element of remaining list are in '
+                    DEBUG_HELPER.print('All element of remaining list are in '
                                       'working list. READY TO START!')
                     pass
 
@@ -295,7 +295,7 @@ class WorkFiles():
                                'in remaining list file found in working list. '
                                '\n \n '
                                'Please double check.')
-                    Debug.print(self, message)
+                    DEBUG_HELPER.print(message)
                     Dev.show_message_box(self, message)
                     pass
                     return False
@@ -304,7 +304,7 @@ class WorkFiles():
                 message = ('First element of the remaining list IS NOT in '
                       'the working list. Please double check list '
                       'correspondences. A backup is created')
-                Debug.print(self, message)
+                DEBUG_HELPER.print(message)
                 # Dev.show_message_box(self, message)
 
                 # Any old file (e.g. previous backup of working or
@@ -324,7 +324,7 @@ class WorkFiles():
                   'any manipulation errors. A new remaining file is '
                   'created right now corresponding to the working '
                   'list.')
-            Debug.print(self, message)
+            DEBUG_HELPER.print(message)
 
             working_list_filenames = WorkFiles.get_working_list_filenames(self)
             self.write_file_list(self.remaining_list_filepath,
@@ -369,7 +369,7 @@ class WorkFiles():
             shutil.copy(self.remaining_list_filepath,
                         remaining_list_backup_path)
 
-        Debug.print(self, 'Old versions created.')
+        DEBUG_HELPER.print('Old versions created.')
 
     @enter_function
     def get_working_list_filenames(self):
@@ -420,7 +420,7 @@ class WorkFiles():
         """
         if remaining_list != None and remaining_list != []:
             if remaining_list[0] != None:
-                Debug.print(self, f"Remaining list 1st element is: "
+                DEBUG_HELPER.print(f"Remaining list 1st element is: "
                                   f"{remaining_list[0]}")
                 pass
                 return True
