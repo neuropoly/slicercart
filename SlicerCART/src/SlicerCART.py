@@ -319,7 +319,6 @@ class SlicerCARTWidget(ScriptedLoadableModuleWidget, VTKObservationMixin):
         # Closes Data Probe upon landing in SlicerCART
         self.close_data_probe_on_startup()
 
-    @enter_function
     def close_data_probe_on_startup(self):
         """
         Each time SlicerCARTWidget is loaded, this function is called to

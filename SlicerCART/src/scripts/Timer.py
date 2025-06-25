@@ -4,7 +4,6 @@ from utils.constants import TIMER_MUTEX
 
 
 class Timer():
-    # @enter_function
     def __init__(self, number=None):
         """
         __init__
@@ -20,7 +19,6 @@ class Timer():
             # False = not counting, True = counting (for pause button)
             self.flag = False
 
-    # @enter_function
     def start(self):
         """
         start
@@ -33,7 +31,6 @@ class Timer():
                 self.flag = True
                 self.start_time = time.time()
 
-    # @enter_function
     def stop(self):
         """
         stop
