@@ -3,11 +3,10 @@ import copy
 import qt
 from utils.ConfigPath import ConfigPath
 from utils.constants import CLASSIFICATION_BOXES_LIST
-from utils.debugging_helpers import enter_function, DEBUG_HELPER
+from utils.debugging_helpers import DEBUG_HELPER
 
 
 class LoadClassificationWindow(qt.QWidget):
-    @enter_function
     def __init__(self, segmenter, classificationInformation_df, parent=None):
         """
         __init__
@@ -97,7 +96,6 @@ class LoadClassificationWindow(qt.QWidget):
         self.setWindowTitle("Load Classification")
         self.resize(800, 400)
 
-    @enter_function
     def pushLoad(self):
         """
         pushLoad
@@ -219,7 +217,6 @@ class LoadClassificationWindow(qt.QWidget):
 
         self.close()
 
-    @enter_function
     def pushCancel(self):
         """
         pushCancel
@@ -228,7 +225,6 @@ class LoadClassificationWindow(qt.QWidget):
         """
         self.close()
 
-    @enter_function
     def get_csv_all_classification_labels(self, csv_df):
         """
         Extract all classification labels from the csv file dataframe
@@ -265,7 +261,6 @@ class LoadClassificationWindow(qt.QWidget):
 
         return result_dict
 
-    @enter_function
     def get_label_names_to_show(self, intersection, columns_names):
         """
         :param intersection: set of all values in the specified version
@@ -307,7 +302,6 @@ class LoadClassificationWindow(qt.QWidget):
 
         return classif_label
 
-    @enter_function
     def clean_classification_grid(self, segmenter):
         """
         clean_classification_grid
@@ -321,7 +315,6 @@ class LoadClassificationWindow(qt.QWidget):
             if widget is not None:
                 widget.deleteLater()
 
-    @enter_function
     def recreate_column_name(self, name, type):
         """
         recreate_column_name

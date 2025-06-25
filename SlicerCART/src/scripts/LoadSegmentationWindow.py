@@ -2,11 +2,9 @@ import os
 
 import qt
 from utils.ConfigPath import ConfigPath
-from utils.debugging_helpers import enter_function
 
 
 class LoadSegmentationsWindow(qt.QWidget):
-    @enter_function
     def __init__(self, segmenter, segmentationInformation_df, parent=None):
         """
         __init__
@@ -96,7 +94,6 @@ class LoadSegmentationsWindow(qt.QWidget):
         self.setWindowTitle("Load Segmentations")
         self.resize(800, 400)
 
-    @enter_function
     def pushLoad(self):
         """
         pushLoad
@@ -121,7 +118,6 @@ class LoadSegmentationsWindow(qt.QWidget):
 
         self.close()
 
-    @enter_function
     def pushCancel(self):
         """
         pushCancel

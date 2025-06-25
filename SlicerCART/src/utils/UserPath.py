@@ -7,7 +7,6 @@ from pathlib import Path
 
 import yaml
 
-from .debugging_helpers import enter_function
 
 SELECTED_EXISTING_FOLDER = False
 
@@ -16,7 +15,6 @@ class UserPath():
     def __init__(self):
         pass
 
-    @enter_function
     def get_user_path(self):
         """
         get_user_path
@@ -26,7 +24,6 @@ class UserPath():
         user_path = Path.home()
         return user_path
 
-    @enter_function
     def check_or_create_filepath(self, filename='slicercart.yml'):
         """
         check_or_create_filepath
@@ -47,7 +44,6 @@ class UserPath():
 
         return filepath
 
-    @enter_function
     def read_filepath(self, filename='slicercart.yml'):
         """
         read_filepath
@@ -62,7 +58,6 @@ class UserPath():
 
         return content
 
-    @enter_function
     def write_in_filepath(self, output_folder_path, volume_folder_path,
                           filename='slicercart.yml'):
         """
@@ -80,7 +75,6 @@ class UserPath():
         with open(filepath, 'w') as file:
             yaml.dump(content, file)
 
-    @enter_function
     def reset_last_selected(self, filepath):
         """
         reset_last_selected
@@ -91,7 +85,6 @@ class UserPath():
         with open(filepath, 'w') as file:
             yaml.dump({}, file)
 
-    @enter_function
     def save_selected_paths(self, output_folder_path, volume_folder_path):
         """
         save_selected_paths
@@ -107,7 +100,6 @@ class UserPath():
                                    volume_folder_path,
                                    'last_selected_paths.yml')
 
-    @enter_function
     def get_selected_paths(self):
         """
         get_selected_paths
@@ -122,7 +114,6 @@ class UserPath():
 
         return content
 
-    @enter_function
     def set_selected_existing_folder(self):
         """
         set_selected_existing_folder
@@ -132,7 +123,6 @@ class UserPath():
         global SELECTED_EXISTING_FOLDER
         SELECTED_EXISTING_FOLDER = not SELECTED_EXISTING_FOLDER
 
-    @enter_function
     def get_selected_existing_folder(self):
         """
         get_selected_existing_folder

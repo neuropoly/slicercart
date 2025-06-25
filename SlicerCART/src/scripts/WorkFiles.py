@@ -5,7 +5,7 @@ from glob import glob
 import yaml
 
 from utils.ConfigPath import ConfigPath
-from utils.debugging_helpers import enter_function, DEBUG_HELPER
+from utils.debugging_helpers import DEBUG_HELPER
 from utils.development_helpers import Dev
 
 
@@ -16,7 +16,6 @@ class WorkFiles():
     previous work sessions.
     """
 
-    @enter_function
     def __init__(self, currentFolder, outputFolder):
         """
         __init__
@@ -41,7 +40,6 @@ class WorkFiles():
         self.all_cases_filenames = (
             self.get_filenames_in_working_list(self.all_cases_path))
 
-    @enter_function
     def check_working_list(self):
         """
         Important function related to this class. Check in an already selected
@@ -136,7 +134,6 @@ class WorkFiles():
 
         return True
 
-    @enter_function
     def get_working_list(self):
         """
         Get all files that have the correct file extension from volumes folder.
@@ -148,7 +145,6 @@ class WorkFiles():
                                            recursive=True))
         return self.CasesPaths
 
-    @enter_function
     def filter_working_list(self, working_list):
         """
         Filter all files that have the correct working list configuration.
@@ -163,7 +159,6 @@ class WorkFiles():
                 filtered_list.append(element)
         return filtered_list
 
-    @enter_function
     def get_filenames_in_working_list(self, all_cases_path):
         """
         Get all filenames from filepaths in the working list.
@@ -171,7 +166,6 @@ class WorkFiles():
         cases = sorted([os.path.split(i)[-1] for i in all_cases_path])
         return cases
 
-    @enter_function
     def check_correspondence(self, all_cases_filenames):
         """
         Verify if the first element of the working list is in the volumes
@@ -248,7 +242,6 @@ class WorkFiles():
 
         return False
 
-    @enter_function
     def check_remaining_list(self, working_list_filenames):
         """
         Important function related to this class. Check the validity of the
@@ -332,7 +325,6 @@ class WorkFiles():
 
         return True
 
-    @enter_function
     def write_file_list(self, filepath, filenames):
         """
         Write all filenames in a specific filepath.
@@ -343,7 +335,6 @@ class WorkFiles():
         with open(filepath, 'w') as file:
             yaml.dump(all_cases_data, file)
 
-    @enter_function
     def check_working_list_in_volumes(self, all_cases_filenames):
         """
         Verify if elements of the working list are in the volumes folder list.
@@ -352,7 +343,6 @@ class WorkFiles():
         return Dev.check_list_in_another(self, working_list_filenames,
                                          all_cases_filenames)
 
-    @enter_function
     def create_backup(self):
         """
         Create a backup of the working list file and/or the remaining list file.
@@ -371,7 +361,6 @@ class WorkFiles():
 
         DEBUG_HELPER.print('Old versions created.')
 
-    @enter_function
     def get_working_list_filenames(self):
         """
         Get all filenames from the working list.
@@ -380,7 +369,6 @@ class WorkFiles():
             working_list_filenames = yaml.safe_load(file)['CASES']
             return working_list_filenames
 
-    @enter_function
     def get_remaining_list_filenames(self):
         """
         Get all filenames from the remaining list.
@@ -389,7 +377,6 @@ class WorkFiles():
             remaining_list_filenames = yaml.safe_load(file)['CASES']
             return remaining_list_filenames
 
-    @enter_function
     def get_working_list_filepaths(self, working_list_filenames):
         """
         Get all working list filepaths.
@@ -401,7 +388,6 @@ class WorkFiles():
                     filenames_path.append(path)
         return filenames_path
 
-    @enter_function
     def get_remaining_list_filepaths(self, remaining_list_filenames):
         """
         Get all remaining list filepaths.
@@ -413,7 +399,6 @@ class WorkFiles():
                     filenames_path.append(path)
         return filenames_path
 
-    @enter_function
     def check_remaining_first_element(self, remaining_list):
         """
         Check validity of the remaining list, based on first element.
@@ -426,14 +411,12 @@ class WorkFiles():
                 return True
         return False
 
-    @enter_function
     def get_all_cases_path(self):
         """
         Get all cases path from the working list filepaths.
         """
         return self.working_list_filepath
 
-    @enter_function
     def find_index_from_filename(self, filename, list):
         """
         Allow to find the index of an element (e.g. filename) in a list.
@@ -441,7 +424,6 @@ class WorkFiles():
         index = list.index(filename)
         return index
 
-    @enter_function
     def find_path_from_filename(self, filename):
         """
         Find path from a filename.
@@ -450,7 +432,6 @@ class WorkFiles():
             if filename in filepath:
                 return filepath
 
-    @enter_function
     def adjust_remaining_list(self, filename):
         """
         Adjust the remaining list by removing a specific filename.

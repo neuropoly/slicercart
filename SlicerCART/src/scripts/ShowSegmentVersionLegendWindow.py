@@ -1,9 +1,7 @@
 import qt
-from utils.debugging_helpers import enter_function
 
 
 class ShowSegmentVersionLegendWindow(qt.QWidget):
-    @enter_function
     def __init__(self, segmenter, segmentationInformation_df, parent=None):
         """
         __init__
@@ -98,7 +96,6 @@ class ShowSegmentVersionLegendWindow(qt.QWidget):
         self.setWindowTitle("Legend of Segment Versions")
         self.resize(800, 200)
 
-    @enter_function
     def pushCancel(self):
         """
         pushCancel

@@ -10,14 +10,13 @@ from .constants import (CLASSIFICATION_BOXES_LIST,
                         CONFIG_FILE_PATH,
                         CONF_FOLDER_NAME,
                         INITIAL_CONFIG_FILE)
-from .debugging_helpers import enter_function, DEBUG_HELPER
+from .debugging_helpers import DEBUG_HELPER
 
 
 OUTPUT_CONFIG_PATH = 'output_path.txt' # Name of the temp file where the path
 # of the config file to use (from selected output folder). To use here only.
 
 class ConfigPath():
-    @enter_function
     def __init__(self):
         self.set_config_values(INITIAL_CONFIG_FILE)
 
@@ -26,7 +25,6 @@ class ConfigPath():
         self.flag_remove_combobox = True
         self.combobox_version = 'v00'
 
-    @enter_function
     def check_existing_configuration(self):
         """
         Check if a configuration file already exists in selected output folder.
@@ -47,7 +45,6 @@ class ConfigPath():
             ConfigPath.create_temp_file(name=OUTPUT_CONFIG_PATH,
                                         text=self.path_to_config_copy)
 
-    @enter_function
     def open_project_config_file(self):
         """
         Load the appropriate configuration template from module or project if
@@ -71,7 +68,6 @@ class ConfigPath():
 
         return self.config_yaml
 
-    @enter_function
     # Was in the initial code. Kept here for further usage if needed.
     def verify_empty(self):
         """
@@ -99,7 +95,6 @@ class ConfigPath():
             else:
                 self.check_existing_configuration()
 
-    @enter_function
     def create_temp_file(self, name='output_folder_not_selected.txt',
                          text="Output folder not yet selected.\n"):
         """
@@ -115,7 +110,6 @@ class ConfigPath():
         with open(temp_file_path, "w") as temp_file:
             temp_file.write(text)
 
-    @enter_function
     def get_temp_file(self, name='output_folder_not_selected.txt'):
         """
         Verify if a specific temp file exists or not. By default, allows to
@@ -134,7 +128,6 @@ class ConfigPath():
 
         return True
 
-    @enter_function
     def delete_temp_file(self, name='output_folder_not_selected.txt'):
         """
         Delete a specific temp file if it exists.
@@ -149,7 +142,6 @@ class ConfigPath():
             # Delete the file
             os.remove(temp_file_path)
 
-    @enter_function
     def read_temp_file(self, name='output_folder_not_selected.txt'):
         """
         Read a specific temp file and return the contents.
@@ -164,7 +156,6 @@ class ConfigPath():
             content = file.read()
             return content
 
-    @enter_function
     def write_config_file(self):
         """
         Write self.config_yaml in the appropriate location (initial or
@@ -184,7 +175,6 @@ class ConfigPath():
         # Ensure to get the latest config values
         ConfigPath.set_config_values(self.config_yaml)
 
-    @enter_function
     def write_correct_path(self):
         """
         Ensure the temp file has the appropriate config file path,
@@ -198,7 +188,6 @@ class ConfigPath():
         ConfigPath.create_temp_file(name=OUTPUT_CONFIG_PATH,
                                     text=path_to_config_copy)
 
-    @enter_function
     def set_config_values(self, config):
         """
         Function moved from SlicerCART.py. Enables to select configuration
@@ -268,7 +257,6 @@ class ConfigPath():
         """
         self.outputFolder = outputFolder
 
-    @enter_function
     def get_initial_config_after_modif(self):
         """
         Read the initial configuration file. To use after Slicer
@@ -280,7 +268,6 @@ class ConfigPath():
             content = yaml.safe_load(file)
         return content
 
-    @enter_function
     def extract_config_classification(self, content):
         """
         Get only the classification configuration from the content of a
@@ -293,7 +280,6 @@ class ConfigPath():
             classif_dict[element] = content[element]
         return classif_dict
 
-    @enter_function
     def compare_and_merge_classification(self, final_config_file, temp_dict):
         """
         Compare possibly modified classification labels with final config
@@ -323,7 +309,6 @@ class ConfigPath():
         return final_config_file
 
     ### The following getter and setter relate to comboboxes versioning
-    @enter_function
     def get_combobox_flag(self):
         """
         get_combobox_flag
@@ -332,7 +317,6 @@ class ConfigPath():
         """
         return self.flag_combobox
 
-    @enter_function
     def set_combobox_flag(self, value=False):
         """
         set_combobox_flag
@@ -342,7 +326,6 @@ class ConfigPath():
         """
         self.flag_combobox = value
 
-    @enter_function
     def get_combobox_version(self):
         """
         get_combobox_version
@@ -351,7 +334,6 @@ class ConfigPath():
         """
         return self.combobox_version
 
-    @enter_function
     def set_combobox_version(self, value):
         """
         set_combobox_version
@@ -361,7 +343,6 @@ class ConfigPath():
         """
         self.combobox_version = value
 
-    @enter_function
     def get_comboboxes_versions(self):
         """
         get_comboboxes_versions
@@ -370,7 +351,6 @@ class ConfigPath():
         """
         return self.all_combobox_version
 
-    @enter_function
     def get_latest_combobox_version(self, config_file):
         """
         get_latest_combobox_version
@@ -383,7 +363,6 @@ class ConfigPath():
             self.combobox_version = max(versions, key=lambda k: int(k[1:]))
         return self.combobox_version
 
-    @enter_function
     def set_latest_combobox_version(self, config_file):
         """
         set_latest_combobox_version
@@ -394,7 +373,6 @@ class ConfigPath():
         self.combobox_version = self.get_latest_combobox_version(config_file)
         return self.combobox_version
 
-    @enter_function
     def get_remove_combobox_flag(self):
         """
         get_remove_combobox_flag
@@ -403,7 +381,6 @@ class ConfigPath():
         """
         return self.flag_remove_combobox
 
-    @enter_function
     def set_remove_combobox_flag(self, value=False):
         """
         set_remove_combobox_flag
@@ -413,7 +390,6 @@ class ConfigPath():
         """
         self.flag_remove_combobox = value
 
-    @enter_function
     def set_interpolate_value(self, value):
         """
         set the interpolation state for rendered volumes.
