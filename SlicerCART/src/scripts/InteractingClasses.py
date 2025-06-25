@@ -1,14 +1,20 @@
 """
-    This InteractingClasses file contains all classes that iteratively
-    interact with each other. This is essential to avoid 'cirular imports'. It
-    should be the only file in scripts folder that contains more than one class.
+This InteractingClasses file contains all classes that iteratively
+interact with each other. This is essential to avoid 'cirular imports'. It
+should be the only file in scripts folder that contains more than one class.
 """
+import copy
+import os
+import shutil
 
-###############################################################################
-# This import needs to be done in each script file for appropriate use.
-from utils import *
+import qt
+from utils.ConfigPath import ConfigPath
+from utils.UserPath import UserPath
+from utils.constants import (CONFIG_COPY_FILENAME, CONFIG_FILE_PATH,
+                             CONF_FOLDER_NAME)
+from utils.debugging_helpers import DEBUG_HELPER
+from utils.development_helpers import Dev
 
-###############################################################################
 
 ###############################################################################
 # This main script contains the following classes, used for configuration:
@@ -22,7 +28,6 @@ from utils import *
 ###############################################################################
 
 class SlicerCARTConfigurationSetupWindow(qt.QWidget):
-    @enter_function
     def __init__(self, segmenter, conf_folder_path=None,
                  parent=None):
         """
@@ -352,7 +357,6 @@ class SlicerCARTConfigurationSetupWindow(qt.QWidget):
         self.setWindowTitle("Configure SlicerCART")
         self.resize(800, 200)
 
-    @enter_function
     def connect_buttons_to_callbacks(self):
         """
         connect_buttons_to_callbacks
@@ -443,7 +447,6 @@ class SlicerCARTConfigurationSetupWindow(qt.QWidget):
         self.segmentation_checkbox_state_changed()
         self.keyboard_shortcuts_checkbox_state_changed()
 
-    @enter_function
     def set_default_values(self):
         """
         set_default_values
@@ -497,7 +500,6 @@ class SlicerCARTConfigurationSetupWindow(qt.QWidget):
         self.save_classification_ks_selected = \
             self.config_yaml['KEYBOARD_SHORTCUTS'][7]['shortcut']
 
-    @enter_function
     def classification_checkbox_state_changed(self):
         """
         classification_checkbox_state_changed
@@ -509,7 +511,6 @@ class SlicerCARTConfigurationSetupWindow(qt.QWidget):
         self.configure_classification_button.setEnabled(
             self.classification_selected)
 
-    @enter_function
     def keyboard_shortcuts_checkbox_state_changed(self):
         """
         keyboard_shortcuts_checkbox_state_changed
@@ -542,7 +543,6 @@ class SlicerCARTConfigurationSetupWindow(qt.QWidget):
         self.save_classification_ks_line_edit.setVisible(
             self.keyboard_shortcuts_selected)
 
-    @enter_function
     def segmentation_checkbox_state_changed(self):
         """
         segmentation_checkbox_state_changed
@@ -553,7 +553,6 @@ class SlicerCARTConfigurationSetupWindow(qt.QWidget):
         self.configure_segmentation_button.setEnabled(
             self.segmentation_selected)
 
-    @enter_function
     def update_interpolate_ks(self):
         """
         update_interpolate_ks
@@ -562,7 +561,6 @@ class SlicerCARTConfigurationSetupWindow(qt.QWidget):
         """
         self.interpolate_ks_selected = self.interpolate_ks_line_edit.text
 
-    @enter_function
     def update_save_classification_ks(self):
         """
         update_save_classification_ks
@@ -572,7 +570,6 @@ class SlicerCARTConfigurationSetupWindow(qt.QWidget):
         self.save_classification_ks_selected = (
             self.save_classification_ks_line_edit.text)
 
-    @enter_function
     def update_remove_small_holes_ks(self):
         """
         update_remove_small_holes_ks
@@ -582,7 +579,6 @@ class SlicerCARTConfigurationSetupWindow(qt.QWidget):
         self.remove_small_holes_ks_selected = (
             self.remove_small_holes_ks_line_edit.text)
 
-    @enter_function
     def update_smooth_ks(self):
         """
         update_smooth_ks
@@ -591,7 +587,6 @@ class SlicerCARTConfigurationSetupWindow(qt.QWidget):
         """
         self.smooth_ks_selected = self.smooth_ks_line_edit.text
 
-    @enter_function
     def update_save_seg_ks(self):
         """
         update_save_seg_ks
@@ -600,7 +595,6 @@ class SlicerCARTConfigurationSetupWindow(qt.QWidget):
         """
         self.save_seg_ks_selected = self.save_seg_ks_line_edit.text
 
-    @enter_function
     def update_undo_ks(self):
         """
         update_undo_ks
@@ -609,7 +603,6 @@ class SlicerCARTConfigurationSetupWindow(qt.QWidget):
         """
         self.undo_ks_selected = self.undo_ks_line_edit.text
 
-    @enter_function
     def update_toggle_visibility_ks(self):
         """
         update_toggle_visibility_ks
@@ -619,7 +612,6 @@ class SlicerCARTConfigurationSetupWindow(qt.QWidget):
         self.toggle_visibility_ks_selected = (
             self.toggle_visibility_ks_line_edit.text)
 
-    @enter_function
     def update_toggle_fill_ks(self):
         """
         update_toggle_fill_ks
@@ -628,7 +620,6 @@ class SlicerCARTConfigurationSetupWindow(qt.QWidget):
         """
         self.toggle_fill_ks_selected = self.toggle_fill_ks_line_edit.text
 
-    @enter_function
     def update_ct_window_width(self):
         """
         update_ct_window_width
@@ -637,7 +628,6 @@ class SlicerCARTConfigurationSetupWindow(qt.QWidget):
         """
         self.ct_window_width_selected = self.ct_window_width_line_edit.text
 
-    @enter_function
     def update_ct_window_level(self):
         """
         update_ct_window_level
@@ -646,7 +636,6 @@ class SlicerCARTConfigurationSetupWindow(qt.QWidget):
         """
         self.ct_window_level_selected = self.ct_window_level_line_edit.text
 
-    @enter_function
     def update_interpolate(self):
         """
         update_interpolate
@@ -658,7 +647,6 @@ class SlicerCARTConfigurationSetupWindow(qt.QWidget):
         else:
             self.interpolate_selected = False
 
-    @enter_function
     def update_keep_working_list(self):
         """
         update_keep_working_list
@@ -671,7 +659,6 @@ class SlicerCARTConfigurationSetupWindow(qt.QWidget):
             self.keep_working_list_selected = False
 
 
-    @enter_function
     def update_initial_view(self):
         """
         update_initial_view
@@ -680,7 +667,6 @@ class SlicerCARTConfigurationSetupWindow(qt.QWidget):
         """
         self.initial_view_selected = self.initial_view_combobox.currentText
 
-    @enter_function
     def update_file_extension(self):
         """
         update_file_extension
@@ -689,7 +675,6 @@ class SlicerCARTConfigurationSetupWindow(qt.QWidget):
         """
         self.file_extension_selected = self.file_extension_combobox.currentText
 
-    @enter_function
     def update_bids(self):
         """
         update_bids
@@ -698,7 +683,6 @@ class SlicerCARTConfigurationSetupWindow(qt.QWidget):
         """
         self.bids_selected = self.bids_combobox.currentText
 
-    @enter_function
     def update_selected_modality(self, option):
         """
         update_selected_modality
@@ -720,7 +704,6 @@ class SlicerCARTConfigurationSetupWindow(qt.QWidget):
             self.ct_window_level_line_edit.setEnabled(False)
             self.ct_window_width_line_edit.setEnabled(False)
 
-    @enter_function
     def push_configure_segmentation(self):
         """
         push_configure_segmentation
@@ -732,7 +715,6 @@ class SlicerCARTConfigurationSetupWindow(qt.QWidget):
         self.configureSegmentationWindow.show()
         self.close()
 
-    @enter_function
     def push_configure_classification(self):
         """
         push_configure_classification
@@ -744,7 +726,6 @@ class SlicerCARTConfigurationSetupWindow(qt.QWidget):
         configureClassificationWindow.show()
         self.close()
 
-    @enter_function
     def push_previous(self):
         """
         push_previous
@@ -757,7 +738,6 @@ class SlicerCARTConfigurationSetupWindow(qt.QWidget):
             self.segmenter))
         slicerCART_configuration_initial_window.show()
 
-    @enter_function  # Example that print the function name when you click on
     # apply in the Configuration Set Up Window
     def push_apply(self):
         """
@@ -828,7 +808,6 @@ class SlicerCARTConfigurationSetupWindow(qt.QWidget):
 
         self.close()
 
-    @enter_function
     def push_cancel(self):
         """
         push_cancel
@@ -847,7 +826,6 @@ class SlicerCARTConfigurationSetupWindow(qt.QWidget):
 
 
 class SlicerCARTConfigurationInitialWindow(qt.QWidget):
-    @enter_function
     def __init__(self, segmenter, parent=None):
         """
         __init__
@@ -907,7 +885,6 @@ class SlicerCARTConfigurationInitialWindow(qt.QWidget):
         self.setWindowTitle("Configure SlicerCART")
         self.resize(800, 100)
 
-    @enter_function
     def update_selected_reuse_config_option(self, option):
         """
         update_selected_reuse_config_option
@@ -917,7 +894,6 @@ class SlicerCARTConfigurationInitialWindow(qt.QWidget):
         """
         self.reuse_configuration_selected_option = option
 
-    @enter_function
     def push_next(self):
         """
         push_next
@@ -950,7 +926,6 @@ class SlicerCARTConfigurationInitialWindow(qt.QWidget):
             self.segmenter.ui.SelectOutputFolder.setVisible(True)
             self.close()
 
-    @enter_function
     def select_output_folder_clicked(self, button):
         """
         select_output_folder_clicked
@@ -1006,7 +981,6 @@ class SlicerCARTConfigurationInitialWindow(qt.QWidget):
             self.close()
             return
 
-    @enter_function
     def error_msg_for_output_folder_selection_clicked(self, button):
         """
         error_msg_for_output_folder_selection_clicked
@@ -1020,7 +994,6 @@ class SlicerCARTConfigurationInitialWindow(qt.QWidget):
         slicerCART_configuration_initial_window.show()
         self.close()
 
-    @enter_function
     def select_template_folder_clicked(self, button):
         """
         select_template_folder_clicked
@@ -1062,7 +1035,6 @@ class SlicerCARTConfigurationInitialWindow(qt.QWidget):
             self.close()
             return
 
-    @enter_function
     def push_cancel(self):
         """
         push_cancel
@@ -1081,7 +1053,6 @@ class SlicerCARTConfigurationInitialWindow(qt.QWidget):
 
 
 class ConfigureSegmentationWindow(qt.QWidget):
-    @enter_function
     def __init__(self, segmenter, modality,
                  segmentation_config_yaml=None, label_config_yaml=None,
                  parent=None):
@@ -1098,11 +1069,11 @@ class ConfigureSegmentationWindow(qt.QWidget):
         super(ConfigureSegmentationWindow, self).__init__(parent)
 
         if label_config_yaml is None:
-            Debug.print(self, 'label_config_yaml is None in '
+            DEBUG_HELPER.print('label_config_yaml is None in '
                               'ConfigureSegmentationwindow')
             self.config_yaml = ConfigPath.open_project_config_file()
         else:
-            Debug.print(self, 'else meaning label_config_yaml is NOT None in '
+            DEBUG_HELPER.print('else meaning label_config_yaml is NOT None in '
                               'ConfigureSegmentationwindow')
             self.config_yaml = label_config_yaml
 
@@ -1132,7 +1103,7 @@ class ConfigureSegmentationWindow(qt.QWidget):
             for index, label in enumerate(self.config_yaml['labels']):
                 edit_button = qt.QPushButton('Edit')
                 edit_button.clicked.connect(
-                    lambda state, label=label: self.push_edit_button(label))
+                    lambda _, l=label: self.push_edit_button(l))
                 edit_button_hbox = qt.QHBoxLayout()
                 edit_button_hbox.addWidget(edit_button)
                 edit_button_hbox.setAlignment(qt.Qt.AlignCenter)
@@ -1146,7 +1117,7 @@ class ConfigureSegmentationWindow(qt.QWidget):
 
                 remove_button = qt.QPushButton('Remove')
                 remove_button.clicked.connect(
-                    lambda state, label=label: self.push_remove_button(label))
+                    lambda _, l=label: self.push_remove_button(l))
                 remove_button_hbox = qt.QHBoxLayout()
                 remove_button_hbox.addWidget(remove_button)
                 remove_button_hbox.setAlignment(qt.Qt.AlignCenter)
@@ -1233,7 +1204,6 @@ class ConfigureSegmentationWindow(qt.QWidget):
         self.setWindowTitle("Configure Segmentation")
         self.resize(500, 600)
 
-    @enter_function
     def push_add_label(self):
         """
         push_add_label
@@ -1247,7 +1217,6 @@ class ConfigureSegmentationWindow(qt.QWidget):
                                        self.config_yaml))
         configureSingleLabelWindow.show()
 
-    @enter_function
     def push_edit_button(self, label):
         """
         push_edit_button
@@ -1264,7 +1233,6 @@ class ConfigureSegmentationWindow(qt.QWidget):
                                        label))
         configureSingleLabelWindow.show()
 
-    @enter_function
     def push_remove_button(self, label):
         """
         push_remove_button
@@ -1286,7 +1254,7 @@ class ConfigureSegmentationWindow(qt.QWidget):
         # If there is no remaining button, the last segmentation label is not
         # remove
         if len(self.config_yaml['labels']) == 0:
-            Debug.print(self, "len(self.config_yaml['labels']) == 0")
+            DEBUG_HELPER.print("len(self.config_yaml['labels']) == 0")
             msg = qt.QMessageBox()
             msg.setWindowTitle('ERROR : Label list is empty')
             msg.setText(
@@ -1307,7 +1275,6 @@ class ConfigureSegmentationWindow(qt.QWidget):
                 self.segmenter, self.modality, self.config_yaml)
             configureSegmentationWindow.show()
 
-    @enter_function
     def set_default_values(self):
         """
         set_default_values
@@ -1318,7 +1285,6 @@ class ConfigureSegmentationWindow(qt.QWidget):
             'is_display_timer_requested'] = (
             self.display_timer_checkbox.isChecked())
 
-    @enter_function
     def populate_default_values(self):
         """
         populate_default_values
@@ -1329,7 +1295,6 @@ class ConfigureSegmentationWindow(qt.QWidget):
             'is_display_timer_requested']
         self.display_timer_checkbox.setChecked(self.display_timer_selected)
 
-    @enter_function
     def connect_buttons_to_callbacks(self):
         """
         connect_buttons_to_callbacks
@@ -1339,7 +1304,6 @@ class ConfigureSegmentationWindow(qt.QWidget):
         self.apply_button.clicked.connect(self.push_apply)
         self.cancel_button.clicked.connect(self.push_cancel)
 
-    @enter_function
     def push_apply(self):
         """
         push_apply
@@ -1350,7 +1314,7 @@ class ConfigureSegmentationWindow(qt.QWidget):
             'is_display_timer_requested'] = (
             self.display_timer_checkbox.isChecked())
 
-        Debug.print(self, 'in else push_apply in '
+        DEBUG_HELPER.print('in else push_apply in '
                           'ConfigureSegmentationWindow')
         ConfigPath.write_config_file()
 
@@ -1359,7 +1323,6 @@ class ConfigureSegmentationWindow(qt.QWidget):
         slicerCARTConfigurationSetupWindow.show()
         self.close()
 
-    @enter_function
     def push_error_label_list_empty(self):
         """
         push_error_label_list_empty
@@ -1368,7 +1331,6 @@ class ConfigureSegmentationWindow(qt.QWidget):
         """
         self.push_cancel()
 
-    @enter_function
     def push_cancel(self):
         """
         push_cancel
@@ -1381,7 +1343,6 @@ class ConfigureSegmentationWindow(qt.QWidget):
         self.close()
 
     # combine the action of going back to configuration setup into one
-    @enter_function
     def go_back_to_configuration_setup_window(self):
         """
         go_back_to_configuration_setup_window
@@ -1394,7 +1355,6 @@ class ConfigureSegmentationWindow(qt.QWidget):
 
 
 class ConfigureSingleLabelWindow(qt.QWidget):
-    @enter_function
     def __init__(self, segmenter, modality, label_config_yaml,
                  label=None, parent=None):
         """
@@ -1491,7 +1451,6 @@ class ConfigureSingleLabelWindow(qt.QWidget):
         self.validator_label_hbox.setEnabled(False)  # Prevent user editing
         layout.addLayout(validator_hbox)
 
-        @enter_function
         def validate_input(color_line_edit):
             """
             This functions validates if RGB value for a single color is valid.
@@ -1570,7 +1529,6 @@ class ConfigureSingleLabelWindow(qt.QWidget):
         self.setWindowTitle("Configure Label")
         self.resize(400, 200)
 
-    @enter_function
     def color_line_edit_changed(self):
         """
         color_line_edit_changed
@@ -1583,7 +1541,6 @@ class ConfigureSingleLabelWindow(qt.QWidget):
                  f'{self.color_b_line_edit.text})')
         self.color_display.setStyleSheet(f"background-color:rgb{color}")
 
-    @enter_function
     def incorrect_rgb(self):
         """
         incorrect_rgb
@@ -1618,7 +1575,6 @@ class ConfigureSingleLabelWindow(qt.QWidget):
 
         return flag_incorrect_value
 
-    @enter_function
     def incorrect_name(self):
         """
         incorrect_name
@@ -1644,7 +1600,6 @@ class ConfigureSingleLabelWindow(qt.QWidget):
 
         return flag_incorrect_name
 
-    @enter_function
     def push_save(self):
         """
         push_save
@@ -1661,7 +1616,7 @@ class ConfigureSingleLabelWindow(qt.QWidget):
             return
 
         current_label_name = self.name_line_edit.text
-        Debug.print(self, f'currrent_label_name: {current_label_name}')
+        DEBUG_HELPER.print(f'currrent_label_name: {current_label_name}')
 
         for label in self.config_yaml['labels']:
             if label['name'] == current_label_name:
@@ -1676,7 +1631,7 @@ class ConfigureSingleLabelWindow(qt.QWidget):
                     label['upper_bound_HU'] = int(self.max_hu_line_edit.text)
 
         if label_found == False:
-            Debug.print(self, 'label_found==False')
+            DEBUG_HELPER.print('label_found==False')
             # append
             new_label = {'color_b': 10,
                          'color_g': 10,
@@ -1703,7 +1658,6 @@ class ConfigureSingleLabelWindow(qt.QWidget):
         self.configureSegmentationWindow.show()
         self.close()
 
-    @enter_function
     def push_cancel(self):
         """
         push_cancel
@@ -1717,7 +1671,6 @@ class ConfigureSingleLabelWindow(qt.QWidget):
 
 
 class ConfigureClassificationWindow(qt.QWidget):
-    @enter_function
     def __init__(self, segmenter, classification_config_yaml=None,
                  parent=None):
         """
@@ -1759,10 +1712,8 @@ class ConfigureClassificationWindow(qt.QWidget):
                     self.config_yaml["checkboxes"].items()):
                 remove_button = qt.QPushButton('Remove')
                 remove_button.clicked.connect(
-                    lambda state,
-                           checkbox_label=
-                           checkbox_label: self.push_remove_checkbox_button(
-                        checkbox_label))
+                    lambda _, cl=checkbox_label:
+                    self.push_remove_checkbox_button(cl))
                 remove_button_hbox = qt.QHBoxLayout()
                 remove_button_hbox.addWidget(remove_button)
                 remove_button_hbox.setAlignment(qt.Qt.AlignCenter)
@@ -1812,10 +1763,8 @@ class ConfigureClassificationWindow(qt.QWidget):
                     latest_combobox_dict.items()):
                 remove_button = qt.QPushButton('Remove')
                 remove_button.clicked.connect(
-                    lambda state,
-                           combo_box_name=
-                           combo_box_name: self.push_remove_combobox_button(
-                        combo_box_name))
+                    lambda _, n=combo_box_name:
+                    self.push_remove_combobox_button(n))
                 remove_button_hbox = qt.QHBoxLayout()
                 remove_button_hbox.addWidget(remove_button)
                 remove_button_hbox.setAlignment(qt.Qt.AlignCenter)
@@ -1871,10 +1820,9 @@ class ConfigureClassificationWindow(qt.QWidget):
                     self.config_yaml["freetextboxes"].items()):
                 remove_button = qt.QPushButton('Remove')
                 remove_button.clicked.connect(
-                    lambda state,
-                           freetextbox_label=
-                           freetextbox_label:
-                    self.push_remove_freetextbox_button(freetextbox_label))
+                    lambda _, l=
+                    freetextbox_label: self.push_remove_freetextbox_button(
+                        freetextbox_label))
                 remove_button_hbox = qt.QHBoxLayout()
                 remove_button_hbox.addWidget(remove_button)
                 remove_button_hbox.setAlignment(qt.Qt.AlignCenter)
@@ -1910,7 +1858,6 @@ class ConfigureClassificationWindow(qt.QWidget):
         self.setWindowTitle("Configure Classification")
         self.resize(500, 600)
 
-    @enter_function
     def get_latest_combobox_version(self, dict_of_comboboxes):
         """
         Get the latest combobox version
@@ -1931,7 +1878,6 @@ class ConfigureClassificationWindow(qt.QWidget):
 
         return latest_combobox_version, latest_combobox_dict
 
-    @enter_function
     def push_remove_combobox_button(self, combo_box_name):
         """
         push_remove_combobox_button
@@ -1969,7 +1915,6 @@ class ConfigureClassificationWindow(qt.QWidget):
             self.segmenter, self.config_yaml)
         configureClassificationWindow.show()
 
-    @enter_function
     def push_remove_checkbox_button(self, checkbox_label):
         """
         push_remove_checkbox_button
@@ -1993,7 +1938,6 @@ class ConfigureClassificationWindow(qt.QWidget):
             self.segmenter, self.config_yaml)
         configureClassificationWindow.show()
 
-    @enter_function
     def push_remove_freetextbox_button(self, freetextbox_label):
         """
         push_remove_freetextbox_button
@@ -2017,7 +1961,6 @@ class ConfigureClassificationWindow(qt.QWidget):
             self.segmenter, self.config_yaml)
         configureClassificationWindow.show()
 
-    @enter_function
     def push_add_freetextbox(self):
         """
         push_add_freetextbox
@@ -2031,7 +1974,6 @@ class ConfigureClassificationWindow(qt.QWidget):
             self.segmenter, self.config_yaml, 'freetextbox'))
         configureSingleClassificationItemWindow.show()
 
-    @enter_function
     def push_add_combobox(self):
         """
         push_add_combobox
@@ -2045,7 +1987,6 @@ class ConfigureClassificationWindow(qt.QWidget):
             self.segmenter, self.config_yaml, 'combobox'))
         configureSingleClassificationItemWindow.show()
 
-    @enter_function
     def push_add_checkbox(self):
         """
         push_add_checkbox
@@ -2059,7 +2000,6 @@ class ConfigureClassificationWindow(qt.QWidget):
             self.segmenter, self.config_yaml, 'checkbox'))
         configureSingleClassificationItemWindow.show()
 
-    @enter_function
     def push_save(self):
         """
         push_save
@@ -2085,7 +2025,6 @@ class ConfigureClassificationWindow(qt.QWidget):
         slicerCARTConfigurationSetupWindow.show()
         self.close()
 
-    @enter_function
     def push_cancel(self):
         """
         push_cancel
@@ -2099,7 +2038,6 @@ class ConfigureClassificationWindow(qt.QWidget):
 
 
 class ConfigureSingleClassificationItemWindow(qt.QWidget):
-    @enter_function
     def __init__(self, segmenter, classification_config_yaml, item_added, parent=None):
         """
         __init__
@@ -2143,7 +2081,6 @@ class ConfigureSingleClassificationItemWindow(qt.QWidget):
         self.setWindowTitle("Configure Classification Item")
         self.resize(200, 100)
 
-    @enter_function
     def edit_combobox(self, layout):
         """
         edit_combobox
@@ -2204,7 +2141,6 @@ class ConfigureSingleClassificationItemWindow(qt.QWidget):
             self.options_edit_layout = qt.QVBoxLayout()
             layout.addLayout(self.options_edit_layout)
 
-            @enter_function
             def clearLayout(layout):
                 """
                 Recursively clears all widgets and sublayouts from the given
@@ -2219,7 +2155,6 @@ class ConfigureSingleClassificationItemWindow(qt.QWidget):
                         clearLayout(
                             child.layout())  # Recursively clear sublayouts
 
-            # @enter_function ### THIS FUNCTION CANNOT USE ENTER_FUNCTION
             def updateOptionFields():
                 """
                 Dynamically adjust the number of options text field based on
@@ -2246,7 +2181,6 @@ class ConfigureSingleClassificationItemWindow(qt.QWidget):
                     self.options_combobox.addItem(option_line_edit.text)
 
                     # Define a function to update the combo box dynamically
-                    @enter_function
                     def updateComboBoxItem(option_line_edit, index=i):
                         """
                         updateComboBoxItem
@@ -2275,7 +2209,6 @@ class ConfigureSingleClassificationItemWindow(qt.QWidget):
             # Connect spin box to update the option fields dynamically
             self.num_options_spinbox.valueChanged.connect(updateOptionFields)
 
-    @enter_function
     def push_save(self):
         """
         push_save
@@ -2396,7 +2329,6 @@ class ConfigureSingleClassificationItemWindow(qt.QWidget):
         configureClassificationWindow.show()
         self.close()
 
-    @enter_function
     def push_error_no_dropdown_option_defined(self):
         """
         push_error_no_dropdown_option_defined
@@ -2405,7 +2337,6 @@ class ConfigureSingleClassificationItemWindow(qt.QWidget):
         """
         self.push_cancel()
 
-    @enter_function
     def push_cancel(self):
         """
         push_cancel
@@ -2414,7 +2345,6 @@ class ConfigureSingleClassificationItemWindow(qt.QWidget):
         """
         self.close()
 
-    @enter_function
     def get_latest_saved_combobox_version(self, all_combobox_versions):
         """
         Get the latest saved (in configuration yaml file) version of combobox.

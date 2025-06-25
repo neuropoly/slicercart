@@ -1,13 +1,12 @@
 import os
-import slicer
 import qt
-from utils.debugging_helpers import *
+import slicer
+
 
 class Dev:
     def __init__(self):
         pass
 
-    @enter_function
     def show_message_box(self, message,
                          box_title=None,
                          buttons=False):
@@ -108,7 +107,6 @@ class Dev:
 
 
     # Check functions
-    @enter_function
     def check_if_folder_exists(self, folder_path):
         """
         check_if_folder_exists
@@ -124,7 +122,6 @@ class Dev:
             print("Folder does not exist: ", folder_path)
             return False
 
-    @enter_function
     def check_list_in_another(self, list1, list2):
         """
         check_list_in_another

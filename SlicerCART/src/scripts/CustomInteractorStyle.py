@@ -1,8 +1,9 @@
-from utils import *
+import slicer
+import vtk
+
 
 # MB CODE BELOW: MOUSE CUSTOMIZATION CLASS
 class CustomInteractorStyle(vtk.vtkInteractorStyleImage):
-    # @enter_function
     def __init__(self, sliceWidget=None):
         """
         __init__
@@ -35,7 +36,6 @@ class CustomInteractorStyle(vtk.vtkInteractorStyleImage):
         self.adjustingWindowLevel = False
         self.z_pressed = False
 
-    # @enter_function
     def onRightButtonPressEvent(self, obj, event):
         """
         onRightButtonPressEvent
@@ -49,7 +49,6 @@ class CustomInteractorStyle(vtk.vtkInteractorStyleImage):
         self.OnRightButtonDown()
         return
 
-    # @enter_function
     def onMouseMoveEvent(self, obj, event):
         """
         onMouseMoveEvent
@@ -96,7 +95,6 @@ class CustomInteractorStyle(vtk.vtkInteractorStyleImage):
         self.OnMouseMove()
         return
 
-    # @enter_function
     def onRightButtonReleaseEvent(self, obj, event):
         """
         onRightButtonReleaseEvent
@@ -110,7 +108,6 @@ class CustomInteractorStyle(vtk.vtkInteractorStyleImage):
         self.OnRightButtonUp()
         return
 
-    # @enter_function
     def onLeftButtonPressEvent(self, obj, event):
         """
         onLeftButtonPressEvent
@@ -124,7 +121,6 @@ class CustomInteractorStyle(vtk.vtkInteractorStyleImage):
         self.OnLeftButtonDown()
         return
 
-    # @enter_function
     def onLeftButtonReleaseEvent(self, obj, event):
         """
         onLeftButtonReleaseEvent
@@ -138,7 +134,6 @@ class CustomInteractorStyle(vtk.vtkInteractorStyleImage):
         self.OnLeftButtonUp()
         return
 
-    # @enter_function
     def onKeyPressEvent(self, obj, event):
         """
         onKeyPressEvent
@@ -153,7 +148,6 @@ class CustomInteractorStyle(vtk.vtkInteractorStyleImage):
         self.OnKeyPress()
         return
 
-    # @enter_function
     def onKeyReleaseEvent(self, obj, event):
         """
         onKeyReleaseEvent
@@ -168,7 +162,6 @@ class CustomInteractorStyle(vtk.vtkInteractorStyleImage):
         self.OnKeyRelease()
         return
 
-    # @enter_function
     def onMouseWheelForwardEvent(self, obj, event):
         """
         onMouseWheelForwardEvent
@@ -190,7 +183,6 @@ class CustomInteractorStyle(vtk.vtkInteractorStyleImage):
             self.OnMouseWheelForward()
         return
 
-    # @enter_function
     def onMouseWheelBackwardEvent(self, obj, event):
         """
         onMouseWheelBackwardEvent
@@ -211,7 +203,6 @@ class CustomInteractorStyle(vtk.vtkInteractorStyleImage):
             self.OnMouseWheelBackward()
         return
 
-    # @enter_function
     def zoom_in(self):
         """
         zoom_in
@@ -222,7 +213,6 @@ class CustomInteractorStyle(vtk.vtkInteractorStyleImage):
         self.sliceNode.SetFieldOfView(fov[0] * 0.9, fov[1] * 0.9, fov[2])
         self.sliceNode.Modified()
 
-    # @enter_function
     def zoom_out(self):
         """
         zoom_out
@@ -233,7 +223,6 @@ class CustomInteractorStyle(vtk.vtkInteractorStyleImage):
         self.sliceNode.SetFieldOfView(fov[0] / 0.9, fov[1] / 0.9, fov[2])
         self.sliceNode.Modified()
 
-    # @enter_function
     def zoom(self):
         """
         zoom
@@ -251,7 +240,6 @@ class CustomInteractorStyle(vtk.vtkInteractorStyleImage):
                                           fov[2])
             self.sliceNode.Modified()
 
-    # @enter_function
     def getSliceSpacing(self):
         """
         getSliceSpacing
