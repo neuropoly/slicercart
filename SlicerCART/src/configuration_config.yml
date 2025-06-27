@@ -23,6 +23,12 @@ KEYBOARD_SHORTCUTS:
 - button: SaveClassificationButton
   callback: onSaveClassificationButton
   shortcut: c
+case_list_filters:
+  exclusion:
+  - t1
+  - t2
+  - seg
+  inclusion: []
 checkboxes:
   Anoxic_injury_checkbox: Anoxic injury
   Craniectomy_checkbox: Craniectomy
@@ -66,7 +72,6 @@ default_segmentation_directory: ''
 default_volume_directory: ''
 enable_debug: true
 freetextboxes:
-  cheese: Cheese
   number_of_focal_points: Number of focal points
   other_comments: Comments
 impose_bids_format: false
@@ -98,5 +103,5 @@ modality: MRI
 remaining_list_filename: remaining_list.yaml
 require_empty: false
 save_uint8: true
-slice_view_color: Yellow
+slice_view_color: Red
 working_list_filename: working_list.yaml

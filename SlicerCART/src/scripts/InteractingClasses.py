@@ -187,6 +187,15 @@ class SlicerCARTConfigurationSetupWindow(qt.QWidget):
         ct_window_width_hbox.addWidget(self.ct_window_width_line_edit)
 
         layout.addLayout(ct_window_width_hbox)
+        
+        separator = qt.QFrame()
+        separator.setFrameShape(qt.QFrame.HLine)
+        separator.setFrameShadow(qt.QFrame.Sunken)
+        separator.setLineWidth(5)
+        
+        layout.addSpacing(15) 
+        layout.addWidget(separator)
+        layout.addSpacing(15) 
 
         keyboard_shortcuts_hbox = qt.QHBoxLayout()
 
@@ -325,17 +334,44 @@ class SlicerCARTConfigurationSetupWindow(qt.QWidget):
         mouse_shortcuts_hbox.addWidget(self.mouse_shortcuts_checkbox)
 
         layout.addLayout(mouse_shortcuts_hbox)
+        
+        separator2 = qt.QFrame()
+        separator2.setFrameShape(qt.QFrame.HLine)
+        separator2.setFrameShadow(qt.QFrame.Sunken)
+        separator2.setLineWidth(5)
+        
+        layout.addSpacing(15) 
+        layout.addWidget(separator2)
+        layout.addSpacing(15) 
+
+                
+        config_buttons_hbox = qt.QHBoxLayout()
+        
         self.configure_segmentation_button = qt.QPushButton(
             'Configure Segmentation...')
         self.configure_segmentation_button.setStyleSheet(
             "background-color : #A6A6A6")
-        layout.addWidget(self.configure_segmentation_button)
-
+        self.configure_segmentation_button.setSizePolicy(qt.QSizePolicy.Expanding, qt.QSizePolicy.Fixed)
+        
+        config_buttons_hbox.addWidget(self.configure_segmentation_button)
+        
         self.configure_classification_button = qt.QPushButton(
             'Configure Classification...')
         self.configure_classification_button.setStyleSheet(
             "background-color : #A6A6A6")
-        layout.addWidget(self.configure_classification_button)
+        self.configure_classification_button.setSizePolicy(qt.QSizePolicy.Expanding, qt.QSizePolicy.Fixed)
+
+        config_buttons_hbox.addWidget(self.configure_classification_button)
+        
+        self.impose_case_list_filters_button = qt.QPushButton(
+            'Impose case list filters')
+        self.impose_case_list_filters_button.setStyleSheet(
+            "background-color : #A6A6A6")
+        self.impose_case_list_filters_button.setSizePolicy(qt.QSizePolicy.Expanding, qt.QSizePolicy.Fixed)
+
+        config_buttons_hbox.addWidget(self.impose_case_list_filters_button)
+        
+        layout.addLayout(config_buttons_hbox)
 
         self.previous_button = qt.QPushButton('Previous')
         layout.addWidget(self.previous_button)
@@ -406,6 +442,8 @@ class SlicerCARTConfigurationSetupWindow(qt.QWidget):
         self.cancel_button.clicked.connect(self.push_cancel)
         self.configure_segmentation_button.clicked.connect(
             self.push_configure_segmentation)
+        self.impose_case_list_filters_button.clicked.connect(
+             self.push_impose_case_list_filters)
 
         if self.modality_selected == 'CT':
             self.ct_modality_radio_button.setChecked(True)
@@ -745,6 +783,13 @@ class SlicerCARTConfigurationSetupWindow(qt.QWidget):
         self.close()
 
     @enter_function
+    def push_impose_case_list_filters(self):
+        self.imposeCaseListFiltersWindow = ImposeCaseListFiltersWindow(
+            self.segmenter)
+        self.imposeCaseListFiltersWindow.show()
+        self.close()
+    
+    @enter_function
     def push_previous(self):
         """
         push_previous
@@ -905,6 +950,8 @@ class SlicerCARTConfigurationInitialWindow(qt.QWidget):
 
         self.setLayout(layout)
         self.setWindowTitle("Configure SlicerCART")
+        self.setWindowFlags(qt.Qt.Window | qt.Qt.CustomizeWindowHint | qt.Qt.WindowMinimizeButtonHint | qt.Qt.WindowCloseButtonHint)
+
         self.resize(800, 100)
 
     @enter_function
@@ -2412,6 +2459,10 @@ class ConfigureSingleClassificationItemWindow(qt.QWidget):
 
         Args:
         """
+        configureClassificationWindow = ConfigureClassificationWindow(
+            self.segmenter, self.config_yaml)
+        configureClassificationWindow.show()
+        
         self.close()
 
     @enter_function
@@ -2431,3 +2482,334 @@ class ConfigureSingleClassificationItemWindow(qt.QWidget):
             version_numbers = 0
 
         return version_numbers
+
+class ImposeCaseListFiltersWindow(qt.QWidget):
+    @enter_function
+    def __init__(self, segmenter, case_list_filters=None, filter_config_yaml=None, parent=None):
+        
+        super(ImposeCaseListFiltersWindow, self).__init__(parent)
+        
+        self.segmenter = segmenter         
+        #TODO: modify for starting with previous volumes
+        if filter_config_yaml is None:
+            self.config_yaml = ConfigPath.open_project_config_file()
+        else:
+            self.config_yaml = filter_config_yaml
+        
+        # Load the case list filters from the config file => only modified when Apply is clicked
+        if not case_list_filters:
+            self.case_list_filters = self.config_yaml.get("case_list_filters", {})
+        else:
+            self.case_list_filters = case_list_filters
+            
+        Debug.print(self, case_list_filters)
+        
+        # UI    
+        layout = qt.QVBoxLayout()
+
+        self.inclusion_table_view = qt.QTableWidget()
+        
+        inclusion_table_view_header_hbox = qt.QHBoxLayout()
+        
+        inclusion_title_label = qt.QLabel("Filters to include in the case list")
+        inclusion_title_label.setStyleSheet("font-weight: bold; font-size: 15px;")
+        inclusion_title_label.setSizePolicy(qt.QSizePolicy.Expanding, qt.QSizePolicy.Fixed)
+        
+        inclusion_table_view_header_hbox.addWidget(inclusion_title_label)
+        
+        self.add_inclusion_filter_button = qt.QPushButton('Add Inclusion Filter')
+        self.add_inclusion_filter_button.setFixedWidth(180)
+        self.add_inclusion_filter_button.setSizePolicy(qt.QSizePolicy.Fixed, qt.QSizePolicy.Fixed)
+        
+        inclusion_table_view_header_hbox.addWidget(self.add_inclusion_filter_button)
+        
+        layout.addLayout(inclusion_table_view_header_hbox)
+        layout.addSpacing(5) 
+        layout.addWidget(self.inclusion_table_view)
+
+        self.inclusion_table_view.setColumnCount(2)
+        
+        # Load existing inclusion filters from the config file
+        if self.case_list_filters.get("inclusion") != []:
+            num_inclusion_filters = len(self.case_list_filters["inclusion"])
+            self.inclusion_table_view.setRowCount(num_inclusion_filters)
+            
+            for incl_idx, incl_filter_value in enumerate(self.case_list_filters["inclusion"]):
+                # Create the remove filter button
+                incl_remove_button = qt.QPushButton("Remove")
+                incl_remove_button.setFixedWidth(100)
+                incl_button_widget = qt.QWidget()
+                incl_button_layout = qt.QHBoxLayout()
+                incl_button_layout.addWidget(incl_remove_button)
+                incl_button_layout.setAlignment(qt.Qt.AlignCenter)
+                incl_button_layout.setContentsMargins(0, 0, 0, 0)
+                incl_button_widget.setLayout(incl_button_layout)
+                
+                # Get the QLineEdit for the filter input (column 1)
+                incl_filter_input = qt.QLineEdit(incl_filter_value)
+                self.inclusion_table_view.setCellWidget(incl_idx, 1, incl_filter_input)
+                
+                # When text changes, update the correct index in case_list_filters
+            
+                incl_filter_input.textChanged.connect(
+                    lambda text, row=incl_idx: self.case_list_filters["inclusion"].__setitem__(row, text)
+                )
+                
+                # Connect remove button, passing both row and filter value
+                incl_remove_button.clicked.connect(
+                    lambda _, row=incl_idx, value=incl_filter_value: self.remove_filter_row(
+                    row, "inclusion", value
+                    )
+                )
+                
+                self.inclusion_table_view.setCellWidget(incl_idx, 0, incl_button_widget)
+
+        separator1 = qt.QFrame()
+        separator1.setFrameShape(qt.QFrame.HLine)
+        separator1.setFrameShadow(qt.QFrame.Sunken)
+        separator1.setLineWidth(5)
+        
+        layout.addSpacing(15) 
+        layout.addWidget(separator1)
+        layout.addSpacing(15) 
+        
+        self.exclusion_table_view = qt.QTableWidget()
+        
+        exclusion_table_view_header_hbox = qt.QHBoxLayout()
+        
+        exclusion_title_label = qt.QLabel("Filters to exclude in the case list")
+        exclusion_title_label.setStyleSheet("font-weight: bold; font-size: 15px;")
+        exclusion_title_label.setSizePolicy(qt.QSizePolicy.Expanding, qt.QSizePolicy.Fixed)
+
+        exclusion_table_view_header_hbox.addWidget(exclusion_title_label)
+        
+        self.add_exclusion_filter_button = qt.QPushButton('Add Exclusion Filter')
+        self.add_exclusion_filter_button.setFixedWidth(180)
+        self.add_exclusion_filter_button.setSizePolicy(qt.QSizePolicy.Fixed, qt.QSizePolicy.Fixed)
+        
+        exclusion_table_view_header_hbox.addWidget(self.add_exclusion_filter_button)
+        
+        layout.addLayout(exclusion_table_view_header_hbox)
+        layout.addWidget(self.exclusion_table_view)
+        
+        self.exclusion_table_view.setColumnCount(2)
+        
+        if self.case_list_filters.get("exclusion") != []:
+            num_exclusion_filters = len(self.case_list_filters["exclusion"])
+            self.exclusion_table_view.setRowCount(num_exclusion_filters)
+
+            for excl_idx, excl_filter_value in enumerate(self.case_list_filters["exclusion"]):
+                # Create the remove filter button
+                excl_remove_button = qt.QPushButton("Remove")
+                excl_remove_button.setFixedWidth(100)
+                excl_button_widget = qt.QWidget()
+                excl_button_layout = qt.QHBoxLayout()
+                excl_button_layout.addWidget(excl_remove_button)
+                excl_button_layout.setAlignment(qt.Qt.AlignCenter)
+                excl_button_layout.setContentsMargins(0, 0, 0, 0)
+                excl_button_widget.setLayout(excl_button_layout)
+
+                # Get the QLineEdit for the filter input (column 1)
+                excl_filter_input = qt.QLineEdit(excl_filter_value)
+                self.exclusion_table_view.setCellWidget(excl_idx, 1, excl_filter_input)
+                
+                # When text changes, update the correct index in case_list_filters
+                excl_filter_input.textChanged.connect(
+                    lambda text, row=excl_idx: self.case_list_filters["exclusion"].__setitem__(row, text)
+                )
+
+                # Connect remove button, passing both row and filter value
+                excl_remove_button.clicked.connect(
+                    lambda _, row=excl_idx, value=excl_filter_value: self.remove_filter_row(
+                    row, "exclusion", value
+                    )
+                )
+
+                self.exclusion_table_view.setCellWidget(excl_idx, 0, excl_button_widget)
+    
+        self.inclusion_table_view.horizontalHeader().setStretchLastSection(
+        True)
+        self.inclusion_table_view.horizontalHeader().setSectionResizeMode(
+        qt.QHeaderView.Stretch)
+        
+        self.exclusion_table_view.horizontalHeader().setStretchLastSection(
+        True)
+        self.exclusion_table_view.horizontalHeader().setSectionResizeMode(
+        qt.QHeaderView.Stretch)
+        
+        layout.addSpacing(15) 
+
+        self.apply_button = qt.QPushButton('Apply')
+        layout.addWidget(self.apply_button)
+
+        self.cancel_button = qt.QPushButton('Cancel')
+        layout.addWidget(self.cancel_button)
+
+        self.setLayout(layout)
+        self.setWindowTitle("Filter case list")
+        self.resize(500, 600)
+        
+        self.connect_buttons_to_callbacks()
+  
+    @enter_function
+    def connect_buttons_to_callbacks(self):
+        """
+        connect_buttons_to_callbacks
+
+        Args:
+        """
+        self.add_inclusion_filter_button.clicked.connect(self.push_add_inclusion_filter)
+        self.add_exclusion_filter_button.clicked.connect(self.push_add_exclusion_filter)
+        
+        self.apply_button.clicked.connect(self.push_apply)
+        self.cancel_button.clicked.connect(self.push_cancel)
+        
+    @enter_function
+    def push_add_inclusion_filter(self):
+        """
+        push_add_inclusion_filter
+
+        Args:
+        """
+        row_position = self.inclusion_table_view.rowCount
+        self.inclusion_table_view.insertRow(row_position)
+        
+        self.case_list_filters["inclusion"].append("")
+        
+        #Create the remove filter button
+        remove_button = qt.QPushButton("Remove")
+        remove_button.setFixedWidth(100)
+        button_widget = qt.QWidget()
+        button_layout = qt.QHBoxLayout()
+        button_layout.addWidget(remove_button)
+        button_layout.setAlignment(qt.Qt.AlignCenter)
+        button_layout.setContentsMargins(0, 0, 0, 0)
+        button_widget.setLayout(button_layout)
+        # Get the QLineEdit for the filter input (column 1)
+        filter_input = qt.QLineEdit()
+        self.inclusion_table_view.setCellWidget(row_position, 1, filter_input)
+
+        # When text changes, update the correct index in case_list_filters
+        filter_input.textChanged.connect(
+            lambda text, row=row_position: self.case_list_filters["inclusion"].__setitem__(row, text)
+        )
+        
+        # Connect remove button, passing both row and filter value
+        remove_button.clicked.connect(
+            lambda _, row=row_position: self.remove_filter_row(
+            row, "inclusion", self.inclusion_table_view.cellWidget(row, 1).text
+            )
+        )
+        
+        self.inclusion_table_view.setCellWidget(row_position, 0, button_widget)
+        
+    @enter_function
+    def push_add_exclusion_filter(self):
+        """
+        push_add_exclusion_filter
+
+        Args:
+        """
+        row_position = self.exclusion_table_view.rowCount
+        self.exclusion_table_view.insertRow(row_position)
+        
+        self.case_list_filters["exclusion"].append("")
+        
+        # Create the remove filter button
+        remove_button = qt.QPushButton("Remove")
+        remove_button.setFixedWidth(100)
+        button_widget = qt.QWidget()
+        button_layout = qt.QHBoxLayout()
+        button_layout.addWidget(remove_button)
+        button_layout.setAlignment(qt.Qt.AlignCenter)
+        button_layout.setContentsMargins(0, 0, 0, 0)
+        button_widget.setLayout(button_layout)
+        # Get the QLineEdit for the filter input (column 1)
+        filter_input = qt.QLineEdit()
+        self.exclusion_table_view.setCellWidget(row_position, 1, filter_input)
+        
+        # When text changes, update the correct index in case_list_filters
+        filter_input.textChanged.connect(
+            lambda text, row=row_position: self.case_list_filters["exclusion"].__setitem__(row, text)
+        )
+
+        # Connect remove button, passing both row and filter value
+        remove_button.clicked.connect(
+            lambda _, row=row_position: self.remove_filter_row(
+            row, "exclusion", self.exclusion_table_view.cellWidget(row, 1).text
+            )
+        )
+        
+        self.exclusion_table_view.setCellWidget(row_position, 0, button_widget)
+    
+    @enter_function
+    def remove_filter_row(self, row, filter_type, filter_value):
+        self.close()
+
+        self.case_list_filters[filter_type].remove(filter_value)         
+        Debug.print(self, self.case_list_filters[filter_type])
+               
+        imposeCaseListFiltersWindow = ImposeCaseListFiltersWindow(
+            self.segmenter, self.case_list_filters)
+        imposeCaseListFiltersWindow.show()
+    
+    @enter_function
+    def push_apply(self):
+        """
+        push_apply
+
+        Args:
+        """
+        def get_filters(table):
+            return [table.cellWidget(row, 1).text.strip().lower() for row in range(table.rowCount)]
+
+        inclusion = get_filters(self.inclusion_table_view)
+        exclusion = get_filters(self.exclusion_table_view)
+
+        # Check for empty filters
+        if "" in inclusion or "" in exclusion:
+            qt.QMessageBox.warning(self, "Warning", "All filters must be filled. Please remove or fill empty filters.")
+            return
+
+        # Check for duplicates between inclusion and exclusion
+        duplicates_between = set(inclusion) & set(exclusion)
+        if duplicates_between:
+            qt.QMessageBox.warning(self, "Warning",
+                f"Duplicate filters found between inclusion and exclusion: {', '.join(duplicates_between)}.\nPlease remove or adjust them before proceeding.")
+            return
+
+        # Check for duplicates within each category
+        def find_duplicates(lst):
+            return set(x for x in lst if lst.count(x) > 1)
+
+        dup_incl = find_duplicates(inclusion)
+        dup_excl = find_duplicates(exclusion)
+        if dup_incl or dup_excl:
+            msg = []
+            if dup_incl:
+                msg.append(f"Inclusion: {', '.join(dup_incl)}")
+            if dup_excl:
+                msg.append(f"Exclusion: {', '.join(dup_excl)}")
+            qt.QMessageBox.warning(self, "Warning",
+                f"Duplicate filters found within the same category:\n" + "\n".join(msg) + "\nPlease remove or adjust them before proceeding.")
+            return
+
+        # Save and close
+        self.config_yaml["case_list_filters"] = self.case_list_filters
+        ConfigPath.write_config_file()
+        slicerCARTConfigurationSetupWindow = SlicerCARTConfigurationSetupWindow(self.segmenter)
+        slicerCARTConfigurationSetupWindow.show()
+        self.close()
+               
+    @enter_function
+    def push_cancel(self):
+        """
+        push_cancel
+
+        Args:
+        """
+        slicerCARTConfigurationSetupWindow = SlicerCARTConfigurationSetupWindow(
+            self.segmenter)
+        slicerCARTConfigurationSetupWindow.show()
+        self.close()
+        

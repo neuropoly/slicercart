@@ -766,7 +766,40 @@ class SlicerCARTWidget(ScriptedLoadableModuleWidget, VTKObservationMixin):
         # loading cases)
         self.CasesPaths = [item for item in self.CasesPaths if 'derivatives' not
                            in item]
+        
+        if self.config_yaml["case_list_filters"]["inclusion"]:
+            filters_to_include = self.config_yaml["case_list_filters"]["inclusion"]
+        else:
+            filters_to_include = []
+            
+        if self.config_yaml["case_list_filters"]["exclusion"]:
+            filters_to_exclude = self.config_yaml["case_list_filters"]["exclusion"]
+        else:
+            filters_to_exclude = []
+        
+        def filter_cases(master_list, inclusion=None, exclusion=None):
+            if inclusion == []:
+                inclusion = None
+            if exclusion == []:
+                exclusion = None
+            
+            # Case insensitiveness
+            master_list = [item.lower() for item in master_list]
+            inclusion = [item.lower() for item in (inclusion or [])]
+            exclusion = [item.lower() for item in (exclusion or [])]
 
+            filtered_cases = []
+            for case in master_list:
+                if exclusion and any(ex in case for ex in exclusion):
+                    continue
+                if inclusion and not any(inc in case for inc in inclusion):
+                    continue
+                filtered_cases.append(case)
+
+            return filtered_cases
+        
+        self.CasesPaths = filter_cases(self.CasesPaths, filters_to_include, filters_to_exclude)
+        
         if not self.CasesPaths:
             message = ('No files found in the selected directory!'
                        f'\n\nCurrent file extension configuration: '
@@ -777,6 +810,7 @@ class SlicerCARTWidget(ScriptedLoadableModuleWidget, VTKObservationMixin):
                        "in "
                        "SlicerCART project or in output folder under _conf "
                        "folder."
+                       "\nNote: Please check your case list filters. "
                        "\n\nThen restart the module.")
             Dev.show_message_box(self, message, box_title='ATTENTION!')
             return
@@ -2548,7 +2582,7 @@ class SlicerCARTWidget(ScriptedLoadableModuleWidget, VTKObservationMixin):
         initial_config_content = ConfigPath.get_initial_config_after_modif()
         temp_dict = ConfigPath.extract_config_classification(
             initial_config_content)
-
+        #Debug.print(self, "inclusion" + str(temp_dict["case_list_filters"]["inclusion"]))
         self.manage_workflow()
 
         # Update classification labels (part 2 of 2)
