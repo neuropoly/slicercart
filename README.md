@@ -1,3 +1,5 @@
+For the project which aimed to replace this tool (developed during Slicer Week 43), proceed to [this](https://github.com/SomeoneInParticular/CART/tree/task_demo) link. Thank you! 
+
 # SlicerCART
 ![](SlicerCART/src/Resources/Icons/SlicerCART.png)
 SlicerCART: Configurable Annotation and Review Tool. 
