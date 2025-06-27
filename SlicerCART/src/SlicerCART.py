@@ -2582,7 +2582,7 @@ class SlicerCARTWidget(ScriptedLoadableModuleWidget, VTKObservationMixin):
         initial_config_content = ConfigPath.get_initial_config_after_modif()
         temp_dict = ConfigPath.extract_config_classification(
             initial_config_content)
-
+        #Debug.print(self, "inclusion" + str(temp_dict["case_list_filters"]["inclusion"]))
         self.manage_workflow()
 
         # Update classification labels (part 2 of 2)
