@@ -10,6 +10,8 @@
 from utils import *  # Import all modules, packages and global variables
 from scripts import *  # Import all classes
 
+from scripts.LayoutLogic import CaseIteratorLayoutLogic
+
 ###############################################################################
 
 ###############################################################################
@@ -101,6 +103,8 @@ class SlicerCARTWidget(ScriptedLoadableModuleWidget, VTKObservationMixin):
         self._updatingGUIFromParameterNode = False
         # LLG CODE BELOW
         self.predictions_names = None
+        
+        self.layoutLogic = CaseIteratorLayoutLogic()
 
         # ----- ANW Addition  ----- : Initialize called var to False so the
         # timer only stops once
@@ -118,6 +122,8 @@ class SlicerCARTWidget(ScriptedLoadableModuleWidget, VTKObservationMixin):
         self.theme = Theme.get_mode(self)
         self.foreground = Theme.set_foreground(self, self.theme)
 
+        self.volumeNodes = []
+        
     @enter_function
     def setup(self):
         """
@@ -761,7 +767,9 @@ class SlicerCARTWidget(ScriptedLoadableModuleWidget, VTKObservationMixin):
             f'{self.CurrentFolder}{os.sep}**{os.sep}'
             f'{ConfigPath.INPUT_FILE_EXTENSION}',
             recursive=True))
-
+        
+        Debug.print(self, f'CasesPaths: {self.CasesPaths}')
+        
         # Remove the volumes in the folder 'derivatives' (creates issues for
         # loading cases)
         self.CasesPaths = [item for item in self.CasesPaths if 'derivatives' not
@@ -1056,10 +1064,39 @@ class SlicerCARTWidget(ScriptedLoadableModuleWidget, VTKObservationMixin):
         self.called = False
 
         slicer.mrmlScene.Clear()
-        slicer.util.loadVolume(self.currentCasePath)
-        self.VolumeNode = \
-            slicer.util.getNodesByClass('vtkMRMLScalarVolumeNode')[0]
-        self.updateCaseAll()
+        # slicer.util.loadVolume(self.currentCasePath)
+        # self.VolumeNode = \
+        #     slicer.util.getNodesByClass('vtkMRMLScalarVolumeNode')[0]
+            
+        for casePath in self.CasesPaths:
+            node = slicer.util.loadVolume(casePath, {"show": False})
+            # TODO: give each node a name from hash and filename
+            #node.SetName()
+            self.volumeNodes.append(node)
+        
+        print("Showing all volumes in multi-row layout")
+        sliceNodesByViewName = self.layoutLogic.viewersPerVolume(self.volumeNodes, include3D=False)
+        
+        # Rotate each volume to its own planes - don't use volumeNodes[0] for all
+        orientations = ('Axial', 'Sagittal', 'Coronal')
+        for volumeNode in self.volumeNodes:
+            # Get slice nodes for this specific volume
+            volumeSliceNodes = []
+            for orientation in orientations:
+                viewName = volumeNode.GetName() + '-' + orientation
+                if viewName in sliceNodesByViewName:
+                    volumeSliceNodes.append(sliceNodesByViewName[viewName])
+
+            # Rotate only this volume's slice nodes to this volume's planes
+            if volumeSliceNodes:
+                self.layoutLogic.rotateToVolumePlanes(volumeNode, volumeSliceNodes)
+
+        # Snap all to IJK for better alignment
+        self.layoutLogic.snapToIJK()
+        
+        # TODO: uncomment
+        # self.updateCaseAll()
+        
         # Adjust windowing (no need to use self. since this is used locally)
         Vol_displayNode = self.VolumeNode.GetDisplayNode()
         # print('self volumenode get display node',
