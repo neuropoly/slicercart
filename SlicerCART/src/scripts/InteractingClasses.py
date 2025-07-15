@@ -79,6 +79,24 @@ class SlicerCARTConfigurationSetupWindow(qt.QWidget):
         modality_hbox.addWidget(self.mri_modality_radio_button)
 
         layout.addLayout(modality_hbox)
+        
+        multicontrast_hbox = qt.QHBoxLayout()
+        
+        multicontrast_hbox_label = qt.QLabel()
+        multicontrast_hbox_label.setText('Enable multicontrast loading?')
+        multicontrast_hbox_label.setStyleSheet("font-weight: bold")
+        
+        self.multicontrast_combobox = qt.QComboBox()
+        self.multicontrast_combobox.addItem('Yes')
+        self.multicontrast_combobox.addItem('No')
+        
+        self.configure_multicontrast_button = qt.QPushButton("Configure multicontrast")
+                
+        multicontrast_hbox.addWidget(multicontrast_hbox_label)
+        multicontrast_hbox.addWidget(self.configure_multicontrast_button)
+        multicontrast_hbox.addWidget(self.multicontrast_combobox)
+        
+        layout.addLayout(multicontrast_hbox)
 
         bids_hbox = qt.QHBoxLayout()
 
@@ -406,7 +424,9 @@ class SlicerCARTConfigurationSetupWindow(qt.QWidget):
         self.cancel_button.clicked.connect(self.push_cancel)
         self.configure_segmentation_button.clicked.connect(
             self.push_configure_segmentation)
-
+       
+        self.multicontrast_combobox.currentIndexChanged.connect(self.update_toggle_multicontrast)
+       
         if self.modality_selected == 'CT':
             self.ct_modality_radio_button.setChecked(True)
         elif self.modality_selected == 'MRI':
@@ -554,6 +574,17 @@ class SlicerCARTConfigurationSetupWindow(qt.QWidget):
             self.segmentation_selected)
 
     @enter_function
+    def update_toggle_multicontrast(self):
+        """
+        toggle_multicontrast
+
+        Args:
+        """
+
+        self.configure_multicontrast_button.setEnabled(self.multicontrast_combobox.currentText == 'Yes')
+
+    
+    @enter_function
     def update_interpolate_ks(self):
         """
         update_interpolate_ks
@@ -669,7 +700,6 @@ class SlicerCARTConfigurationSetupWindow(qt.QWidget):
             self.keep_working_list_selected = True
         else:
             self.keep_working_list_selected = False
-
 
     @enter_function
     def update_initial_view(self):
