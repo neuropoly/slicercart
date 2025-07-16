@@ -122,7 +122,11 @@ class SlicerCARTWidget(ScriptedLoadableModuleWidget, VTKObservationMixin):
         self.theme = Theme.get_mode(self)
         self.foreground = Theme.set_foreground(self, self.theme)
 
+        # TEMP: storage of all displayed volume nodes
         self.volumeNodes = []
+        
+        # Storage of all grouped subjects for multicontrast
+        self.subjects = {}
         
     @enter_function
     def setup(self):
@@ -725,6 +729,36 @@ class SlicerCARTWidget(ScriptedLoadableModuleWidget, VTKObservationMixin):
         self.ui.placeMeasurementLine.setEnabled(False)
 
     @enter_function
+    def structureVolumesFolder(self):
+        """
+        StructureVolumesFolder.
+        
+        Args:
+        volumes_folder: Description of volumes_folder.
+        """
+        # If multicontrast selected, structure images by grouping them under the same subject. Assumes the worst: works by filename matching if all subjects are loaded into one volume folder
+        
+
+        from collections import defaultdict 
+                
+        extension = ".nii.gz"
+        all_files = list(Path(str(self.CurrentFolder)).rglob(f"*{extension}"))
+
+        # Assumes contrast is suffix: subject01_T1.nii.gz
+        regex = r"(.+?)(_t1|_t2|_flair|_t2s|_adc|_dwi|_T1|_T2|_FLAIR|_T2S|_PD|_STIR|_GRE|_MPRAGE|_ASL|_SWI|_TOF|_MRA|_B0|_B1|_DTI|_FA|_MD|_TRACER|_CEST|_HRT1|_HRT2|_SPGR|_FISP|_HASTE|_EPI|_IR|_TIRM|_DIR|_SSFP|t1c|t1n|t2f|t2w)\.(nii|nii\.gz|nrrd)$"
+
+        self.subjects = defaultdict(dict)
+
+        for f in all_files:
+            match = re.match(regex, f.name, re.IGNORECASE)
+            if match:
+                subject_id, contrast, ext = match.groups()
+                key = subject_id.lower()
+                contrast_name = (contrast or '').strip('_').lower() or "unknown"
+                self.subjects[key][contrast_name] = str(f)
+                
+    
+    @enter_function
     def onSelectVolumesFolderButton(self):
         """
         OnSelectVolumesFolderButton.
@@ -763,14 +797,15 @@ class SlicerCARTWidget(ScriptedLoadableModuleWidget, VTKObservationMixin):
         if file_structure_valid == False:
             return  # don't load any patient cases
 
+        # TODO: consider removal of self.CasesPaths 
         self.CasesPaths = sorted(glob(
             f'{self.CurrentFolder}{os.sep}**{os.sep}'
             f'{ConfigPath.INPUT_FILE_EXTENSION}',
             recursive=True))
         
-        Debug.print(self, f'CasesPaths: {self.CasesPaths}')
-        
-        # Remove the volumes in the folder 'derivatives' (creates issues for
+        self.structureVolumesFolder()
+                
+        # Remove the volumes in the folder 'derivatives' (creaWtes issues for
         # loading cases)
         self.CasesPaths = [item for item in self.CasesPaths if 'derivatives' not
                            in item]
@@ -789,7 +824,10 @@ class SlicerCARTWidget(ScriptedLoadableModuleWidget, VTKObservationMixin):
             Dev.show_message_box(self, message, box_title='ATTENTION!')
             return
 
-        self.Cases = sorted([os.path.split(i)[-1] for i in self.CasesPaths])
+        # TEMP
+        # self.Cases = sorted([os.path.split(i)[-1] for i in self.CasesPaths])
+        
+        self.Cases = sorted(self.subjects.keys())
 
         self.reset_ui()
 
@@ -1045,30 +1083,12 @@ class SlicerCARTWidget(ScriptedLoadableModuleWidget, VTKObservationMixin):
         self.ui.CurrentPath.setText(self.currentCasePath)
 
     @enter_function
-    def loadPatient(self):
+    def load_and_display_multicontrasts(self):
         """
-        LoadPatient.
-        
-        Args:.
+        Helper funciton to the loadPatient function for multicontrast loading. Synchronizing of scrolling through different contrasts
         """
-        timer_index = 0
-        self.timers = []
-        for label in self.config_yaml["labels"]:
-            self.timers.append(Timer(number=timer_index))
-            timer_index = timer_index + 1
-
-        # reset dropbox to index 0
-        self.ui.dropDownButton_label_select.setCurrentIndex(0)
-
-        # timer reset if we come back to same case
-        self.called = False
-
-        slicer.mrmlScene.Clear()
-        # slicer.util.loadVolume(self.currentCasePath)
-        # self.VolumeNode = \
-        #     slicer.util.getNodesByClass('vtkMRMLScalarVolumeNode')[0]
-            
-        for casePath in self.CasesPaths:
+        for casePath in self.paths_to_load:
+            Debug.print(self, "CASE PATH: " + str(casePath))
             node = slicer.util.loadVolume(casePath, {"show": False})
             # TODO: give each node a name from hash and filename
             #node.SetName()
@@ -1090,9 +1110,47 @@ class SlicerCARTWidget(ScriptedLoadableModuleWidget, VTKObservationMixin):
             # Rotate only this volume's slice nodes to this volume's planes
             if volumeSliceNodes:
                 self.layoutLogic.rotateToVolumePlanes(volumeNode, volumeSliceNodes)
+                
+        # Optional
+        # slice_widgets = slicer.app.layoutManager().sliceWidgets()
+        # slicer.app.layoutManager().sliceViewAnnotationsEnabled = True
+        # for widget in slice_widgets.values():
+        #     widget.sliceController().setSliceLink(True)
 
         # Snap all to IJK for better alignment
         self.layoutLogic.snapToIJK()
+        
+    
+    @enter_function
+    def loadPatient(self):
+        """
+        LoadPatient.
+        
+        Args:.
+        """
+        timer_index = 0
+        self.timers = []
+        for label in self.config_yaml["labels"]:
+            self.timers.append(Timer(number=timer_index))
+            timer_index = timer_index + 1
+
+        # reset dropbox to index 0
+        self.ui.dropDownButton_label_select.setCurrentIndex(0)
+
+        # timer reset if we come back to same case
+        self.called = False
+        
+        current_subject_id = self.Cases[self.currentCase_index]
+        self.paths_to_load = self.subjects[current_subject_id].values()
+        Debug.print(self, "PATHS TO LOAD: " + str(self.paths_to_load))
+
+        slicer.mrmlScene.Clear()
+        # slicer.util.loadVolume(self.currentCasePath)
+        # self.VolumeNode = \
+        #     slicer.util.getNodesByClass('vtkMRMLScalarVolumeNode')[0]
+        
+        # Load all paths in current subject into multicontrast view
+        self.load_and_display_multicontrasts()
         
         # TODO: uncomment
         # self.updateCaseAll()
