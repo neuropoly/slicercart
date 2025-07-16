@@ -128,6 +128,8 @@ class SlicerCARTWidget(ScriptedLoadableModuleWidget, VTKObservationMixin):
         # Storage of all grouped subjects for multicontrast
         self.subjects = {}
         
+        self.clicked = False
+        
     @enter_function
     def setup(self):
         """
@@ -1095,7 +1097,7 @@ class SlicerCARTWidget(ScriptedLoadableModuleWidget, VTKObservationMixin):
             self.volumeNodes.append(node)
         
         print("Showing all volumes in multi-row layout")
-        sliceNodesByViewName = self.layoutLogic.viewersPerVolume(self.volumeNodes, include3D=False)
+        self.sliceNodesByViewName = self.layoutLogic.viewersPerVolume(self.volumeNodes, include3D=False)
         
         # Rotate each volume to its own planes - don't use volumeNodes[0] for all
         orientations = ('Axial', 'Sagittal', 'Coronal')
@@ -1104,8 +1106,8 @@ class SlicerCARTWidget(ScriptedLoadableModuleWidget, VTKObservationMixin):
             volumeSliceNodes = []
             for orientation in orientations:
                 viewName = volumeNode.GetName() + '-' + orientation
-                if viewName in sliceNodesByViewName:
-                    volumeSliceNodes.append(sliceNodesByViewName[viewName])
+                if viewName in self.sliceNodesByViewName:
+                    volumeSliceNodes.append(self.sliceNodesByViewName[viewName])
 
             # Rotate only this volume's slice nodes to this volume's planes
             if volumeSliceNodes:
@@ -1144,13 +1146,23 @@ class SlicerCARTWidget(ScriptedLoadableModuleWidget, VTKObservationMixin):
         Debug.print(self, "PATHS TO LOAD: " + str(self.paths_to_load))
 
         # This apparently doesn't work
-        #slicer.mrmlScene.Clear()
+        slicer.mrmlScene.Clear()
         
-        self.volumeNodes = []
+        # self.sliceNodesByViewName.clear()
+        
+        # if slicer.mrmlScene and self.clicked:
+        #     tmpdict = slicer.util.getNodes(useLists=True)
+        #     for name, tmplist in tmpdict.items():
+        #         for node in tmplist:
+        #             slicer.mrmlScene.RemoveNode(node)
+        
+        self.clicked = True
+        
+        self.volumeNodes.clear()
         
         # slicer.util.loadVolume(self.currentCasePath)
         # self.VolumeNode = \
-        #     slicer.util.getNodesByClass('vtkMRMLScalarVolumeNode')[0]q
+        #     slicer.util.getNodesByClass('vtkMRMLScalarVolumeNode')[0]
         
         # Load all paths in current subject into multicontrast view
         self.load_and_display_multicontrasts()
@@ -1159,18 +1171,19 @@ class SlicerCARTWidget(ScriptedLoadableModuleWidget, VTKObservationMixin):
         # self.updateCaseAll()
         
         # Adjust windowing (no need to use self. since this is used locally)
-        Vol_displayNode = self.VolumeNode.GetDisplayNode()
-        # print('self volumenode get display node',
-        # self.VolumeNode.GetDisplayNode())
-        # print(' node', self.VolumeNode)
+        # Vol_displayNode = self.VolumeNode.GetDisplayNode()
+        # # print('self volumenode get display node',
+        # # self.VolumeNode.GetDisplayNode())
+        # # print(' node', self.VolumeNode)
 
-        Vol_displayNode.AutoWindowLevelOff()
-        if ConfigPath.MODALITY == 'CT':
-            Debug.print(self, 'MODALITY==CT')
-            Vol_displayNode.SetWindow(ConfigPath.CT_WINDOW_WIDTH)
-            Vol_displayNode.SetLevel(ConfigPath.CT_WINDOW_LEVEL)
-        Vol_displayNode.SetInterpolate(ConfigPath.INTERPOLATE_VALUE)
-        self.newSegmentation()
+        # Vol_displayNode.AutoWindowLevelOff()
+        # if ConfigPath.MODALITY == 'CT':
+        #     Debug.print(self, 'MODALITY==CT')
+        #     Vol_displayNode.SetWindow(ConfigPath.CT_WINDOW_WIDTH)
+        #     Vol_displayNode.SetLevel(ConfigPath.CT_WINDOW_LEVEL)
+        # Vol_displayNode.SetInterpolate(ConfigPath.INTERPOLATE_VALUE)
+        
+        # self.newSegmentation()
 
         self.updateCurrentOutputPathAndCurrentVolumeFilename()
 

@@ -349,3 +349,4 @@ class CaseIteratorLayoutLogic(ScriptedLoadableModuleLogic):
       sliceNode.SetSliceOffset(offset)
       view += 1.
     return sliceNodesByViewName
+
