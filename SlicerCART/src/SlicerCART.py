@@ -1119,7 +1119,6 @@ class SlicerCARTWidget(ScriptedLoadableModuleWidget, VTKObservationMixin):
 
         # Snap all to IJK for better alignment
         self.layoutLogic.snapToIJK()
-        
     
     @enter_function
     def loadPatient(self):
@@ -1144,10 +1143,14 @@ class SlicerCARTWidget(ScriptedLoadableModuleWidget, VTKObservationMixin):
         self.paths_to_load = self.subjects[current_subject_id].values()
         Debug.print(self, "PATHS TO LOAD: " + str(self.paths_to_load))
 
-        slicer.mrmlScene.Clear()
+        # This apparently doesn't work
+        #slicer.mrmlScene.Clear()
+        
+        self.volumeNodes = []
+        
         # slicer.util.loadVolume(self.currentCasePath)
         # self.VolumeNode = \
-        #     slicer.util.getNodesByClass('vtkMRMLScalarVolumeNode')[0]
+        #     slicer.util.getNodesByClass('vtkMRMLScalarVolumeNode')[0]q
         
         # Load all paths in current subject into multicontrast view
         self.load_and_display_multicontrasts()
