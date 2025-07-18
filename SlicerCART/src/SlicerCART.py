@@ -11,6 +11,8 @@ from utils import *  # Import all modules, packages and global variables
 from scripts import *  # Import all classes
 
 from scripts.LayoutLogic import CaseIteratorLayoutLogic
+from scripts.ConfigureMulticontrastWindow import ConfigureMulticontrastWindow
+
 
 ###############################################################################
 
@@ -771,8 +773,9 @@ class SlicerCARTWidget(ScriptedLoadableModuleWidget, VTKObservationMixin):
         print("SUBJECTS TO ALL CONTRASTS: ", self.subject_to_all_contrasts)
     
     @enter_function
-    def onSelectMulticontrastButton(self):
-        print("CONFIGURE MULTICONTRAST!!!")
+    def onConfigureMulticontrastButton(self):
+        configureMulticontrastWindow = ConfigureMulticontrastWindow(self, self.currentCase, self.subject_to_all_contrasts)
+        configureMulticontrastWindow.show()
     
     @enter_function
     def onSelectVolumesFolderButton(self):
