@@ -195,6 +195,8 @@ class SlicerCARTWidget(ScriptedLoadableModuleWidget, VTKObservationMixin):
         self.ui.PauseTimerButton.setText('Pause')
         self.ui.SelectVolumeFolder.connect(
             'clicked(bool)', self.onSelectVolumesFolderButton)
+        self.ui.ConfigureMulticontrastButton.connect(
+          'clicked(bool)', self.onConfigureMulticontrastButton)
         self.ui.SlicerDirectoryListView.clicked.connect(
             self.getCurrentTableItem)
         self.ui.SaveSegmentationButton.connect(
@@ -730,8 +732,10 @@ class SlicerCARTWidget(ScriptedLoadableModuleWidget, VTKObservationMixin):
         self.ui.pushButton_Erase.setEnabled(False)
         self.ui.placeMeasurementLine.setEnabled(False)
 
+    ### MULTICONTRAST ###
+    # Realistically, subject = case 
     @enter_function
-    def structureVolumesFolder(self):
+    def structureMulticontrast(self):
         """
         StructureVolumesFolder.
         
@@ -740,7 +744,8 @@ class SlicerCARTWidget(ScriptedLoadableModuleWidget, VTKObservationMixin):
         """
         # If multicontrast selected, structure images by grouping them under the same subject. Assumes the worst: works by filename matching if all subjects are loaded into one volume folder
         
-
+        # Also creates a dictionary mapping every subject to all the contrasts present under its folder
+		
         from collections import defaultdict 
                 
         extension = ".nii.gz"
@@ -750,6 +755,9 @@ class SlicerCARTWidget(ScriptedLoadableModuleWidget, VTKObservationMixin):
         regex = r"(.+?)(_t1|_t2|_flair|_t2s|_adc|_dwi|_T1|_T2|_FLAIR|_T2S|_PD|_STIR|_GRE|_MPRAGE|_ASL|_SWI|_TOF|_MRA|_B0|_B1|_DTI|_FA|_MD|_TRACER|_CEST|_HRT1|_HRT2|_SPGR|_FISP|_HASTE|_EPI|_IR|_TIRM|_DIR|_SSFP|t1c|t1n|t2f|t2w)\.(nii|nii\.gz|nrrd)$"
 
         self.subjects = defaultdict(dict)
+        
+        # TODO: merge with self.subjects in future commits
+        self.subject_to_all_contrasts = defaultdict(list)
 
         for f in all_files:
             match = re.match(regex, f.name, re.IGNORECASE)
@@ -758,7 +766,13 @@ class SlicerCARTWidget(ScriptedLoadableModuleWidget, VTKObservationMixin):
                 key = subject_id.lower()
                 contrast_name = (contrast or '').strip('_').lower() or "unknown"
                 self.subjects[key][contrast_name] = str(f)
-                
+                self.subject_to_all_contrasts[key].append((contrast_name, False))
+        
+        print("SUBJECTS TO ALL CONTRASTS: ", self.subject_to_all_contrasts)
+    
+    @enter_function
+    def onSelectMulticontrastButton(self):
+        print("CONFIGURE MULTICONTRAST!!!")
     
     @enter_function
     def onSelectVolumesFolderButton(self):
@@ -805,7 +819,8 @@ class SlicerCARTWidget(ScriptedLoadableModuleWidget, VTKObservationMixin):
             f'{ConfigPath.INPUT_FILE_EXTENSION}',
             recursive=True))
         
-        self.structureVolumesFolder()
+        # Structure for multicontrast
+        self.structureMulticontrast()
                 
         # Remove the volumes in the folder 'derivatives' (creaWtes issues for
         # loading cases)
