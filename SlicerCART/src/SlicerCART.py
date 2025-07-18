@@ -130,7 +130,6 @@ class SlicerCARTWidget(ScriptedLoadableModuleWidget, VTKObservationMixin):
         # Storage of all grouped subjects for multicontrast
         self.subjects = {}
         
-        self.clicked = False
         
     @enter_function
     def setup(self):
@@ -759,7 +758,7 @@ class SlicerCARTWidget(ScriptedLoadableModuleWidget, VTKObservationMixin):
         self.subjects = defaultdict(dict)
         
         # TODO: merge with self.subjects in future commits
-        self.subject_to_all_contrasts = defaultdict(list)
+        self.subjects_to_all_contrasts = defaultdict(dict)
 
         for f in all_files:
             match = re.match(regex, f.name, re.IGNORECASE)
@@ -768,13 +767,11 @@ class SlicerCARTWidget(ScriptedLoadableModuleWidget, VTKObservationMixin):
                 key = subject_id.lower()
                 contrast_name = (contrast or '').strip('_').lower() or "unknown"
                 self.subjects[key][contrast_name] = str(f)
-                self.subject_to_all_contrasts[key].append((contrast_name, False))
-        
-        print("SUBJECTS TO ALL CONTRASTS: ", self.subject_to_all_contrasts)
-    
+                self.subjects_to_all_contrasts[key][contrast_name] = False
+                    
     @enter_function
     def onConfigureMulticontrastButton(self):
-        configureMulticontrastWindow = ConfigureMulticontrastWindow(self, self.currentCase, self.subject_to_all_contrasts)
+        configureMulticontrastWindow = ConfigureMulticontrastWindow(self, self.currentCase, self.subjects_to_all_contrasts)
         configureMulticontrastWindow.show()
     
     @enter_function
@@ -1160,9 +1157,13 @@ class SlicerCARTWidget(ScriptedLoadableModuleWidget, VTKObservationMixin):
         self.called = False
         
         current_subject_id = self.Cases[self.currentCase_index]
-        self.paths_to_load = self.subjects[current_subject_id].values()
+        
+        self.paths_to_load = []
+        for contrast, path in self.subjects[current_subject_id].items():
+            if self.subjects_to_all_contrasts[current_subject_id][contrast]:
+                self.paths_to_load.append(path)
+                
         Debug.print(self, "PATHS TO LOAD: " + str(self.paths_to_load))
-
         # This apparently doesn't work
         slicer.mrmlScene.Clear()
         
@@ -1173,8 +1174,6 @@ class SlicerCARTWidget(ScriptedLoadableModuleWidget, VTKObservationMixin):
         #     for name, tmplist in tmpdict.items():
         #         for node in tmplist:
         #             slicer.mrmlScene.RemoveNode(node)
-        
-        self.clicked = True
         
         self.volumeNodes.clear()
         

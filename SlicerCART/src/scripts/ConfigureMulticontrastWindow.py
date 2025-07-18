@@ -1,12 +1,14 @@
 from utils import *
 
 class ConfigureMulticontrastWindow(qt.QWidget):
-    def __init__(self, segmenter, current_subject, subject_to_all_contrasts, parent=None):
-        super().__init__(parent, qt.Qt.Window)    # Call the constructor of the parent class
+    def __init__(self, segmenter, current_subject, subjects_to_all_contrasts, parent=None):
+        super().__init__(parent)    # Call the constructor of the parent class
 
-        self.SlicerCARTWidget_instance = segmenter
-        self.current_subject_id = current_subject
-        self._initial_contrasts = list(subject_to_all_contrasts[current_subject])
+        self.segmenter = segmenter
+        self.current_subject = current_subject
+        self._initial_contrasts = subjects_to_all_contrasts[current_subject]
+        
+        Debug.print(self, "initial contrasts: "+ str(self._initial_contrasts))
 
         _main_layout = qt.QVBoxLayout()
         self.setLayout(_main_layout)
@@ -17,9 +19,8 @@ class ConfigureMulticontrastWindow(qt.QWidget):
         self.list_widget.setDragDropMode(qt.QListWidget.InternalMove)
         self.list_widget.setDefaultDropAction(qt.Qt.MoveAction)
 
-        for i, (contrast_name, checked_state) in enumerate(self._initial_contrasts):
-            item_text = f"Contrast {i + 1}: {contrast_name}"
-            item = qt.QListWidgetItem(item_text)
+        for i, (contrast_name, checked_state) in enumerate(list(self._initial_contrasts.items())):
+            item = qt.QListWidgetItem(contrast_name)
             item.setFlags(item.flags() | qt.Qt.ItemIsUserCheckable | qt.Qt.ItemIsEnabled | qt.Qt.ItemIsSelectable | qt.Qt.ItemIsDragEnabled)
             item.setCheckState(qt.Qt.Checked if checked_state else qt.Qt.Unchecked)
             self.list_widget.addItem(item)
@@ -27,12 +28,18 @@ class ConfigureMulticontrastWindow(qt.QWidget):
         _main_layout.addWidget(self.list_widget)
         
         # Number of rows displayed
-        self.multicontrast_layout_row_count_combobox = qt.QComboBox("Set the number of contrasts to display in the view")
+        contrast_number_hbox = qt.QHBoxLayout()
+        contrast_number_hbox.addWidget(qt.QLabel("Number of rows:"))
         
-        for i in range(2, 5):
+        self.multicontrast_layout_row_count_combobox = qt.QComboBox()
+        contrast_number_hbox.addWidget(self.multicontrast_layout_row_count_combobox)
+        
+        for i in range(1, 5):
             self.multicontrast_layout_row_count_combobox.addItem(str(i + 1))
             
-        self.multicontrast_layout_row_count_combobox.currentIndexChanged.connect(self.set_multicontrast_layout_row_count)
+        self.multicontrast_layout_row_count_combobox.currentIndexChanged.connect(self.set_multicontrast_layout_rows)
+        
+        _main_layout.addWidget(self.multicontrast_layout_row_count_combobox)
 
         self.apply_button = qt.QPushButton("Apply Changes")
         self.apply_button.clicked.connect(self.push_apply)
@@ -42,11 +49,17 @@ class ConfigureMulticontrastWindow(qt.QWidget):
         self.cancel_button.clicked.connect(self.push_cancel)
         _main_layout.addWidget(self.cancel_button)
 
-        self.setWindowTitle(f"Configure Contrasts for {self.current_subject_id}")
+        self.setWindowTitle(f"Configure Contrasts for {self.current_subject}")
         self.resize(350, 450)
 
-    def set_multicontrast_layout_row_count(self):
+    def set_multicontrast_layout_rows(self):
         row_count = int(self.multicontrast_layout_row_count_combobox.currentText)
+        
+        for i in range(row_count):
+            requested_contrast = self.list_widget.item(i).text()
+            self.segmenter.subjects_to_all_contrasts[self.current_subject][requested_contrast] = True
+        
+        self.segmenter.loadPatient()
 
     def push_apply(self):
         # final_ordered_contrasts = []
