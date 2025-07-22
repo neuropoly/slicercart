@@ -11,6 +11,8 @@ class ConfigureMulticontrastWindow(qt.QWidget):
         # Total number of contrasts loaded under the subject folder
         self.contrast_count = len(self._initial_contrasts.items())
 
+        self.contrast_order = []
+
         Debug.print(self, "initial contrasts: "+ str(self._initial_contrasts))
 
         _main_layout = qt.QVBoxLayout()
@@ -27,6 +29,12 @@ class ConfigureMulticontrastWindow(qt.QWidget):
             item.setFlags(item.flags() | qt.Qt.ItemIsEnabled | qt.Qt.ItemIsSelectable | qt.Qt.ItemIsDragEnabled)
             self.list_widget.addItem(item)
 
+        # Make the highlight upon selection transparent to avoid confusion
+        palette = self.list_widget.palette
+        palette.setColor(qt.QPalette.Highlight, qt.Qt.transparent)
+        self.list_widget.setPalette(palette)
+
+        self.list_widget.model().rowsMoved.connect(self.reorder_multicontrast_view)
         _main_layout.addWidget(self.list_widget)
 
         # Number of rows displayed
@@ -64,7 +72,7 @@ class ConfigureMulticontrastWindow(qt.QWidget):
         for i in range(self.contrast_count):
             item = self.list_widget.item(i)
             requested_contrast = item.text()
-            item.setBackground(qt.QColor())
+            # item.setBackground(qt.QColor())
             self.segmenter.subjects_to_all_contrasts[self.current_subject][requested_contrast] = False
 
     def set_multicontrast_layout_rows(self):
@@ -77,18 +85,28 @@ class ConfigureMulticontrastWindow(qt.QWidget):
         # Highlight the amount of rows selected. The items within those rows will be displayed in the viewer, in order.
         for row in range(row_count):
             item = self.list_widget.item(row)
-            item.setBackground(qt.QColor(255, 255, 0, 100))
+            # item.setBackground(qt.QColor(255, 255, 0, 100))
 
         # Add wanted contrasts into view
         for i in range(row_count):
             requested_contrast = self.list_widget.item(i).text()
             self.segmenter.subjects_to_all_contrasts[self.current_subject][requested_contrast] = True
 
+    def reorder_multicontrast_view(self):
+        self.set_multicontrast_layout_rows()
+
+        self.contrast_order.clear()
+        for i in range(self.list_widget.count):
+            item = self.list_widget.item(i)
+            self.contrast_order.append(item.text())
+
+        return
+
     def push_apply(self):
         # final_ordered_contrasts = []
         # for i in range(self.list_widget.count()):
         #     item = self.list_widget.item(i)
-        #     contrast_full_text = item.text()
+        #     contrast_full_text = item.text()()
         #     if ": " in contrast_full_text:
         #         contrast_name = contrast_full_text.split(": ", 1)[1]
         #     else:
@@ -100,7 +118,7 @@ class ConfigureMulticontrastWindow(qt.QWidget):
         # if (hasattr(self.SlicerCARTWidget_instance, 'subject_to_all_contrasts') and
         #         self.current_subject_id in self.SlicerCARTWidget_instance.subject_to_all_contrasts):
         #     self.SlicerCARTWidget_instance.subject_to_all_contrasts[self.current_subject_id] = final_ordered_contrasts
-        self.segmenter.loadPatient()
+        self.segmenter.loadPatient(self.contrast_order)
 
     def push_cancel(self):
         self.close()
