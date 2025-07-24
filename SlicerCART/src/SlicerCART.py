@@ -822,29 +822,41 @@ class SlicerCARTWidget(ScriptedLoadableModuleWidget, VTKObservationMixin):
         # Structure for multicontrast
         self.structureMulticontrast()
 
-        # Remove the volumes in the folder 'derivatives' (creaWtes issues for
-        # loading cases)
-        self.CasesPaths = [item for item in self.CasesPaths if 'derivatives' not
-                           in item]
+        ### COMMENTED OUT FOR MULTICONTRAST TESTING ###
 
-        if not self.CasesPaths:
-            message = ('No files found in the selected directory!'
-                       f'\n\nCurrent file extension configuration: '
-                       f'{ConfigPath.INPUT_FILE_EXTENSION}'
-                       "\n\nMake sure the configured extension is "
-                       "in the right format."
-                       "\n\nFor example: check configuration_config.yml file "
-                       "in "
-                       "SlicerCART project or in output folder under _conf "
-                       "folder."
-                       "\n\nThen restart the module.")
-            Dev.show_message_box(self, message, box_title='ATTENTION!')
-            return
+        # # Remove the volumes in the folder 'derivatives' (creaWtes issues for
+        # # loading cases)
+        # self.CasesPaths = [item for item in self.CasesPaths if 'derivatives' not
+        #                    in item]
 
-        # TEMP
-        # self.Cases = sorted([os.path.split(i)[-1] for i in self.CasesPaths])
+        # if not self.CasesPaths:
+        #     message = ('No files found in the selected directory!'
+        #                f'\n\nCurrent file extension configuration: '
+        #                f'{ConfigPath.INPUT_FILE_EXTENSION}'
+        #                "\n\nMake sure the configured extension is "
+        #                "in the right format."
+        #                "\n\nFor example: check configuration_config.yml file "
+        #                "in "
+        #                "SlicerCART project or in output folder under _conf "
+        #                "folder."
+        #                "\n\nThen restart the module.")
+        #     Dev.show_message_box(self, message, box_title='ATTENTION!')
+        #     return
 
+        # # TEMP
+        # # self.Cases = sorted([os.path.split(i)[-1] for i in self.CasesPaths])
+
+        # Rebuild CasesPaths to be the list of PRIMARY REFERENCE paths, matching the order of self.Cases
         self.Cases = sorted(self.subjects.keys())
+
+        self.CasesPaths = []
+        for subject_id in self.Cases:
+            # Assuming the first contrast is the primary reference.
+            # This must be a consistent key, like 't1' or the first key alphabetically.
+            # Let's assume the first key in the dictionary for that subject is the primary.
+            primary_contrast_key = next(iter(self.subjects[subject_id]))
+            primary_path = self.subjects[subject_id][primary_contrast_key]
+            self.CasesPaths.append(primary_path)
 
         self.reset_ui()
 
@@ -1139,10 +1151,15 @@ class SlicerCARTWidget(ScriptedLoadableModuleWidget, VTKObservationMixin):
     @enter_function
     def loadPatient(self, contrast_order=None):
         """
+
+
+
+
         LoadPatient.
 
         Args:.
         """
+
         timer_index = 0
         self.timers = []
         for label in self.config_yaml["labels"]:
@@ -1205,7 +1222,12 @@ class SlicerCARTWidget(ScriptedLoadableModuleWidget, VTKObservationMixin):
         #     Vol_displayNode.SetWindow(ConfigPath.CT_WINDOW_WIDTH)
         #     Vol_displayNode.SetLevel(ConfigPath.CT_WINDOW_LEVEL)
         # Vol_displayNode.SetInterpolate(ConfigPath.INTERPOLATE_VALUE)
-        Debug.print(self, "CURRENT OUTPUT PATH: " + str(self.currentCasePath))
+
+        # The master volume is the first contrast image
+
+        self.VolumeNode = self.volumeNodes[0]
+        self.currentCasePath = self.paths_to_load[0]
+
 
         self.newSegmentation()
 
@@ -1751,6 +1773,13 @@ class SlicerCARTWidget(ScriptedLoadableModuleWidget, VTKObservationMixin):
 
         Args:.
         """
+
+        Debug.print(self, "_________________________________")
+        Debug.print(self, self.currentOutputPath)
+        Debug.print(self, self.outputFolder)
+        Debug.print(self, self.currentCasePath)
+        Debug.print(self, "_________________________________")
+
         self.revision_step = self.ui.RevisionStep.currentText
         if len(self.revision_step) != 0:
             if os.path.exists(self.outputFolder) == False:
@@ -2464,7 +2493,11 @@ class SlicerCARTWidget(ScriptedLoadableModuleWidget, VTKObservationMixin):
             tag_str += (f",{line_key} ControlPoint1,{line_key} ControlPoint2,"
                         f"{line_key} Length")
 
-        data_str = self.currentCase
+
+        # data_str = self.currentCase
+
+        # Usage of folder name
+        data_str = os.path.basename(self.currentCasePath)
         data_str += "," + currentSegmentationVersion
         data_str += "," + self.annotator_name
         data_str += "," + self.annotator_degree
@@ -2712,7 +2745,7 @@ class SlicerCARTWidget(ScriptedLoadableModuleWidget, VTKObservationMixin):
             if self.CurrentFolder is not None:
                 self.updateCurrentOutputPathAndCurrentVolumeFilename()
 
-                # self.update_case_list_colors()
+                self.update_case_list_colors()
 
                 self.ui.SlicerDirectoryListView.setCurrentItem(
                     self.ui.SlicerDirectoryListView.item(
@@ -2741,12 +2774,19 @@ class SlicerCARTWidget(ScriptedLoadableModuleWidget, VTKObservationMixin):
             return
 
         self.ui.SlicerDirectoryListView.clear()
-        for case in self.Cases:
-            case_id = case.split('.')[0]
-            item = qt.QListWidgetItem(case_id)
+        for i, case_subject_id in enumerate(self.Cases): # 'case' is now a subject ID
+            item = qt.QListWidgetItem(case_subject_id)
+
+            ### START of NEW FIX ###
+            primary_ref_path = self.CasesPaths[i] # Use the synchronized list
+            primary_ref_filename = os.path.basename(primary_ref_path)
+            primary_ref_filename_no_ext = primary_ref_filename.split('.')[0]
+
             segmentation_information_path = (f'{self.currentOutputPath}{os.sep}'
-                                             f'{case_id}'
-                                             f'_SegmentationInformation.csv')
+                                            f'{primary_ref_filename_no_ext}'
+                                            f'_SegmentationInformation.csv')
+            ### END of NEW FIX ###
+
             segmentation_information_df = None
             if os.path.exists(segmentation_information_path):
                 segmentation_information_df = pd.read_csv(
