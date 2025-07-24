@@ -1105,7 +1105,6 @@ class SlicerCARTWidget(ScriptedLoadableModuleWidget, VTKObservationMixin):
         Helper funciton to the loadPatient function for multicontrast loading. Synchronizing of scrolling through different contrasts
         """
         for casePath in self.paths_to_load:
-            Debug.print(self, "CASE PATH: " + str(casePath))
             node = slicer.util.loadVolume(casePath, {"show": False})
             # TODO: give each node a name from hash and filename
             #node.SetName()
@@ -1206,8 +1205,9 @@ class SlicerCARTWidget(ScriptedLoadableModuleWidget, VTKObservationMixin):
         #     Vol_displayNode.SetWindow(ConfigPath.CT_WINDOW_WIDTH)
         #     Vol_displayNode.SetLevel(ConfigPath.CT_WINDOW_LEVEL)
         # Vol_displayNode.SetInterpolate(ConfigPath.INTERPOLATE_VALUE)
+        Debug.print(self, "CURRENT OUTPUT PATH: " + str(self.currentCasePath))
 
-        # self.newSegmentation()
+        self.newSegmentation()
 
         self.updateCurrentOutputPathAndCurrentVolumeFilename()
 
