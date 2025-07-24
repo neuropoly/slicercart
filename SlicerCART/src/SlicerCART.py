@@ -1170,18 +1170,19 @@ class SlicerCARTWidget(ScriptedLoadableModuleWidget, VTKObservationMixin):
                 self.paths_to_load.append(path)
 
         Debug.print(self, "PATHS TO LOAD: " + str(self.paths_to_load))
-        # This apparently doesn't work
+
+        if slicer.mrmlScene:
+            tmpdict = slicer.util.getNodes(useLists=True)
+            for name, tmplist in tmpdict.items():
+              if name.startswith(("vtkMRMLScalarVolumeNode", "vtkMRMLSliceNode")):
+                  for node in tmplist:
+                      print("NAME: ", name)
+                      slicer.mrmlScene.RemoveNode(node)
+
         slicer.mrmlScene.Clear()
 
-        # self.sliceNodesByViewName.clear()
-
-        # if slicer.mrmlScene and self.clicked:
-        #     tmpdict = slicer.util.getNodes(useLists=True)
-        #     for name, tmplist in tmpdict.items():
-        #         for node in tmplist:
-        #             slicer.mrmlScene.RemoveNode(node)
-
         self.volumeNodes.clear()
+
 
         # slicer.util.loadVolume(self.currentCasePath)
         # self.VolumeNode = \
