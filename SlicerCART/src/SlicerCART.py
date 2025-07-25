@@ -917,7 +917,7 @@ class SlicerCARTWidget(ScriptedLoadableModuleWidget, VTKObservationMixin):
         self.config_yaml = ConfigPath.open_project_config_file()
         # Instantiate a WorkFiles class object to facilitate cases lists
         # management.
-        self.WorkFiles = WorkFiles(self.CurrentFolder, self.outputFolder)
+        self.WorkFiles = WorkFiles(self.CurrentFolder, self.outputFolder, self.subjects)
 
         # Set up working list appropriateness compared to volumes folder
         # selected.

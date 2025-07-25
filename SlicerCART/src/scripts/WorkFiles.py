@@ -8,7 +8,7 @@ class WorkFiles():
     """
 
     @enter_function
-    def __init__(self, currentFolder, outputFolder):
+    def __init__(self, currentFolder, outputFolder, subjects_dict):
         """
         __init__
 
@@ -18,6 +18,8 @@ class WorkFiles():
         """
         self.CurrentFolder = currentFolder
         self.outputFolder = outputFolder
+        self.subjects = subjects_dict
+
         self.working_list_filepath = os.path.join(
             self.outputFolder, ConfigPath.WORKING_LIST_FILENAME)
         self.remaining_list_filepath = os.path.join(
@@ -29,8 +31,7 @@ class WorkFiles():
         self.all_cases_path = WorkFiles.filter_working_list(self,
                                                             self.all_cases_path)
 
-        self.all_cases_filenames = (
-            self.get_filenames_in_working_list(self.all_cases_path))
+        self.all_cases_filenames = sorted(list(self.subjects.keys())) # MODIFIED
 
     @enter_function
     def check_working_list(self):
@@ -381,15 +382,19 @@ class WorkFiles():
             return remaining_list_filenames
 
     @enter_function
-    def get_working_list_filepaths(self, working_list_filenames):
+    def get_working_list_filepaths(self, working_list_subject_ids):
         """
         Get all working list filepaths.
         """
         filenames_path = []
-        for element in working_list_filenames:
-            for path in self.all_cases_path:
-                if element in path:
-                    filenames_path.append(path)
+        for subject_id in working_list_subject_ids:
+            if subject_id in self.subjects:
+                # Get the dictionary of contrasts for this subject
+                contrasts = self.subjects[subject_id]
+                # Assume the first contrast is the primary reference
+                primary_contrast_key = next(iter(contrasts))
+                path = contrasts[primary_contrast_key]
+                filenames_path.append(path)
         return filenames_path
 
     @enter_function
@@ -433,13 +438,15 @@ class WorkFiles():
         return index
 
     @enter_function
-    def find_path_from_filename(self, filename):
+    def find_path_from_filename(self, subject_id):
         """
         Find path from a filename.
         """
-        for filepath in self.all_cases_path:
-            if filename in filepath:
-                return filepath
+        if subject_id in self.subjects:
+                contrasts = self.subjects[subject_id]
+                primary_contrast_key = next(iter(contrasts))
+                return contrasts[primary_contrast_key]
+        return None # Return None if subject not found
 
     @enter_function
     def adjust_remaining_list(self, filename):
