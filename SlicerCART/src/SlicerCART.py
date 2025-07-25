@@ -914,56 +914,59 @@ class SlicerCARTWidget(ScriptedLoadableModuleWidget, VTKObservationMixin):
         Allows to work from appropriate working list and remaining list.
         """
 
-        self.config_yaml = ConfigPath.open_project_config_file()
-        # Instantiate a WorkFiles class object to facilitate cases lists
-        # management.
-        self.WorkFiles = WorkFiles(self.CurrentFolder, self.outputFolder, self.subjects)
+        print("WorkFiles logic is currently disabled via manage_workflow.")
+        pass
 
-        # Set up working list appropriateness compared to volumes folder
-        # selected.
-        if self.WorkFiles.check_working_list() == False:
-            print(
-                '\n\n INVALID WORKFLOW. CANNOT CONTINUE WITH CURRENT SELECTED '
-                'VOLUMES AND OUTPUT FOLDERS.\n\n')
-            # Output folder is inconsistent with Volumes Folder.
-            # We should NEVER be able to save any other segmentations.
-            message = ('The UI case list is now invalid. \n'
-                       f'In the output folder {self.outputFolder}'
-                       f'working_list and remaining_list, '
-                       'files are inconsistent and corrupted.\n\n'
-                       'Cannot continue with Slicer from now one.\n\n'
-                       'Please restart SlicerCART if you want to continue.\n\n'
-                       'Ensure you select appropriate volumes and output '
-                       'folder, and reset working_list and remaining_list.\n'
-                       '(For example, delete them).')
-            Dev.show_message_box(self, message)
-            return
+        # self.config_yaml = ConfigPath.open_project_config_file()
+        # # Instantiate a WorkFiles class object to facilitate cases lists
+        # # management.
+        # self.WorkFiles = WorkFiles(self.CurrentFolder, self.outputFolder, self.subjects)
 
-        # Re-assignation of self.Cases and self.CasesPath based on working list.
-        self.Cases = self.WorkFiles.get_working_list_filenames(self)
-        self.CasesPaths = self.WorkFiles.get_working_list_filepaths(self.Cases)
-        self.reset_ui()
+        # # Set up working list appropriateness compared to volumes folder
+        # # selected.
+        # if self.WorkFiles.check_working_list() == False:
+        #     print(
+        #         '\n\n INVALID WORKFLOW. CANNOT CONTINUE WITH CURRENT SELECTED '
+        #         'VOLUMES AND OUTPUT FOLDERS.\n\n')
+        #     # Output folder is inconsistent with Volumes Folder.
+        #     # We should NEVER be able to save any other segmentations.
+        #     message = ('The UI case list is now invalid. \n'
+        #                f'In the output folder {self.outputFolder}'
+        #                f'working_list and remaining_list, '
+        #                'files are inconsistent and corrupted.\n\n'
+        #                'Cannot continue with Slicer from now one.\n\n'
+        #                'Please restart SlicerCART if you want to continue.\n\n'
+        #                'Ensure you select appropriate volumes and output '
+        #                'folder, and reset working_list and remaining_list.\n'
+        #                '(For example, delete them).')
+        #     Dev.show_message_box(self, message)
+        #     return
 
-        # Get the first case of remaining list (considers if empty).
-        remaining_list_filenames = (
-            self.WorkFiles.get_remaining_list_filenames(self))
+        # # Re-assignation of self.Cases and self.CasesPath based on working list.
+        # self.Cases = self.WorkFiles.get_working_list_filenames(self)
+        # self.CasesPaths = self.WorkFiles.get_working_list_filepaths(self.Cases)
+        # self.reset_ui()
 
-        if self.WorkFiles.check_remaining_first_element(
-                remaining_list_filenames):
-            Debug.print(self, 'First case in remaining list ok.')
-            remaining_list_first = self.WorkFiles.get_remaining_list_filenames(
-                self)[0]
-        else:
-            Debug.print(self, 'Remaining list empty. Select case from working '
-                              'list (working list should never be empty).')
-            remaining_list_first = self.select_next_working_case()
+        # # Get the first case of remaining list (considers if empty).
+        # remaining_list_filenames = (
+        #     self.WorkFiles.get_remaining_list_filenames(self))
 
-        self.set_patient(remaining_list_first)
+        # if self.WorkFiles.check_remaining_first_element(
+        #         remaining_list_filenames):
+        #     Debug.print(self, 'First case in remaining list ok.')
+        #     remaining_list_first = self.WorkFiles.get_remaining_list_filenames(
+        #         self)[0]
+        # else:
+        #     Debug.print(self, 'Remaining list empty. Select case from working '
+        #                       'list (working list should never be empty).')
+        #     remaining_list_first = self.select_next_working_case()
 
-        # Assign segmentation labels in the segmentation UI
-        self.set_segmentation_config_ui()
+        # self.set_patient(remaining_list_first)
 
-        self.update_ui()
+        # # Assign segmentation labels in the segmentation UI
+        # self.set_segmentation_config_ui()
+
+        # self.update_ui()
 
     @enter_function
     def validateBIDS(self, path):
@@ -2256,7 +2259,7 @@ class SlicerCARTWidget(ScriptedLoadableModuleWidget, VTKObservationMixin):
         # One segment has been saved, which allows to load the next case from
         # now.
         self.saved_selected = True
-        self.select_next_remaining_case()
+        #self.select_next_remaining_case()
 
     @enter_function
     def select_next_remaining_case(self):
@@ -2698,12 +2701,10 @@ class SlicerCARTWidget(ScriptedLoadableModuleWidget, VTKObservationMixin):
         # Save the associated volume_folder_path with the output_folder
         # selected.
         UserPath.write_in_filepath(self, self.outputFolder, self.CurrentFolder)
-
-        self.manage_workflow_and_classification()
-
+        # self.manage_workflow_and_classification() # Bypassed
+        print("Bypassing manage_workflow_and_classification.")
         ConfigPath.write_config_file()
-
-        self.set_ui_enabled_options()
+        self.set_ui_enabled_options() # Still need to enable the save buttons, etc.
 
     @enter_function
     def manage_workflow_and_classification(self):
