@@ -1381,6 +1381,7 @@ class SlicerCARTWidget(ScriptedLoadableModuleWidget, VTKObservationMixin):
         self.set_classification_version_labels(None)
         self.set_classification_config_ui()
 
+
     @enter_function
     def newSegmentation(self):
         """
