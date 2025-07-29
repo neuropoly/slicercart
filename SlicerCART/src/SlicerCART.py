@@ -813,47 +813,14 @@ class SlicerCARTWidget(ScriptedLoadableModuleWidget, VTKObservationMixin):
         if file_structure_valid == False:
             return  # don't load any patient cases
 
-        # TODO: consider removal of self.CasesPaths
-        self.CasesPaths = sorted(glob(
-            f'{self.CurrentFolder}{os.sep}**{os.sep}'
-            f'{ConfigPath.INPUT_FILE_EXTENSION}',
-            recursive=True))
-
-        # Structure for multicontrast
+        # Structure for multicontrast - This is now the default
         self.structureMulticontrast()
-
-        ### COMMENTED OUT FOR MULTICONTRAST TESTING ###
-
-        # # Remove the volumes in the folder 'derivatives' (creaWtes issues for
-        # # loading cases)
-        # self.CasesPaths = [item for item in self.CasesPaths if 'derivatives' not
-        #                    in item]
-
-        # if not self.CasesPaths:
-        #     message = ('No files found in the selected directory!'
-        #                f'\n\nCurrent file extension configuration: '
-        #                f'{ConfigPath.INPUT_FILE_EXTENSION}'
-        #                "\n\nMake sure the configured extension is "
-        #                "in the right format."
-        #                "\n\nFor example: check configuration_config.yml file "
-        #                "in "
-        #                "SlicerCART project or in output folder under _conf "
-        #                "folder."
-        #                "\n\nThen restart the module.")
-        #     Dev.show_message_box(self, message, box_title='ATTENTION!')
-        #     return
-
-        # # TEMP
-        # # self.Cases = sorted([os.path.split(i)[-1] for i in self.CasesPaths])
 
         # Rebuild CasesPaths to be the list of PRIMARY REFERENCE paths, matching the order of self.Cases
         self.Cases = sorted(self.subjects.keys())
-
         self.CasesPaths = []
         for subject_id in self.Cases:
             # Assuming the first contrast is the primary reference.
-            # This must be a consistent key, like 't1' or the first key alphabetically.
-            # Let's assume the first key in the dictionary for that subject is the primary.
             primary_contrast_key = next(iter(self.subjects[subject_id]))
             primary_path = self.subjects[subject_id][primary_contrast_key]
             self.CasesPaths.append(primary_path)
@@ -867,7 +834,7 @@ class SlicerCARTWidget(ScriptedLoadableModuleWidget, VTKObservationMixin):
         # folder.
         if self.outputFolder != None:
             UserPath.write_in_filepath(self, self.outputFolder,
-                                       self.CurrentFolder)
+                                    self.CurrentFolder)
             self.manage_workflow_and_classification()
 
     @enter_function
@@ -914,59 +881,43 @@ class SlicerCARTWidget(ScriptedLoadableModuleWidget, VTKObservationMixin):
         Allows to work from appropriate working list and remaining list.
         """
 
-        print("WorkFiles logic is currently disabled via manage_workflow.")
-        pass
 
-        # self.config_yaml = ConfigPath.open_project_config_file()
-        # # Instantiate a WorkFiles class object to facilitate cases lists
-        # # management.
-        # self.WorkFiles = WorkFiles(self.CurrentFolder, self.outputFolder, self.subjects)
+        self.config_yaml = ConfigPath.open_project_config_file()
+        # Instantiate a WorkFiles class object to facilitate cases lists
+        # management.
+        self.WorkFiles = WorkFiles(self.CurrentFolder, self.outputFolder, self.subjects)
 
-        # # Set up working list appropriateness compared to volumes folder
-        # # selected.
-        # if self.WorkFiles.check_working_list() == False:
-        #     print(
-        #         '\n\n INVALID WORKFLOW. CANNOT CONTINUE WITH CURRENT SELECTED '
-        #         'VOLUMES AND OUTPUT FOLDERS.\n\n')
-        #     # Output folder is inconsistent with Volumes Folder.
-        #     # We should NEVER be able to save any other segmentations.
-        #     message = ('The UI case list is now invalid. \n'
-        #                f'In the output folder {self.outputFolder}'
-        #                f'working_list and remaining_list, '
-        #                'files are inconsistent and corrupted.\n\n'
-        #                'Cannot continue with Slicer from now one.\n\n'
-        #                'Please restart SlicerCART if you want to continue.\n\n'
-        #                'Ensure you select appropriate volumes and output '
-        #                'folder, and reset working_list and remaining_list.\n'
-        #                '(For example, delete them).')
-        #     Dev.show_message_box(self, message)
-        #     return
+        # Set up working list appropriateness compared to volumes folder
+        # selected.
+        if not self.WorkFiles.check_working_list():
+            Dev.show_message_box(self, "There is an issue with the working lists. Please check the logs.")
+            return
 
-        # # Re-assignation of self.Cases and self.CasesPath based on working list.
-        # self.Cases = self.WorkFiles.get_working_list_filenames(self)
-        # self.CasesPaths = self.WorkFiles.get_working_list_filepaths(self.Cases)
-        # self.reset_ui()
+        # Re-assignation of self.Cases and self.CasesPath based on working list.
+        self.Cases = self.WorkFiles.get_working_list_filenames(self)
+        self.CasesPaths = self.WorkFiles.get_working_list_filepaths(self.Cases)
+        self.reset_ui()
 
-        # # Get the first case of remaining list (considers if empty).
-        # remaining_list_filenames = (
-        #     self.WorkFiles.get_remaining_list_filenames(self))
+        # Get the first case of remaining list (considers if empty).
+        remaining_list_filenames = (
+            self.WorkFiles.get_remaining_list_filenames(self))
 
-        # if self.WorkFiles.check_remaining_first_element(
-        #         remaining_list_filenames):
-        #     Debug.print(self, 'First case in remaining list ok.')
-        #     remaining_list_first = self.WorkFiles.get_remaining_list_filenames(
-        #         self)[0]
-        # else:
-        #     Debug.print(self, 'Remaining list empty. Select case from working '
-        #                       'list (working list should never be empty).')
-        #     remaining_list_first = self.select_next_working_case()
+        if self.WorkFiles.check_remaining_first_element(
+                remaining_list_filenames):
+            Debug.print(self, 'First case in remaining list ok.')
+            remaining_list_first = self.WorkFiles.get_remaining_list_filenames(
+                self)[0]
+        else:
+            Debug.print(self, 'Remaining list empty. Select case from working '
+                              'list (working list should never be empty).')
+            remaining_list_first = self.select_next_working_case()
 
-        # self.set_patient(remaining_list_first)
+        self.set_patient(remaining_list_first)
 
-        # # Assign segmentation labels in the segmentation UI
-        # self.set_segmentation_config_ui()
+        # Assign segmentation labels in the segmentation UI
+        self.set_segmentation_config_ui()
 
-        # self.update_ui()
+        self.update_ui()
 
     @enter_function
     def validateBIDS(self, path):
@@ -1154,14 +1105,11 @@ class SlicerCARTWidget(ScriptedLoadableModuleWidget, VTKObservationMixin):
     @enter_function
     def loadPatient(self, contrast_order=None):
         """
-
-
-
-
         LoadPatient.
 
         Args:.
         """
+        self.cleanupObservers()
 
         timer_index = 0
         self.timers = []
@@ -1202,45 +1150,21 @@ class SlicerCARTWidget(ScriptedLoadableModuleWidget, VTKObservationMixin):
 
         self.volumeNodes.clear()
 
-
-        # slicer.util.loadVolume(self.currentCasePath)
-        # self.VolumeNode = \
-        #     slicer.util.getNodesByClass('vtkMRMLScalarVolumeNode')[0]
-
         # Load all paths in current subject into multicontrast view
         self.load_and_display_multicontrasts()
 
-        # TODO: uncomment
-        # self.updateCaseAll()
-
-        # Adjust windowing (no need to use self. since this is used locally)
-        # Vol_displayNode = self.VolumeNode.GetDisplayNode()
-        # # print('self volumenode get display node',
-        # # self.VolumeNode.GetDisplayNode())
-        # # print(' node', self.VolumeNode)
-
-        # Vol_displayNode.AutoWindowLevelOff()
-        # if ConfigPath.MODALITY == 'CT':
-        #     Debug.print(self, 'MODALITY==CT')
-        #     Vol_displayNode.SetWindow(ConfigPath.CT_WINDOW_WIDTH)
-        #     Vol_displayNode.SetLevel(ConfigPath.CT_WINDOW_LEVEL)
-        # Vol_displayNode.SetInterpolate(ConfigPath.INTERPOLATE_VALUE)
-
         # The master volume is the first contrast image
-
         self.VolumeNode = self.volumeNodes[0]
         self.currentCasePath = self.paths_to_load[0]
-
 
         self.newSegmentation()
 
         self.updateCurrentOutputPathAndCurrentVolumeFilename()
 
         # If Load latest masks is checked, will load the latest version if
-        # avaialable when loading a new patient
+        # available when loading a new patient
         if self.ui.ToggleSegmentation.isChecked():
             self.toggle_segmentation_masks()
-
     @enter_function
     def updateCurrentOutputPathAndCurrentVolumeFilename(self):
         """
@@ -2407,7 +2331,7 @@ class SlicerCARTWidget(ScriptedLoadableModuleWidget, VTKObservationMixin):
         self.outputSegmFile = os.path.join(
             self.currentOutputPath,
             "{}_{}.seg.nrrd".format(
-                self.currentVolumeFilename, currentSegmentationVersion))
+                self.currentCase, currentSegmentationVersion))
         if not os.path.isfile(self.outputSegmFile):
             slicer.util.saveNode(self.segmentationNode, self.outputSegmFile)
         else:
@@ -2443,7 +2367,7 @@ class SlicerCARTWidget(ScriptedLoadableModuleWidget, VTKObservationMixin):
         # Save to final path
         self.outputSegmFileNifti = os.path.join(
             self.currentOutputPath,
-            f"{self.currentVolumeFilename}_{currentSegmentationVersion}.nii.gz"
+            f"{self.currentCase}_{currentSegmentationVersion}.nii.gz"
         )
         if ConfigPath.SAVE_UINT8:
             Debug.print(self, "Save segmentation to UINT8.")
@@ -3678,6 +3602,15 @@ class SlicerCARTWidget(ScriptedLoadableModuleWidget, VTKObservationMixin):
 
         Args:.
         """
+        # Add a safety check to reload the config if it's in an invalid state.
+        if "labels" not in self.config_yaml or not self.config_yaml["labels"]:
+            Debug.print(self, "Configuration is missing 'labels'. Reloading from file.")
+            self.config_yaml = ConfigPath.open_project_config_file()
+            # If it's still missing, we have a bigger problem, but this should fix most cases.
+            if "labels" not in self.config_yaml:
+                Dev.show_message_box(self, "Critical Error: 'labels' key missing from configuration file. Cannot perform segmentation.", box_title="Config Error")
+                return
+
         # Make sure a valid segment is selected
         selected_segment_id = self.segmentationNode.GetSegmentation(
 
@@ -3911,3 +3844,12 @@ class SlicerCARTWidget(ScriptedLoadableModuleWidget, VTKObservationMixin):
                 "upper_bound_HU"] = self.UB_HU
         except:
             pass
+
+    @enter_function
+    def cleanupObservers(self):
+        if hasattr(self, 'lineNode') and self.lineNode:
+            self.lineNode.RemoveAllObservers()
+        if hasattr(self, 'segmentationNode') and self.segmentationNode:
+            displayNode = self.segmentationNode.GetDisplayNode()
+            if displayNode:
+                displayNode.RemoveAllObservers()

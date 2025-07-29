@@ -15,6 +15,7 @@ class WorkFiles():
         Args:
             currentFolder: Description of currentFolder.
             outputFolder: Description of outputFolder.
+            subjects_dict: The dictionary of subjects and their contrasts.
         """
         self.CurrentFolder = currentFolder
         self.outputFolder = outputFolder
@@ -27,104 +28,35 @@ class WorkFiles():
 
         self.output_folder_files = os.listdir(self.outputFolder)
 
-        self.all_cases_path = WorkFiles.get_working_list(self)
-        self.all_cases_path = WorkFiles.filter_working_list(self,
-                                                            self.all_cases_path)
-
-        self.all_cases_filenames = sorted(list(self.subjects.keys())) # MODIFIED
+        self.all_cases_filenames = sorted(list(self.subjects.keys()))
 
     @enter_function
     def check_working_list(self):
         """
-        Important function related to this class. Check in an already selected
-        output folder if a working list is defined.
+        Checks and synchronizes the working and remaining lists with the available subjects.
         """
+        if ConfigPath.WORKING_LIST_FILENAME not in self.output_folder_files:
+            # If no working list exists, create it from the subjects
+            self.write_file_list(self.working_list_filepath, self.all_cases_filenames)
+            self.write_file_list(self.remaining_list_filepath, self.all_cases_filenames)
+            return True
 
-        if ConfigPath.WORKING_LIST_FILENAME in self.output_folder_files:
-            # Check if the working list file corresponds to the volumes folder.
-            good_match = self.check_correspondence(self.all_cases_filenames)
-            if good_match:
-                if self.check_remaining_list(
-                        self.all_cases_filenames):
-                    Debug.print(self, ('Working list corresponds to the '
-                                       'filtered list from volumes folder. '
-                                       'READY TO START!'))
-                    pass
-                else:
-                    Debug.print(self, ('Good match of working list with '
-                                       'filtered list from volumes folder. '
-                                       'However, the remaining list is '
-                                       'incorrect.'))
-                    return False
-            else:
-                # Means that working list is different from filtered list
-                # from volumes folder.
+        # If a working list exists, check for consistency
+        working_list_from_file = self.get_working_list_filenames()
 
-                # The user wants to keep the working list as is currently in
-                # output folder.
-                if ConfigPath.KEEP_WORKING_LIST:
-                    if WorkFiles.check_working_list_in_volumes(
-                            self, self.all_cases_filenames):
-                        Debug.print(self, 'All elements in working list are '
-                                          'in the filtered list from volumes '
-                                          'folder.')
-                        working_list_filenames = (
-                            WorkFiles.get_working_list_filenames(self))
-                        if WorkFiles.check_remaining_list(self,
-                                working_list_filenames):
-                            Debug.print(self,
-                                        'All elements in remaining list are '
-                                        'in the working list from volumes. '
-                                        'READY TO START!')
-                            pass
-                    else:
-                        Debug.print(self, 'Some elements in the working list '
-                                    'is/are not in the volumes folder.')
-                        Dev.show_message_box(self, f'INVALID WORKING LIST FILE')
-                        return False
-
-                else:
-                    # The user wants to take the working list associated with
-                    # the filtered list from volumes folder.
-                    # Any previous working list will be erased.
-
-                    # Any old file (e.g. previous backup of working or
-                    # remaining list will be overwritten).
-                    self.create_backup()
-
-                    # Overwrite any working list and/or remaining list.
-                    self.write_file_list(self.working_list_filepath,
-                                         self.all_cases_filenames)
-                    self.write_file_list(self.remaining_list_filepath,
-                                         self.all_cases_filenames)
-
-                    pass
-
-
-        else:
-            # Create initial working list and remaining list.
-            self.write_file_list(self.working_list_filepath,
-                                 self.all_cases_filenames)
-
-            working_list_filenames = WorkFiles.get_working_list_filenames(self)
-
-            if os.path.exists(self.remaining_list_filepath):
-                if self.check_remaining_list(working_list_filenames):
-                    Debug.print(self, 'Cases in remaining list are in the '
-                                      'working list. READY TO START!')
-                    pass
-                else:
-                    Debug.print(self, ('There is a remaining list file in the '
-                                   'output folder, but it is inconsistent with'
-                                       ' working list. \n\n Please double '
-                                       'check.'))
-                    return False
+        if set(working_list_from_file) != set(self.all_cases_filenames):
+            if ConfigPath.KEEP_WORKING_LIST:
+                # If the user wants to keep the existing working list, we only work on subjects
+                # that are present in both the working list and the current volume folder.
+                self.all_cases_filenames = sorted(list(set(working_list_from_file) & set(self.all_cases_filenames)))
+                self.write_file_list(self.working_list_filepath, self.all_cases_filenames)
+                self.write_file_list(self.remaining_list_filepath, self.all_cases_filenames)
 
             else:
-                Debug.print(self, 'No remaining file exists. One is being '
-                                 'created.')
-                self.write_file_list(self.remaining_list_filepath,
-                                     self.all_cases_filenames)
+                # Overwrite with the new list of subjects
+                self.create_backup()
+                self.write_file_list(self.working_list_filepath, self.all_cases_filenames)
+                self.write_file_list(self.remaining_list_filepath, self.all_cases_filenames)
 
         return True
 
@@ -443,9 +375,9 @@ class WorkFiles():
         Find path from a filename.
         """
         if subject_id in self.subjects:
-                contrasts = self.subjects[subject_id]
-                primary_contrast_key = next(iter(contrasts))
-                return contrasts[primary_contrast_key]
+            contrasts = self.subjects[subject_id]
+            primary_contrast_key = next(iter(contrasts))
+            return contrasts[primary_contrast_key]
         return None # Return None if subject not found
 
     @enter_function
