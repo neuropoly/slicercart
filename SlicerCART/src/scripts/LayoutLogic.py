@@ -290,14 +290,16 @@ class CaseIteratorLayoutLogic(ScriptedLoadableModuleLogic):
     for volumeNode in volumeNodes:
       layoutDescription += ' <item> <layout type="horizontal">\n'
       column = 0
-      for orientation in orientations:
-        viewName = volumeNode.GetName() + '-' + orientation
-        rgb = [int(round(v * 255)) for v in self.lookupTable.GetTableValue(index)[:-1]]
-        color = '#%0.2X%0.2X%0.2X' % tuple(rgb)
-        layoutDescription += self.sliceViewItemPattern.format(viewName=viewName, orientation=orientation, color=color)
-        actualViewNames.append(viewName)
-        index += 1
-        column += 1
+
+      # Commented out, because axial is the only orientation needed.
+      # for orientation in orientations:
+      viewName = volumeNode.GetName() + '-' + "Axial"
+      rgb = [int(round(v * 255)) for v in self.lookupTable.GetTableValue(index)[:-1]]
+      color = '#%0.2X%0.2X%0.2X' % tuple(rgb)
+      layoutDescription += self.sliceViewItemPattern.format(viewName=viewName, orientation="Axial", color=color)
+      actualViewNames.append(viewName)
+      index += 1
+      column += 1
       if include3D:
         print('TODO: add 3D viewer')
       layoutDescription += '</layout></item>\n'
@@ -312,15 +314,15 @@ class CaseIteratorLayoutLogic(ScriptedLoadableModuleLogic):
     layoutManager = slicer.app.layoutManager()
     sliceNodesByViewName = {}
     for volumeNode in volumeNodes:
-      for orientation in orientations:
-        viewName = volumeNode.GetName() + '-' + orientation
-        sliceWidget = layoutManager.sliceWidget(viewName)
-        compositeNode = sliceWidget.mrmlSliceCompositeNode()
-        compositeNode.SetBackgroundVolumeID(volumeNode.GetID())
-        sliceNode = sliceWidget.mrmlSliceNode()
-        sliceNode.SetOrientation(orientation)
-        sliceWidget.fitSliceToBackground()
-        sliceNodesByViewName[viewName] = sliceNode
+      # for orientation in orientations:
+      viewName = volumeNode.GetName() + '-' + "Axial"
+      sliceWidget = layoutManager.sliceWidget(viewName)
+      compositeNode = sliceWidget.mrmlSliceCompositeNode()
+      compositeNode.SetBackgroundVolumeID(volumeNode.GetID())
+      sliceNode = sliceWidget.mrmlSliceNode()
+      sliceNode.SetOrientation("Axial")
+      sliceWidget.fitSliceToBackground()
+      sliceNodesByViewName[viewName] = sliceNode
     return sliceNodesByViewName
 
   def volumeLightbox(self, volumeNode, layout=[3, 3], orientation='Axial', padRatio=.1):

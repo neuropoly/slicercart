@@ -130,7 +130,6 @@ class SlicerCARTWidget(ScriptedLoadableModuleWidget, VTKObservationMixin):
         # Storage of all grouped subjects for multicontrast
         self.subjects = {}
 
-
     @enter_function
     def setup(self):
         """
@@ -255,6 +254,7 @@ class SlicerCARTWidget(ScriptedLoadableModuleWidget, VTKObservationMixin):
 
         self.ui.placeMeasurementLine.connect(
             'clicked(bool)', self.onPlacePointsAndConnect)
+        self.ui.ConfigureMulticontrastButton(False)
 
         self.ui.ShowSegmentVersionLegendButton.setVisible(False)
 
@@ -828,6 +828,7 @@ class SlicerCARTWidget(ScriptedLoadableModuleWidget, VTKObservationMixin):
         self.reset_ui()
 
         self.ui.pushButton_Interpolate.setEnabled(True)
+        self.self.ui.ConfigureMulticontrastButton.setEnabled(True)
 
         # If output folder has already been selected from continue from
         # existing folder, this code updates the volume folders of output
