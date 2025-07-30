@@ -1165,6 +1165,7 @@ class SlicerCARTWidget(ScriptedLoadableModuleWidget, VTKObservationMixin):
         # available when loading a new patient
         if self.ui.ToggleSegmentation.isChecked():
             self.toggle_segmentation_masks()
+
     @enter_function
     def updateCurrentOutputPathAndCurrentVolumeFilename(self):
         """

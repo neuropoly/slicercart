@@ -45,7 +45,7 @@ class ConfigureMulticontrastWindow(qt.QWidget):
         contrast_number_hbox.addWidget(self.multicontrast_layout_row_count_combobox)
 
         # Five contrasts (rows) loaded into the viewer should be the maximum.
-        for i in range(1, min(self.contrast_count, 5)):
+        for i in range(min(self.contrast_count, 5)):
             self.multicontrast_layout_row_count_combobox.addItem(str(i + 1))
 
         self.multicontrast_layout_row_count_combobox.currentIndexChanged.connect(self.set_multicontrast_layout_rows)
