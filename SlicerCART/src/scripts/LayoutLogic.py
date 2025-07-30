@@ -20,6 +20,7 @@ import numpy as np
 import vtk, qt, ctk, slicer
 from slicer.ScriptedLoadableModule import *
 
+from utils import *
 
 class CaseIteratorLayoutLogic(ScriptedLoadableModuleLogic):
   """This class should implement all the actual
@@ -87,6 +88,7 @@ class CaseIteratorLayoutLogic(ScriptedLoadableModuleLogic):
       default_orientation = "Axial"
 
     if not volumeNodes:
+      Debug.print(self, 'NO VOLUME NODES')
       volumeNodes = list(slicer.util.getNodes('*VolumeNode*').values())
 
     if len(volumeNodes) == 0:

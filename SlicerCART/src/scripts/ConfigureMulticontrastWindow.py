@@ -120,6 +120,13 @@ class ConfigureMulticontrastWindow(qt.QWidget):
         #     self.SlicerCARTWidget_instance.subject_to_all_contrasts[self.current_subject_id] = final_ordered_contrasts
         self.segmenter.loadPatient(self.contrast_order)
 
+        for node in self.segmenter.volumeNodes:
+            Debug.print(self, "NODE NAME")
+            Debug.print(self, node.GetName())
+
+        self.close()
+
+
     def push_cancel(self):
         self.close()
 

@@ -1087,15 +1087,9 @@ class SlicerCARTWidget(ScriptedLoadableModuleWidget, VTKObservationMixin):
 
             self.volumeNodes.append(node)
 
-        Debug.print(self, "PATHS TO LOAD")
-        Debug.print(self, self.paths_to_load)
-
-        Debug.print(self, "VOLUME NODES")
-        Debug.print(self, self.volumeNodes)
-
         print("Showing all volumes in multi-row layout")
         # Default loading is Axial
-        self.sliceNodesByViewName = self.layoutLogic.viewerPerVolume(self.volumeNodes)
+        self.sliceNodesByViewName = self.layoutLogic.viewersPerVolume(self.volumeNodes)
 
         # Rotate each volume to its own planes - don't use volumeNodes[0] for all
         orientations = ('Axial', 'Sagittal', 'Coronal')
@@ -1155,14 +1149,6 @@ class SlicerCARTWidget(ScriptedLoadableModuleWidget, VTKObservationMixin):
                 self.paths_to_load.append(path)
 
         Debug.print(self, "PATHS TO LOAD: " + str(self.paths_to_load))
-
-        if slicer.mrmlScene:
-            tmpdict = slicer.util.getNodes(useLists=True)
-            for name, tmplist in tmpdict.items():
-              if name.startswith(("vtkMRMLScalarVolumeNode", "vtkMRMLSliceNode")):
-                  for node in tmplist:
-                      print("NAME: ", name)
-                      slicer.mrmlScene.RemoveNode(node)
 
         slicer.mrmlScene.Clear()
 
