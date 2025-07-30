@@ -1068,26 +1068,10 @@ class SlicerCARTWidget(ScriptedLoadableModuleWidget, VTKObservationMixin):
         self.ui.CurrentPath.setText(self.currentCasePath)
 
     @enter_function
-    def load_and_display_multicontrasts(self):
+    def multicontrast_layout(self):
         """
-        Helper funciton to the loadPatient function for multicontrast loading. Synchronizing of scrolling through different contrasts
+        Builds a layout which supports multiple contrasts being displayed in parallel
         """
-        for casePath in self.paths_to_load:
-            node = slicer.util.loadVolume(casePath, {"show": False})
-
-            # Get the base filename and remove extensions to create a unique name
-            base_name = os.path.basename(casePath)
-            node_name = base_name
-            if node_name.endswith('.nii.gz'):
-                node_name = node_name[:-7]
-            elif node_name.endswith(('.nii', '.nrrd')):
-                node_name = node_name[:-4]
-
-            # Explicitly set the unique name for the loaded node
-            node.SetName(node_name)
-
-            self.volumeNodes.append(node)
-
         print("Showing all volumes in multi-row layout")
         # Default loading is Axial
         self.sliceNodesByViewName = self.layoutLogic.viewerPerVolume(self.volumeNodes)
@@ -1118,8 +1102,6 @@ class SlicerCARTWidget(ScriptedLoadableModuleWidget, VTKObservationMixin):
         # print("IT WORKS")
 
         # Snap all to IJK for better alignment
-
-        auuuuuuugh
         self.layoutLogic.snapToIJK()
 
     @enter_function
@@ -1156,18 +1138,40 @@ class SlicerCARTWidget(ScriptedLoadableModuleWidget, VTKObservationMixin):
 
         Debug.print(self, "PATHS TO LOAD: " + str(self.paths_to_load))
 
+        # Reset our state
         slicer.mrmlScene.Clear()
-
         self.volumeNodes.clear()
 
-        # Load all paths in current subject into multicontrast view
-        self.load_and_display_multicontrasts()
+        # Load in our volumes
+        for casePath in self.paths_to_load:
+            node = slicer.util.loadVolume(casePath, {"show": False})
 
-        # The master volume is the first contrast image
+            # Get the base filename and remove extensions to create a unique name
+            base_name = os.path.basename(casePath)
+            node_name = base_name
+            if node_name.endswith('.nii.gz'):
+                node_name = node_name[:-7]
+            elif node_name.endswith(('.nii', '.nrrd')):
+                node_name = node_name[:-4]
+
+            # Explicitly set the unique name for the loaded node
+            node.SetName(node_name)
+
+            self.volumeNodes.append(node)
+
+        # Set our "reference" volume to be the first in the list
         self.VolumeNode = self.volumeNodes[0]
+        # Assume the first path is also what is needed
         self.currentCasePath = self.paths_to_load[0]
 
+        # Create a blank segmentation
+        # KO: This MUST be done before we update our layout; otherwise Slicer sets all
+        #  viewers in our layout to point to the same volume, rather than one-each like
+        #  we desire.
         self.newSegmentation()
+
+        # Load all paths in current subject into multicontrast view
+        self.multicontrast_layout()
 
         self.updateCurrentOutputPathAndCurrentVolumeFilename()
 
