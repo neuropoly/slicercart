@@ -825,10 +825,11 @@ class SlicerCARTWidget(ScriptedLoadableModuleWidget, VTKObservationMixin):
             primary_path = self.subjects[subject_id][primary_contrast_key]
             self.CasesPaths.append(primary_path)
 
+        self.ui.ConfigureMulticontrastButton.setEnabled(True)
+
         self.reset_ui()
 
         self.ui.pushButton_Interpolate.setEnabled(True)
-        self.ui.ConfigureMulticontrastButton.setEnabled(True)
 
         # If output folder has already been selected from continue from
         # existing folder, this code updates the volume folders of output
@@ -1089,29 +1090,36 @@ class SlicerCARTWidget(ScriptedLoadableModuleWidget, VTKObservationMixin):
 
         print("Showing all volumes in multi-row layout")
         # Default loading is Axial
-        self.sliceNodesByViewName = self.layoutLogic.viewersPerVolume(self.volumeNodes)
+        self.sliceNodesByViewName = self.layoutLogic.viewerPerVolume(self.volumeNodes)
 
         # Rotate each volume to its own planes - don't use volumeNodes[0] for all
-        orientations = ('Axial', 'Sagittal', 'Coronal')
-        for volumeNode in self.volumeNodes:
-            # Get slice nodes for this specific volume
-            volumeSliceNodes = []
-            for orientation in orientations:
-                viewName = volumeNode.GetName() + '-' + orientation
-                if viewName in self.sliceNodesByViewName:
-                    volumeSliceNodes.append(self.sliceNodesByViewName[viewName])
+        # orientations = ('Axial', 'Sagittal', 'Coronal')
+        # for volumeNode in self.volumeNodes:
+        #     # Get slice nodes for this specific volume
+        #     volumeSliceNodes = []
+        #     for orientation in orientations:
+        #         viewName = volumeNode.GetName() + '-' + orientation
+        #         if viewName in self.sliceNodesByViewName:
+        #             volumeSliceNodes.append(self.sliceNodesByViewName[viewName])
 
-            # Rotate only this volume's slice nodes to this volume's planes
-            if volumeSliceNodes:
-                self.layoutLogic.rotateToVolumePlanes(volumeNode, volumeSliceNodes)
+        #     # Rotate only this volume's slice nodes to this volume's planes
+        #     if volumeSliceNodes:
+        #         self.layoutLogic.rotateToVolumePlanes(volumeNode, volumeSliceNodes)
+
+        slicer.app.processEvents()
+
 
         # Optional
-        slice_widgets = slicer.app.layoutManager().sliceWidgets()
-        slicer.app.layoutManager().sliceViewAnnotationsEnabled = True
-        for widget in slice_widgets.values():
-            widget.sliceController().setSliceLink(True)
+        # slice_widgets = slicer.app.layoutManager().sliceWidgets()
+        # slicer.app.layoutManager().sliceViewAnnotationsEnabled = True
+        # for widget in slice_widgets.values():
+        #     widget.sliceController().setSliceLink(True)
+
+        # print("IT WORKS")
 
         # Snap all to IJK for better alignment
+
+        auuuuuuugh
         self.layoutLogic.snapToIJK()
 
     @enter_function
