@@ -254,7 +254,7 @@ class SlicerCARTWidget(ScriptedLoadableModuleWidget, VTKObservationMixin):
 
         self.ui.placeMeasurementLine.connect(
             'clicked(bool)', self.onPlacePointsAndConnect)
-        self.ui.ConfigureMulticontrastButton(False)
+        self.ui.ConfigureMulticontrastButton.setEnabled(False)
 
         self.ui.ShowSegmentVersionLegendButton.setVisible(False)
 
@@ -828,7 +828,7 @@ class SlicerCARTWidget(ScriptedLoadableModuleWidget, VTKObservationMixin):
         self.reset_ui()
 
         self.ui.pushButton_Interpolate.setEnabled(True)
-        self.self.ui.ConfigureMulticontrastButton.setEnabled(True)
+        self.ui.ConfigureMulticontrastButton.setEnabled(True)
 
         # If output folder has already been selected from continue from
         # existing folder, this code updates the volume folders of output
@@ -1073,12 +1073,29 @@ class SlicerCARTWidget(ScriptedLoadableModuleWidget, VTKObservationMixin):
         """
         for casePath in self.paths_to_load:
             node = slicer.util.loadVolume(casePath, {"show": False})
-            # TODO: give each node a name from hash and filename
-            #node.SetName()
+
+            # Get the base filename and remove extensions to create a unique name
+            base_name = os.path.basename(casePath)
+            node_name = base_name
+            if node_name.endswith('.nii.gz'):
+                node_name = node_name[:-7]
+            elif node_name.endswith(('.nii', '.nrrd')):
+                node_name = node_name[:-4]
+
+            # Explicitly set the unique name for the loaded node
+            node.SetName(node_name)
+
             self.volumeNodes.append(node)
 
+        Debug.print(self, "PATHS TO LOAD")
+        Debug.print(self, self.paths_to_load)
+
+        Debug.print(self, "VOLUME NODES")
+        Debug.print(self, self.volumeNodes)
+
         print("Showing all volumes in multi-row layout")
-        self.sliceNodesByViewName = self.layoutLogic.viewersPerVolume(self.volumeNodes, include3D=False)
+        # Default loading is Axial
+        self.sliceNodesByViewName = self.layoutLogic.viewerPerVolume(self.volumeNodes)
 
         # Rotate each volume to its own planes - don't use volumeNodes[0] for all
         orientations = ('Axial', 'Sagittal', 'Coronal')
