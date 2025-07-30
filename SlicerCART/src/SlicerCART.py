@@ -2,6 +2,9 @@
     This is the main file for SlicerCART.
     That means the Slicer Python Interpreter always refer to the path of this
     script when using SlicerCART.
+    This is the main file for SlicerCART.
+    That means the Slicer Python Interpreter always refer to the path of this
+    script when using SlicerCART.
 """
 
 ###############################################################################
@@ -145,7 +148,9 @@ class SlicerCARTWidget(ScriptedLoadableModuleWidget, VTKObservationMixin):
         # Additional widgets can be instantiated manually and added to
         # self.layout.
         uiWidget = slicer.util.loadUI(self.resourcePath('UI/SlicerCART.ui'))
+        uiWidget = slicer.util.loadUI(self.resourcePath('UI/SlicerCART.ui'))
         self.layout.addWidget(uiWidget)
+        self.ui = slicer.util.childWidgetVariables(uiWidget)
         self.ui = slicer.util.childWidgetVariables(uiWidget)
 
         # Set scene in MRML widgets. Make sure that in Qt designer the
@@ -327,6 +332,7 @@ class SlicerCARTWidget(ScriptedLoadableModuleWidget, VTKObservationMixin):
     @enter_function
     def visibilityModifiedCallback(self, caller, event):
         """
+        Each time segments visibility is changed, this function is called.
         Each time segments visibility is changed, this function is called.
         caller: used to get segment visibility
         event: segment modified
@@ -554,6 +560,8 @@ class SlicerCARTWidget(ScriptedLoadableModuleWidget, VTKObservationMixin):
             self.segmentEditorNode.SetMasterVolumeIntensityMask(False)
 
     @enter_function
+    def setupCheckboxes(self, number_of_columns, classif_label,
+                        flag_use_csv=False):
     def setupCheckboxes(self, number_of_columns, classif_label,
                         flag_use_csv=False):
         """
@@ -1877,6 +1885,7 @@ class SlicerCARTWidget(ScriptedLoadableModuleWidget, VTKObservationMixin):
 
         if classif_label != None:
 
+
             try:
                 self.outputClassificationInformationFile = (
                     os.path.join(self.currentOutputPath,
@@ -2765,6 +2774,8 @@ class SlicerCARTWidget(ScriptedLoadableModuleWidget, VTKObservationMixin):
         return found_case
 
     @enter_function
+    def msg_warnig_delete_segm_node_clicked(self,
+                                            msg_warnig_delete_segm_node_button):
     def msg_warnig_delete_segm_node_clicked(self,
                                             msg_warnig_delete_segm_node_button):
         """
