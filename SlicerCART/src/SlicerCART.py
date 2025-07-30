@@ -1106,10 +1106,10 @@ class SlicerCARTWidget(ScriptedLoadableModuleWidget, VTKObservationMixin):
                 self.layoutLogic.rotateToVolumePlanes(volumeNode, volumeSliceNodes)
 
         # Optional
-        # slice_widgets = slicer.app.layoutManager().sliceWidgets()
-        # slicer.app.layoutManager().sliceViewAnnotationsEnabled = True
-        # for widget in slice_widgets.values():
-        #     widget.sliceController().setSliceLink(True)
+        slice_widgets = slicer.app.layoutManager().sliceWidgets()
+        slicer.app.layoutManager().sliceViewAnnotationsEnabled = True
+        for widget in slice_widgets.values():
+            widget.sliceController().setSliceLink(True)
 
         # Snap all to IJK for better alignment
         self.layoutLogic.snapToIJK()
@@ -1121,8 +1121,6 @@ class SlicerCARTWidget(ScriptedLoadableModuleWidget, VTKObservationMixin):
 
         Args:.
         """
-        self.cleanupObservers()
-
         timer_index = 0
         self.timers = []
         for label in self.config_yaml["labels"]:
@@ -3850,12 +3848,3 @@ class SlicerCARTWidget(ScriptedLoadableModuleWidget, VTKObservationMixin):
                 "upper_bound_HU"] = self.UB_HU
         except:
             pass
-
-    @enter_function
-    def cleanupObservers(self):
-        if hasattr(self, 'lineNode') and self.lineNode:
-            self.lineNode.RemoveAllObservers()
-        if hasattr(self, 'segmentationNode') and self.segmentationNode:
-            displayNode = self.segmentationNode.GetDisplayNode()
-            if displayNode:
-                displayNode.RemoveAllObservers()
