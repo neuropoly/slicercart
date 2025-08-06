@@ -743,29 +743,33 @@ class SlicerCARTWidget(ScriptedLoadableModuleWidget, VTKObservationMixin):
         Args:
         volumes_folder: Description of volumes_folder.
         """
-        # If multicontrast selected, structure images by grouping them under the same subject. Assumes the worst: works by filename matching if all subjects are loaded into one volume folder
+        # If multicontrast selected, structure images by grouping them under the same subject.
+        # Assumes the worst: works by filename matching if all subjects are loaded into one volume folder.
 
-        # Also creates a dictionary mapping every subject to all the contrasts present under its folder
+        # Also creates a dictionary mapping every subject to all the contrasts present under its folder.
 
         from collections import defaultdict
+        import re
+        from pathlib import Path
 
-        extension = ".nii.gz"
-        all_files = list(Path(str(self.CurrentFolder)).rglob(f"*{extension}"))
+        all_files = list(Path(str(self.CurrentFolder)).rglob("*"))
 
-        # Assumes contrast is suffix: subject01_T1.nii.gz
+        # Accept any suffix after last underscore as the contrast
         regex = r"^(.+?)_([^_]+)\.(nii|nii\.gz|nrrd)$"
 
         self.subjects = defaultdict(dict)
-
-        # TODO: merge with self.subjects in future commits
         self.subjects_to_all_contrasts = defaultdict(dict)
 
         for f in all_files:
+            # Skip files in or under any 'derivatives' directory
+            if "derivatives" in [part.lower() for part in f.parts]:
+                continue
+
             match = re.match(regex, f.name, re.IGNORECASE)
             if match:
                 subject_id, contrast, ext = match.groups()
                 key = subject_id.lower()
-                contrast_name = (contrast or '').strip('_').lower() or "unknown"
+                contrast_name = contrast.strip('_').lower() or "unknown"
                 self.subjects[key][contrast_name] = str(f)
                 self.subjects_to_all_contrasts[key][contrast_name] = True
 
@@ -1077,18 +1081,18 @@ class SlicerCARTWidget(ScriptedLoadableModuleWidget, VTKObservationMixin):
         self.sliceNodesByViewName = self.layoutLogic.viewerPerVolume(self.volumeNodes)
 
         # Rotate each volume to its own planes - don't use volumeNodes[0] for all
-        # orientations = ('Axial', 'Sagittal', 'Coronal')
-        # for volumeNode in self.volumeNodes:
-        #     # Get slice nodes for this specific volume
-        #     volumeSliceNodes = []
-        #     for orientation in orientations:
-        #         viewName = volumeNode.GetName() + '-' + orientation
-        #         if viewName in self.sliceNodesByViewName:
-        #             volumeSliceNodes.append(self.sliceNodesByViewName[viewName])
+        orientations = ('Axial', 'Sagittal', 'Coronal')
+        for volumeNode in self.volumeNodes:
+            # Get slice nodes for this specific volume
+            volumeSliceNodes = []
+            for orientation in orientations:
+                viewName = volumeNode.GetName() + '-' + orientation
+                if viewName in self.sliceNodesByViewName:
+                    volumeSliceNodes.append(self.sliceNodesByViewName[viewName])
 
-        #     # Rotate only this volume's slice nodes to this volume's planes
-        #     if volumeSliceNodes:
-        #         self.layoutLogic.rotateToVolumePlanes(volumeNode, volumeSliceNodes)
+            # Rotate only this volume's slice nodes to this volume's planes
+            if volumeSliceNodes:
+                self.layoutLogic.rotateToVolumePlanes(volumeNode, volumeSliceNodes)
 
         slicer.app.processEvents()
 
@@ -1098,8 +1102,6 @@ class SlicerCARTWidget(ScriptedLoadableModuleWidget, VTKObservationMixin):
         # slicer.app.layoutManager().sliceViewAnnotationsEnabled = True
         # for widget in slice_widgets.values():
         #     widget.sliceController().setSliceLink(True)
-
-        # print("IT WORKS")
 
         # Snap all to IJK for better alignment
         self.layoutLogic.snapToIJK()
@@ -1144,15 +1146,17 @@ class SlicerCARTWidget(ScriptedLoadableModuleWidget, VTKObservationMixin):
 
         # Load in our volumes
         for casePath in self.paths_to_load:
-            node = slicer.util.loadVolume(casePath, {"show": False})
+            node = slicer.util.loadVolume(casePath, {"show": False, "singlefile": True})
 
             # Get the base filename and remove extensions to create a unique name
             base_name = os.path.basename(casePath)
             node_name = base_name
             if node_name.endswith('.nii.gz'):
                 node_name = node_name[:-7]
-            elif node_name.endswith(('.nii', '.nrrd')):
+            elif node_name.endswith(('.nii')):
                 node_name = node_name[:-4]
+            elif node_name.endswith(('.nrrd')):
+                node_name = node_name[:-5]
 
             # Explicitly set the unique name for the loaded node
             node.SetName(node_name)

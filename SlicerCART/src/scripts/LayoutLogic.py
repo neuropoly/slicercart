@@ -91,6 +91,10 @@ class CaseIteratorLayoutLogic(ScriptedLoadableModuleLogic):
       Debug.print(self, 'NO VOLUME NODES')
       volumeNodes = list(slicer.util.getNodes('*VolumeNode*').values())
 
+    for volumeNode in volumeNodes:
+        name = volumeNode.GetName()
+        print('Processing volume node: %s' % name)
+
     if len(volumeNodes) == 0:
       return
 
