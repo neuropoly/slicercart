@@ -753,7 +753,7 @@ class SlicerCARTWidget(ScriptedLoadableModuleWidget, VTKObservationMixin):
         all_files = list(Path(str(self.CurrentFolder)).rglob(f"*{extension}"))
 
         # Assumes contrast is suffix: subject01_T1.nii.gz
-        regex = r"(.+?)(_t1|_t2|_flair|_t2s|_adc|_dwi|_T1|_T2|_FLAIR|_T2S|_PD|_STIR|_GRE|_MPRAGE|_ASL|_SWI|_TOF|_MRA|_B0|_B1|_DTI|_FA|_MD|_TRACER|_CEST|_HRT1|_HRT2|_SPGR|_FISP|_HASTE|_EPI|_IR|_TIRM|_DIR|_SSFP|t1c|t1n|t2f|t2w)\.(nii|nii\.gz|nrrd)$"
+        regex = r"^(.+?)_([^_]+)\.(nii|nii\.gz|nrrd)$"
 
         self.subjects = defaultdict(dict)
 
