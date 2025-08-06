@@ -127,6 +127,9 @@ class SlicerCARTWidget(ScriptedLoadableModuleWidget, VTKObservationMixin):
         # TEMP: storage of all displayed volume nodes
         self.volumeNodes = []
 
+        # Order of contrasts loaded in the viewer
+        self.contrast_order = []
+
         # Storage of all grouped subjects for multicontrast
         self.subjects = {}
 
@@ -775,7 +778,7 @@ class SlicerCARTWidget(ScriptedLoadableModuleWidget, VTKObservationMixin):
 
     @enter_function
     def onConfigureMulticontrastButton(self):
-        configureMulticontrastWindow = ConfigureMulticontrastWindow(self, self.currentCase, self.subjects_to_all_contrasts)
+        configureMulticontrastWindow = ConfigureMulticontrastWindow(self, self.currentCase, self.subjects_to_all_contrasts, self.contrast_order)
         configureMulticontrastWindow.show()
 
     @enter_function

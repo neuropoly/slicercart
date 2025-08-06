@@ -1,7 +1,7 @@
 from utils import *
 
 class ConfigureMulticontrastWindow(qt.QWidget):
-    def __init__(self, segmenter, current_subject, subjects_to_all_contrasts, parent=None):
+    def __init__(self, segmenter, current_subject, subjects_to_all_contrasts, contrast_order, parent=None):
         super().__init__(parent)    # Call the constructor of the parent class
 
         self.segmenter = segmenter
@@ -11,7 +11,12 @@ class ConfigureMulticontrastWindow(qt.QWidget):
         # Total number of contrasts loaded under the subject folder
         self.contrast_count = len(self._initial_contrasts.items())
 
-        self.contrast_order = []
+        if contrast_order:
+            self.contrast_order = contrast_order
+            row_content = self.contrast_order
+        else:
+            self.contrast_order = []
+            row_content = list(self._initial_contrasts.keys())
 
         Debug.print(self, "initial contrasts: "+ str(self._initial_contrasts))
 
@@ -24,7 +29,7 @@ class ConfigureMulticontrastWindow(qt.QWidget):
         self.list_widget.setDragDropMode(qt.QListWidget.InternalMove)
         self.list_widget.setDefaultDropAction(qt.Qt.MoveAction)
 
-        for i, (contrast_name, is_shown_in_view) in enumerate(list(self._initial_contrasts.items())):
+        for contrast_name in row_content:
             item = qt.QListWidgetItem(contrast_name)
             item.setFlags(item.flags() | qt.Qt.ItemIsEnabled | qt.Qt.ItemIsSelectable | qt.Qt.ItemIsDragEnabled)
             self.list_widget.addItem(item)
@@ -119,6 +124,7 @@ class ConfigureMulticontrastWindow(qt.QWidget):
         #         self.current_subject_id in self.SlicerCARTWidget_instance.subject_to_all_contrasts):
         #     self.SlicerCARTWidget_instance.subject_to_all_contrasts[self.current_subject_id] = final_ordered_contrasts
         self.segmenter.loadPatient(self.contrast_order)
+        self.segmenter.contrast_order = self.contrast_order
 
         for node in self.segmenter.volumeNodes:
             Debug.print(self, "NODE NAME")
