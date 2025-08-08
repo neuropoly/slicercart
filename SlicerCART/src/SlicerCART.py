@@ -1149,7 +1149,7 @@ class SlicerCARTWidget(ScriptedLoadableModuleWidget, VTKObservationMixin):
 
         # Load in our volumes
         for casePath in self.paths_to_load:
-            node = slicer.util.loadVolume(casePath, {"show": False, "singlefile": True})
+            node = slicer.util.loadVolume(casePath, {"show": False, "singleFile": True})
 
             # Get the base filename and remove extensions to create a unique name
             base_name = os.path.basename(casePath)
