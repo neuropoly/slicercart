@@ -10,6 +10,10 @@
 from utils import *  # Import all modules, packages and global variables
 from scripts import *  # Import all classes
 
+from scripts.LayoutLogic import CaseIteratorLayoutLogic
+from scripts.ConfigureMulticontrastWindow import ConfigureMulticontrastWindow
+
+
 ###############################################################################
 
 ###############################################################################
@@ -33,7 +37,7 @@ class SlicerCART(ScriptedLoadableModule):
     def __init__(self, parent):
         """
         Initialize the SlicerCART module.
-        
+
         Args:
         parent: Parent widget for the module.
         """
@@ -53,27 +57,27 @@ class SlicerCART(ScriptedLoadableModule):
         #  online module documentation
         self.parent.helpText = """
         This is an example of scripted loadable module bundled in an extension.
-        See more information in 
+        See more information in
         <a href="https://github.com/organization/projectname
         #SEGMENTER_v2">module documentation</a>.
         """
 
         # TODO: replace with organization, grant and thanks
         self.parent.acknowledgementText = """
-        Module supported by funding from : 
-        1. Fonds de Recherche du Québec en Santé and Fondation de 
-        l’Association des Radiologistes du Québec Radiology Research funding 
+        Module supported by funding from :
+        1. Fonds de Recherche du Québec en Santé and Fondation de
+        l’Association des Radiologistes du Québec Radiology Research funding
         (299979) and Clinical Research Scholarship–Junior1 Salary Award (
         311203)
-        2. Foundation of the Radiological Society of North America - Seed 
+        2. Foundation of the Radiological Society of North America - Seed
         Grant (RSD2122)
-        3. Quebec Bio-Imaging Network, 2022 pilot project grant 
+        3. Quebec Bio-Imaging Network, 2022 pilot project grant
         (Project no 21.24)
-        4. Support professoral du Département de radiologie, radio-oncologie et 
-        médecine nucléaire de l’Université de Montréal, Radiology departement 
-        Centre Hospitalier de l’Université de Montréal (CHUM) and CHUM Research 
+        4. Support professoral du Département de radiologie, radio-oncologie et
+        médecine nucléaire de l’Université de Montréal, Radiology departement
+        Centre Hospitalier de l’Université de Montréal (CHUM) and CHUM Research
         Center (CRCHUM) start-up funds
-        Thanks to the Slicer community for the support and the development of 
+        Thanks to the Slicer community for the support and the development of
         the software.
         """
 
@@ -89,7 +93,7 @@ class SlicerCARTWidget(ScriptedLoadableModuleWidget, VTKObservationMixin):
         """
         Called when the user opens the module the first time and the widget
         is initialized.
-        
+
         Args:
         parent: Parent widget for this widget.
         """
@@ -101,6 +105,8 @@ class SlicerCARTWidget(ScriptedLoadableModuleWidget, VTKObservationMixin):
         self._updatingGUIFromParameterNode = False
         # LLG CODE BELOW
         self.predictions_names = None
+
+        self.layoutLogic = CaseIteratorLayoutLogic()
 
         # ----- ANW Addition  ----- : Initialize called var to False so the
         # timer only stops once
@@ -117,6 +123,15 @@ class SlicerCARTWidget(ScriptedLoadableModuleWidget, VTKObservationMixin):
         # Auto-Detect the Slicer theme, so specific foreground can be used
         self.theme = Theme.get_mode(self)
         self.foreground = Theme.set_foreground(self, self.theme)
+
+        # TEMP: storage of all displayed volume nodes
+        self.volumeNodes = []
+
+        # Order of contrasts loaded in the viewer
+        self.contrast_order = []
+
+        # Storage of all grouped subjects for multicontrast
+        self.subjects = {}
 
     @enter_function
     def setup(self):
@@ -183,6 +198,8 @@ class SlicerCARTWidget(ScriptedLoadableModuleWidget, VTKObservationMixin):
         self.ui.PauseTimerButton.setText('Pause')
         self.ui.SelectVolumeFolder.connect(
             'clicked(bool)', self.onSelectVolumesFolderButton)
+        self.ui.ConfigureMulticontrastButton.connect(
+          'clicked(bool)', self.onConfigureMulticontrastButton)
         self.ui.SlicerDirectoryListView.clicked.connect(
             self.getCurrentTableItem)
         self.ui.SaveSegmentationButton.connect(
@@ -240,6 +257,7 @@ class SlicerCARTWidget(ScriptedLoadableModuleWidget, VTKObservationMixin):
 
         self.ui.placeMeasurementLine.connect(
             'clicked(bool)', self.onPlacePointsAndConnect)
+        self.ui.ConfigureMulticontrastButton.setEnabled(False)
 
         self.ui.ShowSegmentVersionLegendButton.setVisible(False)
 
@@ -272,7 +290,7 @@ class SlicerCARTWidget(ScriptedLoadableModuleWidget, VTKObservationMixin):
         self.ui.pushButton_ToggleVisibility.setChecked(True)
         self.ui.pushButton_ToggleVisibility.setStyleSheet(
             f"background-color : {self.color_active}")
-        
+
         # By default, load latest masks version button appears not selected.
         self.ui.ToggleSegmentation.setStyleSheet(
             f"background-color : {self.color_inactive}")
@@ -304,7 +322,7 @@ class SlicerCARTWidget(ScriptedLoadableModuleWidget, VTKObservationMixin):
     @enter_function
     def set_classification_version_labels(self, classif_label):
         """
-        Keep the classification labels depending on the classification 
+        Keep the classification labels depending on the classification
         version to use and to save.
         """
         self.classification_version_labels = classif_label
@@ -348,7 +366,7 @@ class SlicerCARTWidget(ScriptedLoadableModuleWidget, VTKObservationMixin):
     def setup_configuration(self):
         """
         Setup_configuration.
-        
+
         Args:.
         """
         self.config_yaml = ConfigPath.open_project_config_file()
@@ -432,7 +450,7 @@ class SlicerCARTWidget(ScriptedLoadableModuleWidget, VTKObservationMixin):
     def set_keyboard_shortcuts(self):
         """
         Set_keyboard_shortcuts.
-        
+
         Args:.
         """
         # Initialize dictionaries if they don't exist yet
@@ -468,7 +486,7 @@ class SlicerCARTWidget(ScriptedLoadableModuleWidget, VTKObservationMixin):
         """
         Set labels in the UI Drop Down Menu under Segmentation according to
         configuration.
-        
+
         Args:.
         """
         self.ui.dropDownButton_label_select.clear()
@@ -530,7 +548,7 @@ class SlicerCARTWidget(ScriptedLoadableModuleWidget, VTKObservationMixin):
     def set_master_volume_intensity_mask_according_to_modality(self):
         """
         Set_master_volume_intensity_mask_according_to_modality.
-        
+
         Args:.
         """
         if ConfigPath.MODALITY == 'CT':
@@ -578,7 +596,7 @@ class SlicerCARTWidget(ScriptedLoadableModuleWidget, VTKObservationMixin):
     def setupComboboxes(self, start_row, classif_label, combobox_version=None):
         """
         SetupComboboxes.
-        
+
         Args:
         start_row: Description of start_row.
         classif_label: Description of classif_label.
@@ -628,7 +646,7 @@ class SlicerCARTWidget(ScriptedLoadableModuleWidget, VTKObservationMixin):
     def setupFreeText(self, start_row, columns_to_check=None):
         """
         SetupFreeText.
-        
+
         Args:
         start_row: Description of start_row.
         columns_to_check: Description of columns_to_check.
@@ -655,7 +673,7 @@ class SlicerCARTWidget(ScriptedLoadableModuleWidget, VTKObservationMixin):
     def connectShortcut(self, shortcutKey, button, callback):
         """
         ConnectShortcut.
-        
+
         Args:
         shortcutKey: Description of shortcutKey.
         button: Description of button.
@@ -671,7 +689,7 @@ class SlicerCARTWidget(ScriptedLoadableModuleWidget, VTKObservationMixin):
     def toggleKeyboardShortcut(self, button, callback):
         """
         ToggleKeyboardShortcut.
-        
+
         Args:
         button: Description of button.
         callback: Description of callback.
@@ -683,7 +701,7 @@ class SlicerCARTWidget(ScriptedLoadableModuleWidget, VTKObservationMixin):
     def setUpperAndLowerBoundHU(self, inputLB_HU, inputUB_HU):
         """
         SetUpperAndLowerBoundHU.
-        
+
         Args:
         inputLB_HU: Description of inputLB_HU.
         inputUB_HU: Description of inputUB_HU.
@@ -698,7 +716,7 @@ class SlicerCARTWidget(ScriptedLoadableModuleWidget, VTKObservationMixin):
     def enableSegmentAndPaintButtons(self):
         """
         EnableSegmentAndPaintButtons.
-        
+
         Args:.
         """
         self.ui.pushButton_Paint.setEnabled(True)
@@ -710,7 +728,7 @@ class SlicerCARTWidget(ScriptedLoadableModuleWidget, VTKObservationMixin):
     def disableSegmentAndPaintButtons(self):
         """
         DisableSegmentAndPaintButtons.
-        
+
         Args:.
         """
         self.ui.pushButton_Paint.setEnabled(False)
@@ -718,11 +736,56 @@ class SlicerCARTWidget(ScriptedLoadableModuleWidget, VTKObservationMixin):
         self.ui.pushButton_Erase.setEnabled(False)
         self.ui.placeMeasurementLine.setEnabled(False)
 
+    ### MULTICONTRAST ###
+    # Realistically, subject = case
+    @enter_function
+    def structureMulticontrast(self):
+        """
+        StructureVolumesFolder.
+
+        Args:
+        volumes_folder: Description of volumes_folder.
+        """
+        # If multicontrast selected, structure images by grouping them under the same subject.
+        # Assumes the worst: works by filename matching if all subjects are loaded into one volume folder.
+
+        # Also creates a dictionary mapping every subject to all the contrasts present under its folder.
+
+        from collections import defaultdict
+        import re
+        from pathlib import Path
+
+        all_files = list(Path(str(self.CurrentFolder)).rglob("*"))
+
+        # Accept any suffix after last underscore as the contrast
+        regex = r"^(.+?)_([^_]+)\.(nii|nii\.gz|nrrd)$"
+
+        self.subjects = defaultdict(dict)
+        self.subjects_to_all_contrasts = defaultdict(dict)
+
+        for f in all_files:
+            # Skip files in or under any 'derivatives' directory
+            if "derivatives" in [part.lower() for part in f.parts]:
+                continue
+
+            match = re.match(regex, f.name, re.IGNORECASE)
+            if match:
+                subject_id, contrast, ext = match.groups()
+                key = subject_id.lower()
+                contrast_name = contrast.strip('_').lower() or "unknown"
+                self.subjects[key][contrast_name] = str(f)
+                self.subjects_to_all_contrasts[key][contrast_name] = True
+
+    @enter_function
+    def onConfigureMulticontrastButton(self):
+        configureMulticontrastWindow = ConfigureMulticontrastWindow(self, self.currentCase, self.subjects_to_all_contrasts, self.contrast_order)
+        configureMulticontrastWindow.show()
+
     @enter_function
     def onSelectVolumesFolderButton(self):
         """
         OnSelectVolumesFolderButton.
-        
+
         Args:.
         """
 
@@ -757,31 +820,19 @@ class SlicerCARTWidget(ScriptedLoadableModuleWidget, VTKObservationMixin):
         if file_structure_valid == False:
             return  # don't load any patient cases
 
-        self.CasesPaths = sorted(glob(
-            f'{self.CurrentFolder}{os.sep}**{os.sep}'
-            f'{ConfigPath.INPUT_FILE_EXTENSION}',
-            recursive=True))
+        # Structure for multicontrast - This is now the default
+        self.structureMulticontrast()
 
-        # Remove the volumes in the folder 'derivatives' (creates issues for
-        # loading cases)
-        self.CasesPaths = [item for item in self.CasesPaths if 'derivatives' not
-                           in item]
+        # Rebuild CasesPaths to be the list of PRIMARY REFERENCE paths, matching the order of self.Cases
+        self.Cases = sorted(self.subjects.keys())
+        self.CasesPaths = []
+        for subject_id in self.Cases:
+            # Assuming the first contrast is the primary reference.
+            primary_contrast_key = next(iter(self.subjects[subject_id]))
+            primary_path = self.subjects[subject_id][primary_contrast_key]
+            self.CasesPaths.append(primary_path)
 
-        if not self.CasesPaths:
-            message = ('No files found in the selected directory!'
-                       f'\n\nCurrent file extension configuration: '
-                       f'{ConfigPath.INPUT_FILE_EXTENSION}'
-                       "\n\nMake sure the configured extension is "
-                       "in the right format."
-                       "\n\nFor example: check configuration_config.yml file "
-                       "in "
-                       "SlicerCART project or in output folder under _conf "
-                       "folder."
-                       "\n\nThen restart the module.")
-            Dev.show_message_box(self, message, box_title='ATTENTION!')
-            return
-
-        self.Cases = sorted([os.path.split(i)[-1] for i in self.CasesPaths])
+        self.ui.ConfigureMulticontrastButton.setEnabled(True)
 
         self.reset_ui()
 
@@ -792,14 +843,14 @@ class SlicerCARTWidget(ScriptedLoadableModuleWidget, VTKObservationMixin):
         # folder.
         if self.outputFolder != None:
             UserPath.write_in_filepath(self, self.outputFolder,
-                                       self.CurrentFolder)
+                                    self.CurrentFolder)
             self.manage_workflow_and_classification()
 
     @enter_function
     def reset_ui(self):
         """
         Reset_ui.
-        
+
         Args:.
         """
         self.ui.SlicerDirectoryListView.clear()
@@ -813,7 +864,7 @@ class SlicerCARTWidget(ScriptedLoadableModuleWidget, VTKObservationMixin):
     def update_ui(self):
         """
         Update_ui.
-        
+
         Args:.
         """
         self.updateCaseAll()
@@ -839,29 +890,16 @@ class SlicerCARTWidget(ScriptedLoadableModuleWidget, VTKObservationMixin):
         Allows to work from appropriate working list and remaining list.
         """
 
+
         self.config_yaml = ConfigPath.open_project_config_file()
         # Instantiate a WorkFiles class object to facilitate cases lists
         # management.
-        self.WorkFiles = WorkFiles(self.CurrentFolder, self.outputFolder)
+        self.WorkFiles = WorkFiles(self.CurrentFolder, self.outputFolder, self.subjects)
 
         # Set up working list appropriateness compared to volumes folder
         # selected.
-        if self.WorkFiles.check_working_list() == False:
-            print(
-                '\n\n INVALID WORKFLOW. CANNOT CONTINUE WITH CURRENT SELECTED '
-                'VOLUMES AND OUTPUT FOLDERS.\n\n')
-            # Output folder is inconsistent with Volumes Folder.
-            # We should NEVER be able to save any other segmentations.
-            message = ('The UI case list is now invalid. \n'
-                       f'In the output folder {self.outputFolder}'
-                       f'working_list and remaining_list, '
-                       'files are inconsistent and corrupted.\n\n'
-                       'Cannot continue with Slicer from now one.\n\n'
-                       'Please restart SlicerCART if you want to continue.\n\n'
-                       'Ensure you select appropriate volumes and output '
-                       'folder, and reset working_list and remaining_list.\n'
-                       '(For example, delete them).')
-            Dev.show_message_box(self, message)
+        if not self.WorkFiles.check_working_list():
+            Dev.show_message_box(self, "There is an issue with the working lists. Please check the logs.")
             return
 
         # Re-assignation of self.Cases and self.CasesPath based on working list.
@@ -894,7 +932,7 @@ class SlicerCARTWidget(ScriptedLoadableModuleWidget, VTKObservationMixin):
     def validateBIDS(self, path):
         """
         ValidateBIDS.
-        
+
         Args:
         path: Description of path.
         """
@@ -935,7 +973,7 @@ class SlicerCARTWidget(ScriptedLoadableModuleWidget, VTKObservationMixin):
     def updateCaseAll(self):
         """
         UpdateCaseAll.
-        
+
         Args:.
         """
         # All below is dependent on self.currentCase_index updates,
@@ -955,7 +993,7 @@ class SlicerCARTWidget(ScriptedLoadableModuleWidget, VTKObservationMixin):
     def update_current_segmentation_status(self):
         """
         Update_current_segmentation_status.
-        
+
         Args:.
         """
         current_color = self.ui.SlicerDirectoryListView.currentItem(
@@ -974,7 +1012,7 @@ class SlicerCARTWidget(ScriptedLoadableModuleWidget, VTKObservationMixin):
     def getCurrentTableItem(self):
         """
         GetCurrentTableItem.
-        
+
         Args:.
         """
         # ----- ANW Addition ----- : Reset timer when change case and uncheck
@@ -1008,7 +1046,7 @@ class SlicerCARTWidget(ScriptedLoadableModuleWidget, VTKObservationMixin):
     def updateCaseIndex(self, index):
         """
         UpdateCaseIndex.
-        
+
         Args:
         index: Description of index.
         """
@@ -1021,7 +1059,7 @@ class SlicerCARTWidget(ScriptedLoadableModuleWidget, VTKObservationMixin):
     def updateCurrentPatient(self):
         """
         UpdateCurrentPatient.
-        
+
         Args:.
         """
         self.updateCaseIndex(self.currentCase_index)
@@ -1030,17 +1068,52 @@ class SlicerCARTWidget(ScriptedLoadableModuleWidget, VTKObservationMixin):
     def updateCurrentPath(self):
         """
         UpdateCurrentPath.
-        
+
         Args:.
         """
         self.ui.CurrentPath.setReadOnly(True)
         self.ui.CurrentPath.setText(self.currentCasePath)
 
     @enter_function
-    def loadPatient(self):
+    def multicontrast_layout(self):
+        """
+        Builds a layout which supports multiple contrasts being displayed in parallel
+        """
+        print("Showing all volumes in multi-row layout")
+        # Default loading is Axial
+        self.sliceNodesByViewName = self.layoutLogic.viewerPerVolume(self.volumeNodes)
+
+        # Rotate each volume to its own planes - don't use volumeNodes[0] for all
+        orientations = ('Axial', 'Sagittal', 'Coronal')
+        for volumeNode in self.volumeNodes:
+            # Get slice nodes for this specific volume
+            volumeSliceNodes = []
+            for orientation in orientations:
+                viewName = volumeNode.GetName() + '-' + orientation
+                if viewName in self.sliceNodesByViewName:
+                    volumeSliceNodes.append(self.sliceNodesByViewName[viewName])
+
+            # Rotate only this volume's slice nodes to this volume's planes
+            if volumeSliceNodes:
+                self.layoutLogic.rotateToVolumePlanes(volumeNode, volumeSliceNodes)
+
+        slicer.app.processEvents()
+
+
+        # Optional
+        # slice_widgets = slicer.app.layoutManager().sliceWidgets()
+        # slicer.app.layoutManager().sliceViewAnnotationsEnabled = True
+        # for widget in slice_widgets.values():
+        #     widget.sliceController().setSliceLink(True)
+
+        # Snap all to IJK for better alignment
+        self.layoutLogic.snapToIJK()
+
+    @enter_function
+    def loadPatient(self, contrast_order=None):
         """
         LoadPatient.
-        
+
         Args:.
         """
         timer_index = 0
@@ -1055,29 +1128,62 @@ class SlicerCARTWidget(ScriptedLoadableModuleWidget, VTKObservationMixin):
         # timer reset if we come back to same case
         self.called = False
 
-        slicer.mrmlScene.Clear()
-        slicer.util.loadVolume(self.currentCasePath)
-        self.VolumeNode = \
-            slicer.util.getNodesByClass('vtkMRMLScalarVolumeNode')[0]
-        self.updateCaseAll()
-        # Adjust windowing (no need to use self. since this is used locally)
-        Vol_displayNode = self.VolumeNode.GetDisplayNode()
-        # print('self volumenode get display node',
-        # self.VolumeNode.GetDisplayNode())
-        # print(' node', self.VolumeNode)
+        current_subject_id = self.Cases[self.currentCase_index]
 
-        Vol_displayNode.AutoWindowLevelOff()
-        if ConfigPath.MODALITY == 'CT':
-            Debug.print(self, 'MODALITY==CT')
-            Vol_displayNode.SetWindow(ConfigPath.CT_WINDOW_WIDTH)
-            Vol_displayNode.SetLevel(ConfigPath.CT_WINDOW_LEVEL)
-        Vol_displayNode.SetInterpolate(ConfigPath.INTERPOLATE_VALUE)
+        if not contrast_order:
+            contrast_order = self.subjects[current_subject_id].keys()
+
+        Debug.print(self, "CONTRAST ORDER: " + str(contrast_order))
+
+        self.paths_to_load = []
+        for contrast in contrast_order:
+            if contrast in self.subjects[current_subject_id] and self.subjects_to_all_contrasts[current_subject_id][contrast]:
+                path = self.subjects[current_subject_id][contrast]
+                self.paths_to_load.append(path)
+
+        Debug.print(self, "PATHS TO LOAD: " + str(self.paths_to_load))
+
+        # Reset our state
+        slicer.mrmlScene.Clear()
+        self.volumeNodes.clear()
+
+        # Load in our volumes
+        for casePath in self.paths_to_load:
+            node = slicer.util.loadVolume(casePath, {"show": False, "singleFile": True})
+
+            # Get the base filename and remove extensions to create a unique name
+            base_name = os.path.basename(casePath)
+            node_name = base_name
+            if node_name.endswith('.nii.gz'):
+                node_name = node_name[:-7]
+            elif node_name.endswith(('.nii')):
+                node_name = node_name[:-4]
+            elif node_name.endswith(('.nrrd')):
+                node_name = node_name[:-5]
+
+            # Explicitly set the unique name for the loaded node
+            node.SetName(node_name)
+
+            self.volumeNodes.append(node)
+
+        # Set our "reference" volume to be the first in the list
+        self.VolumeNode = self.volumeNodes[0]
+        # Assume the first path is also what is needed
+        self.currentCasePath = self.paths_to_load[0]
+
+        # Create a blank segmentation
+        # KO: This MUST be done before we update our layout; otherwise Slicer sets all
+        #  viewers in our layout to point to the same volume, rather than one-each like
+        #  we desire.
         self.newSegmentation()
+
+        # Load all paths in current subject into multicontrast view
+        self.multicontrast_layout()
 
         self.updateCurrentOutputPathAndCurrentVolumeFilename()
 
         # If Load latest masks is checked, will load the latest version if
-        # avaialable when loading a new patient
+        # available when loading a new patient
         if self.ui.ToggleSegmentation.isChecked():
             self.toggle_segmentation_masks()
 
@@ -1085,7 +1191,7 @@ class SlicerCARTWidget(ScriptedLoadableModuleWidget, VTKObservationMixin):
     def updateCurrentOutputPathAndCurrentVolumeFilename(self):
         """
         UpdateCurrentOutputPathAndCurrentVolumeFilename.
-        
+
         Args:.
         """
         if (self.currentCasePath == None
@@ -1112,7 +1218,7 @@ class SlicerCARTWidget(ScriptedLoadableModuleWidget, VTKObservationMixin):
     def segmentationNodeName(self):
         """
         SegmentationNodeName.
-        
+
         Args:.
         """
         return (f"{os.path.split(self.currentCasePath)[1].split('.')[0]}"
@@ -1122,7 +1228,7 @@ class SlicerCARTWidget(ScriptedLoadableModuleWidget, VTKObservationMixin):
     def newSegments(self):
         """
         NewSegments.
-        
+
         Args:.
         """
         pass
@@ -1131,7 +1237,7 @@ class SlicerCARTWidget(ScriptedLoadableModuleWidget, VTKObservationMixin):
     def onPushButton_NewMask(self):
         """
         OnPushButton_NewMask.
-        
+
         Args:.
         """
         self.newSegments()
@@ -1140,7 +1246,7 @@ class SlicerCARTWidget(ScriptedLoadableModuleWidget, VTKObservationMixin):
     def on_annotator_name_changed(self):
         """
         On_annotator_name_changed.
-        
+
         Args:.
         """
         # self.update_case_list_colors()
@@ -1152,7 +1258,7 @@ class SlicerCARTWidget(ScriptedLoadableModuleWidget, VTKObservationMixin):
     def onPushButton_Interpolate(self):
         """
         OnPushButton_Interpolate.
-        
+
         Args:.
         """
 
@@ -1181,7 +1287,7 @@ class SlicerCARTWidget(ScriptedLoadableModuleWidget, VTKObservationMixin):
     def onPreviousButton(self):
         """
         OnPreviousButton.
-        
+
         Args:.
         """
         # ----- ANW Addition ----- : Reset timer when change case and uncheck
@@ -1198,7 +1304,7 @@ class SlicerCARTWidget(ScriptedLoadableModuleWidget, VTKObservationMixin):
     def onNextButton(self):
         """
         OnNextButton.
-        
+
         Args:.
         """
         # ----- ANW Addition ----- : Reset timer when change case and uncheck
@@ -1221,11 +1327,12 @@ class SlicerCARTWidget(ScriptedLoadableModuleWidget, VTKObservationMixin):
         self.set_classification_version_labels(None)
         self.set_classification_config_ui()
 
+
     @enter_function
     def newSegmentation(self):
         """
         NewSegmentation.
-        
+
         Args:.
         """
         # Create segment editor widget and node
@@ -1273,7 +1380,7 @@ class SlicerCARTWidget(ScriptedLoadableModuleWidget, VTKObservationMixin):
     def createNewSegments(self):
         """
         CreateNewSegments.
-        
+
         Args:.
         """
         for label in self.config_yaml["labels"]:
@@ -1293,7 +1400,7 @@ class SlicerCARTWidget(ScriptedLoadableModuleWidget, VTKObservationMixin):
     def newSegment(self, segment_name=None):
         """
         NewSegment.
-        
+
         Args:
         segment_name: Description of segment_name.
         """
@@ -1343,7 +1450,7 @@ class SlicerCARTWidget(ScriptedLoadableModuleWidget, VTKObservationMixin):
                        label_color_b, label_LB_HU, label_UB_HU):
         """
         OnNewLabelSegm.
-        
+
         Args:
         label_name: Description of label_name.
         label_color_r: Description of label_color_r.
@@ -1395,7 +1502,7 @@ class SlicerCARTWidget(ScriptedLoadableModuleWidget, VTKObservationMixin):
     def onPushButton_select_label(self, segment_name, label_LB_HU, label_UB_HU):
         """
         OnPushButton_select_label.
-        
+
         Args:
         segment_name: Description of segment_name.
         label_LB_HU: Description of label_LB_HU.
@@ -1421,7 +1528,7 @@ class SlicerCARTWidget(ScriptedLoadableModuleWidget, VTKObservationMixin):
     def startTimer(self):
         """
         StartTimer.
-        
+
         Args:.
         """
         with TIMER_MUTEX:
@@ -1447,14 +1554,14 @@ class SlicerCARTWidget(ScriptedLoadableModuleWidget, VTKObservationMixin):
     def updatelcdNumber(self):
         """
         UpdatelcdNumber.
-        
+
         Args:.
         """
         # Get the time
         with TIMER_MUTEX:
             if self.flag2:  # add flag to avoid counting time when user
                 # clicks on save segm button
-                # the timer sends a signal every second (1000 ms). 
+                # the timer sends a signal every second (1000 ms).
                 self.counter += 1  # the self.timer.timeout.connect(
             # self.updatelcdNumber) function is called every second and
             # updates the counter
@@ -1465,7 +1572,7 @@ class SlicerCARTWidget(ScriptedLoadableModuleWidget, VTKObservationMixin):
     def stopTimer(self):
         """
         StopTimer.
-        
+
         Args:.
         """
         with TIMER_MUTEX:
@@ -1489,7 +1596,7 @@ class SlicerCARTWidget(ScriptedLoadableModuleWidget, VTKObservationMixin):
     def resetTimer(self):
         """
         ResetTimer.
-        
+
         Args:.
         """
         with TIMER_MUTEX:
@@ -1515,7 +1622,7 @@ class SlicerCARTWidget(ScriptedLoadableModuleWidget, VTKObservationMixin):
     def enableStartTimerButton(self):
         """
         EnableStartTimerButton.
-        
+
         Args:.
         """
         self.ui.StartTimerButton.setEnabled(True)
@@ -1527,7 +1634,7 @@ class SlicerCARTWidget(ScriptedLoadableModuleWidget, VTKObservationMixin):
     def disablePauseTimerButton(self):
         """
         DisablePauseTimerButton.
-        
+
         Args:.
         """
         self.ui.PauseTimerButton.setStyleSheet("background-color : silver")
@@ -1537,7 +1644,7 @@ class SlicerCARTWidget(ScriptedLoadableModuleWidget, VTKObservationMixin):
     def toggleStartTimerButton(self):
         """
         ToggleStartTimerButton.
-        
+
         Args:.
         """
         # allow users to start the timer by clicking on any of the
@@ -1561,7 +1668,7 @@ class SlicerCARTWidget(ScriptedLoadableModuleWidget, VTKObservationMixin):
     def togglePauseTimerButton(self):
         """
         TogglePauseTimerButton.
-        
+
         Args:.
         """
         # if button is checked - Time paused
@@ -1597,7 +1704,7 @@ class SlicerCARTWidget(ScriptedLoadableModuleWidget, VTKObservationMixin):
     def timer_router(self):
         """
         Timer_router.
-        
+
         Args:.
         """
         self.timers[self.current_label_index].start()
@@ -1613,9 +1720,16 @@ class SlicerCARTWidget(ScriptedLoadableModuleWidget, VTKObservationMixin):
     def createFolders(self):
         """
         CreateFolders.
-        
+
         Args:.
         """
+
+        Debug.print(self, "_________________________________")
+        Debug.print(self, self.currentOutputPath)
+        Debug.print(self, self.outputFolder)
+        Debug.print(self, self.currentCasePath)
+        Debug.print(self, "_________________________________")
+
         self.revision_step = self.ui.RevisionStep.currentText
         if len(self.revision_step) != 0:
             if os.path.exists(self.outputFolder) == False:
@@ -1640,7 +1754,7 @@ class SlicerCARTWidget(ScriptedLoadableModuleWidget, VTKObservationMixin):
     def startTimerForActions(self):
         """
         StartTimerForActions.
-        
+
         Args:.
         """
         with TIMER_MUTEX:
@@ -1654,7 +1768,7 @@ class SlicerCARTWidget(ScriptedLoadableModuleWidget, VTKObservationMixin):
     def resetClassificationInformation(self):
         """
         ResetClassificationInformation.
-        
+
         Args:.
         """
         # Try/Except to prevent crashing when selecting another file in the
@@ -1782,6 +1896,7 @@ class SlicerCARTWidget(ScriptedLoadableModuleWidget, VTKObservationMixin):
         # not defined so it should return none (and not fail).
 
         if classif_label != None:
+
 
             try:
                 self.outputClassificationInformationFile = (
@@ -2025,7 +2140,7 @@ class SlicerCARTWidget(ScriptedLoadableModuleWidget, VTKObservationMixin):
     def onSaveSegmentationButton(self):
         """
         OnSaveSegmentationButton.
-        
+
         Args:.
         """
         # By default creates a new folder in the volume directory
@@ -2092,13 +2207,13 @@ class SlicerCARTWidget(ScriptedLoadableModuleWidget, VTKObservationMixin):
         # One segment has been saved, which allows to load the next case from
         # now.
         self.saved_selected = True
-        self.select_next_remaining_case()
+        #self.select_next_remaining_case()
 
     @enter_function
     def select_next_remaining_case(self):
         """
         Select_next_remaining_case.
-        
+
         Args:.
         """
         Debug.print(self, f'self.currentCase_index: {self.currentCase_index}')
@@ -2176,7 +2291,7 @@ class SlicerCARTWidget(ScriptedLoadableModuleWidget, VTKObservationMixin):
     def qualityControlOfLabels(self):
         """
         QualityControlOfLabels.
-        
+
         Args:.
         """
         is_valid = True
@@ -2239,7 +2354,7 @@ class SlicerCARTWidget(ScriptedLoadableModuleWidget, VTKObservationMixin):
         self.outputSegmFile = os.path.join(
             self.currentOutputPath,
             "{}_{}.seg.nrrd".format(
-                self.currentVolumeFilename, currentSegmentationVersion))
+                self.currentCase, currentSegmentationVersion))
         if not os.path.isfile(self.outputSegmFile):
             slicer.util.saveNode(self.segmentationNode, self.outputSegmFile)
         else:
@@ -2275,7 +2390,7 @@ class SlicerCARTWidget(ScriptedLoadableModuleWidget, VTKObservationMixin):
         # Save to final path
         self.outputSegmFileNifti = os.path.join(
             self.currentOutputPath,
-            f"{self.currentVolumeFilename}_{currentSegmentationVersion}.nii.gz"
+            f"{self.currentCase}_{currentSegmentationVersion}.nii.gz"
         )
         if ConfigPath.SAVE_UINT8:
             Debug.print(self, "Save segmentation to UINT8.")
@@ -2312,7 +2427,7 @@ class SlicerCARTWidget(ScriptedLoadableModuleWidget, VTKObservationMixin):
     def saveSegmentationInformation(self, currentSegmentationVersion):
         """
         SaveSegmentationInformation.
-        
+
         Args:
         currentSegmentationVersion: Description of currentSegmentationVersion.
         """
@@ -2329,7 +2444,11 @@ class SlicerCARTWidget(ScriptedLoadableModuleWidget, VTKObservationMixin):
             tag_str += (f",{line_key} ControlPoint1,{line_key} ControlPoint2,"
                         f"{line_key} Length")
 
-        data_str = self.currentCase
+
+        # data_str = self.currentCase
+
+        # Usage of folder name
+        data_str = os.path.basename(self.currentCasePath)
         data_str += "," + currentSegmentationVersion
         data_str += "," + self.annotator_name
         data_str += "," + self.annotator_degree
@@ -2395,7 +2514,7 @@ class SlicerCARTWidget(ScriptedLoadableModuleWidget, VTKObservationMixin):
     def getClassificationInformationVersion(self):
         """
         GetClassificationInformationVersion.
-        
+
         Args:.
         """
         version = "v"
@@ -2422,7 +2541,7 @@ class SlicerCARTWidget(ScriptedLoadableModuleWidget, VTKObservationMixin):
     def getCurrentSegmentationVersion(self):
         """
         GetCurrentSegmentationVersion.
-        
+
         Args:.
         """
         # Adjust the version according to each individual file.
@@ -2447,7 +2566,7 @@ class SlicerCARTWidget(ScriptedLoadableModuleWidget, VTKObservationMixin):
     def msg2_clicked(self, msg2_button):
         """
         Msg2_clicked.
-        
+
         Args:
         msg2_button: Description of msg2_button.
         """
@@ -2460,7 +2579,7 @@ class SlicerCARTWidget(ScriptedLoadableModuleWidget, VTKObservationMixin):
     def msg3_clicked(self, msg3_button):
         """
         Msg3_clicked.
-        
+
         Args:
         msg3_button: Description of msg3_button.
         """
@@ -2474,7 +2593,7 @@ class SlicerCARTWidget(ScriptedLoadableModuleWidget, VTKObservationMixin):
     def msg4_clicked(self, msg4_button):
         """
         Msg4_clicked.
-        
+
         Args:
         msg4_button: Description of msg4_button.
         """
@@ -2487,7 +2606,7 @@ class SlicerCARTWidget(ScriptedLoadableModuleWidget, VTKObservationMixin):
     def check_volume_folder_selected(self):
         """
         Check_volume_folder_selected.
-        
+
         Args:.
         """
         Debug.print(self, f'self.Currentfolder: {self.CurrentFolder}')
@@ -2499,7 +2618,7 @@ class SlicerCARTWidget(ScriptedLoadableModuleWidget, VTKObservationMixin):
     def onSelectOutputFolder(self):
         """
         OnSelectOutputFolder.
-        
+
         Args:.
         """
 
@@ -2530,18 +2649,16 @@ class SlicerCARTWidget(ScriptedLoadableModuleWidget, VTKObservationMixin):
         # Save the associated volume_folder_path with the output_folder
         # selected.
         UserPath.write_in_filepath(self, self.outputFolder, self.CurrentFolder)
-
-        self.manage_workflow_and_classification()
-
+        # self.manage_workflow_and_classification() # Bypassed
+        print("Bypassing manage_workflow_and_classification.")
         ConfigPath.write_config_file()
-
-        self.set_ui_enabled_options()
+        self.set_ui_enabled_options() # Still need to enable the save buttons, etc.
 
     @enter_function
     def manage_workflow_and_classification(self):
         """
         Manage_workflow_and_classification.
-        
+
         Args:.
         """
         # Update classification labels (part 1 of 2)
@@ -2564,7 +2681,7 @@ class SlicerCARTWidget(ScriptedLoadableModuleWidget, VTKObservationMixin):
     def set_ui_enabled_options(self):
         """
         Set_ui_enabled_options.
-        
+
         Args:.
         """
         if self.outputFolder is not None:
@@ -2577,7 +2694,7 @@ class SlicerCARTWidget(ScriptedLoadableModuleWidget, VTKObservationMixin):
             if self.CurrentFolder is not None:
                 self.updateCurrentOutputPathAndCurrentVolumeFilename()
 
-                # self.update_case_list_colors()
+                self.update_case_list_colors()
 
                 self.ui.SlicerDirectoryListView.setCurrentItem(
                     self.ui.SlicerDirectoryListView.item(
@@ -2599,19 +2716,26 @@ class SlicerCARTWidget(ScriptedLoadableModuleWidget, VTKObservationMixin):
     def update_case_list_colors(self):
         """
         Update_case_list_colors.
-        
+
         Args:.
         """
         if self.outputFolder is None or self.CurrentFolder is None:
             return
 
         self.ui.SlicerDirectoryListView.clear()
-        for case in self.Cases:
-            case_id = case.split('.')[0]
-            item = qt.QListWidgetItem(case_id)
+        for i, case_subject_id in enumerate(self.Cases): # 'case' is now a subject ID
+            item = qt.QListWidgetItem(case_subject_id)
+
+            ### START of NEW FIX ###
+            primary_ref_path = self.CasesPaths[i] # Use the synchronized list
+            primary_ref_filename = os.path.basename(primary_ref_path)
+            primary_ref_filename_no_ext = primary_ref_filename.split('.')[0]
+
             segmentation_information_path = (f'{self.currentOutputPath}{os.sep}'
-                                             f'{case_id}'
-                                             f'_SegmentationInformation.csv')
+                                            f'{primary_ref_filename_no_ext}'
+                                            f'_SegmentationInformation.csv')
+            ### END of NEW FIX ###
+
             segmentation_information_df = None
             if os.path.exists(segmentation_information_path):
                 segmentation_information_df = pd.read_csv(
@@ -2633,7 +2757,7 @@ class SlicerCARTWidget(ScriptedLoadableModuleWidget, VTKObservationMixin):
     def get_segmentation_status(self, case, segmentation_information_df):
         """
         Get_segmentation_status.
-        
+
         Args:
         case: Description of case.
         segmentation_information_df: Description of segmentation_information_df.
@@ -2681,7 +2805,7 @@ class SlicerCARTWidget(ScriptedLoadableModuleWidget, VTKObservationMixin):
     def onLoadClassification(self):
         """
         OnLoadClassification.
-        
+
         Args:.
         """
         classificationInformationPath = (f'{self.currentOutputPath}{os.sep}'
@@ -2712,7 +2836,7 @@ class SlicerCARTWidget(ScriptedLoadableModuleWidget, VTKObservationMixin):
     def onSaveClassificationButton(self):
         """
         OnSaveClassificationButton.
-        
+
         Args:.
         """
         self.annotator_name = self.ui.Annotator_name.text
@@ -2751,7 +2875,7 @@ class SlicerCARTWidget(ScriptedLoadableModuleWidget, VTKObservationMixin):
     def onCompareSegmentVersions(self):
         """
         OnCompareSegmentVersions.
-        
+
         Args:.
         """
         if 'Clear' in self.ui.CompareSegmentVersions.text:
@@ -2768,7 +2892,7 @@ class SlicerCARTWidget(ScriptedLoadableModuleWidget, VTKObservationMixin):
             self, msg_warnig_delete_segm_node_button):
         """
         OnCompareSegmentVersionsWillEraseCurrentSegmentsWarningClicked.
-        
+
         Args:
         msg_warnig_delete_segm_node_button: Description of msg_warnig_delete_segm_node_button.
         """
@@ -2785,7 +2909,7 @@ class SlicerCARTWidget(ScriptedLoadableModuleWidget, VTKObservationMixin):
     def warnAgainstDeletingCurrentSegmentation(self):
         """
         WarnAgainstDeletingCurrentSegmentation.
-        
+
         Args:.
         """
         msg_warnig_delete_segm_node = qt.QMessageBox()
@@ -2803,7 +2927,7 @@ class SlicerCARTWidget(ScriptedLoadableModuleWidget, VTKObservationMixin):
     def onLoadSegmentation(self):
         """
         OnLoadSegmentation.
-        
+
         Args:.
         """
         msg_warnig_delete_segm_node = (
@@ -2818,7 +2942,7 @@ class SlicerCARTWidget(ScriptedLoadableModuleWidget, VTKObservationMixin):
             self, msg_warnig_delete_segm_node_button):
         """
         OnLoadSegmentationWillEraseCurrentSegmentsWarningClicked.
-        
+
         Args:
         msg_warnig_delete_segm_node_button: Description of msg_warnig_delete_segm_node_button.
         """
@@ -2931,7 +3055,7 @@ class SlicerCARTWidget(ScriptedLoadableModuleWidget, VTKObservationMixin):
     def openLoadSegmentationWindow(self):
         """
         OpenLoadSegmentationWindow.
-        
+
         Args:.
         """
         segmentationInformationPath = (f'{self.currentOutputPath}{os.sep}'
@@ -2962,7 +3086,7 @@ class SlicerCARTWidget(ScriptedLoadableModuleWidget, VTKObservationMixin):
     def openCompareSegmentVersionsWindow(self):
         """
         OpenCompareSegmentVersionsWindow.
-        
+
         Args:.
         """
         segmentationInformationPath = (f'{self.currentOutputPath}{os.sep}'
@@ -2995,7 +3119,7 @@ class SlicerCARTWidget(ScriptedLoadableModuleWidget, VTKObservationMixin):
                                selected_version_file_paths):
         """
         CompareSegmentVersions.
-        
+
         Args:
         selected_label: Description of selected_label.
         selected_version_file_paths: Description of selected_version_file_paths.
@@ -3098,7 +3222,7 @@ class SlicerCARTWidget(ScriptedLoadableModuleWidget, VTKObservationMixin):
     def onClearCompareSegmentVersions(self):
         """
         OnClearCompareSegmentVersions.
-        
+
         Args:.
         """
         self.loadPatient()
@@ -3118,7 +3242,7 @@ class SlicerCARTWidget(ScriptedLoadableModuleWidget, VTKObservationMixin):
     def loadSegmentation(self, absolute_path_to_segmentation_file):
         """
         LoadSegmentation.
-        
+
         Args:
         absolute_path_to_segmentation_file: Description of absolute_path_to_segmentation_file.
         """
@@ -3126,8 +3250,8 @@ class SlicerCARTWidget(ScriptedLoadableModuleWidget, VTKObservationMixin):
             slicer.util.loadSegmentation(absolute_path_to_segmentation_file)
             self.segmentationNode = \
                 slicer.util.getNodesByClass('vtkMRMLSegmentationNode')[0]
-                
-                
+
+
         elif 'nii' in ConfigPath.INPUT_FILE_EXTENSION:
             labelmapVolumeNode = slicer.util.loadLabelVolume(
                 absolute_path_to_segmentation_file)
@@ -3318,7 +3442,7 @@ class SlicerCARTWidget(ScriptedLoadableModuleWidget, VTKObservationMixin):
     def onPushDefaultMin(self):
         """
         OnPushDefaultMin.
-        
+
         Args:.
         """
         fresh_config = ConfigPath.open_project_config_file()
@@ -3336,7 +3460,7 @@ class SlicerCARTWidget(ScriptedLoadableModuleWidget, VTKObservationMixin):
     def onPushDefaultMax(self):
         """
         OnPushDefaultMax.
-        
+
         Args:.
         """
         fresh_config = ConfigPath.open_project_config_file()
@@ -3353,7 +3477,7 @@ class SlicerCARTWidget(ScriptedLoadableModuleWidget, VTKObservationMixin):
     def onPush_ShowSegmentVersionLegendButton(self):
         """
         OnPush_ShowSegmentVersionLegendButton.
-        
+
         Args:.
         """
         segmentationInformationPath = (f'{self.currentOutputPath}{os.sep}'
@@ -3383,7 +3507,7 @@ class SlicerCARTWidget(ScriptedLoadableModuleWidget, VTKObservationMixin):
     def onPushButton_undo(self):
         """
         OnPushButton_undo.
-        
+
         Args:.
         """
         if self.previousAction == 'segmentation':
@@ -3427,7 +3551,7 @@ class SlicerCARTWidget(ScriptedLoadableModuleWidget, VTKObservationMixin):
     def onDropDownButton_label_select(self, value):
         """
         OnDropDownButton_label_select.
-        
+
         Args:
         value: Description of value.
         """
@@ -3450,7 +3574,7 @@ class SlicerCARTWidget(ScriptedLoadableModuleWidget, VTKObservationMixin):
     def onPushLassoPaint(self):
         """
         OnPushLassoPaint.
-        
+
         Args:.
         """
         self.startTimerForActions()
@@ -3467,7 +3591,7 @@ class SlicerCARTWidget(ScriptedLoadableModuleWidget, VTKObservationMixin):
     def onPushButton_Paint(self):
         """
         OnPushButton_Paint.
-        
+
         Args:.
         """
         self.startTimerForActions()
@@ -3498,9 +3622,18 @@ class SlicerCARTWidget(ScriptedLoadableModuleWidget, VTKObservationMixin):
     def ensure_active_segment_is_selected(self):
         """
         Ensure_active_segment_is_selected.
-        
+
         Args:.
         """
+        # Add a safety check to reload the config if it's in an invalid state.
+        if "labels" not in self.config_yaml or not self.config_yaml["labels"]:
+            Debug.print(self, "Configuration is missing 'labels'. Reloading from file.")
+            self.config_yaml = ConfigPath.open_project_config_file()
+            # If it's still missing, we have a bigger problem, but this should fix most cases.
+            if "labels" not in self.config_yaml:
+                Dev.show_message_box(self, "Critical Error: 'labels' key missing from configuration file. Cannot perform segmentation.", box_title="Config Error")
+                return
+
         # Make sure a valid segment is selected
         selected_segment_id = self.segmentationNode.GetSegmentation(
 
@@ -3514,7 +3647,7 @@ class SlicerCARTWidget(ScriptedLoadableModuleWidget, VTKObservationMixin):
     def toggleFillButton(self):
         """
         ToggleFillButton.
-        
+
         Args:.
         """
         self.startTimerForActions()
@@ -3560,7 +3693,7 @@ class SlicerCARTWidget(ScriptedLoadableModuleWidget, VTKObservationMixin):
     def togglePaintMask(self):
         """
         TogglePaintMask.
-        
+
         Args:.
         """
         if self.ui.pushButton_TogglePaintMask.isChecked():
@@ -3575,7 +3708,7 @@ class SlicerCARTWidget(ScriptedLoadableModuleWidget, VTKObservationMixin):
     def onPushButton_segmeditor(self):
         """
         OnPushButton_segmeditor.
-        
+
         Args:.
         """
         self.startTimerForActions()
@@ -3586,7 +3719,7 @@ class SlicerCARTWidget(ScriptedLoadableModuleWidget, VTKObservationMixin):
     def onPushButton_Erase(self):
         """
         OnPushButton_Erase.
-        
+
         Args:.
         """
         self.startTimerForActions()
@@ -3609,7 +3742,7 @@ class SlicerCARTWidget(ScriptedLoadableModuleWidget, VTKObservationMixin):
     def onPushButton_Smooth(self):
         """
         OnPushButton_Smooth.
-        
+
         Args:.
         """
         # pass
@@ -3630,7 +3763,7 @@ class SlicerCARTWidget(ScriptedLoadableModuleWidget, VTKObservationMixin):
     def onPlacePointsAndConnect(self):
         """
         OnPlacePointsAndConnect.
-        
+
         Args:.
         """
         self.startTimerForActions()
@@ -3657,7 +3790,7 @@ class SlicerCARTWidget(ScriptedLoadableModuleWidget, VTKObservationMixin):
     def onLinePlaced(self, caller, event):
         """
         OnLinePlaced.
-        
+
         Args:
         caller: Description of caller.
         event: Description of event.
@@ -3685,7 +3818,7 @@ class SlicerCARTWidget(ScriptedLoadableModuleWidget, VTKObservationMixin):
     def onPushButton_Small_holes(self):
         """
         OnPushButton_Small_holes.
-        
+
         Args:.
         """
         # pass
@@ -3704,7 +3837,7 @@ class SlicerCARTWidget(ScriptedLoadableModuleWidget, VTKObservationMixin):
     def onLB_HU(self):
         """
         OnLB_HU.
-        
+
         Args:.
         """
         try:
@@ -3722,7 +3855,7 @@ class SlicerCARTWidget(ScriptedLoadableModuleWidget, VTKObservationMixin):
     def onUB_HU(self):
         """
         OnUB_HU.
-        
+
         Args:.
         """
         try:

@@ -670,7 +670,6 @@ class SlicerCARTConfigurationSetupWindow(qt.QWidget):
         else:
             self.keep_working_list_selected = False
 
-
     @enter_function
     def update_initial_view(self):
         """
@@ -1731,7 +1730,7 @@ class ConfigureClassificationWindow(qt.QWidget):
         super(ConfigureClassificationWindow, self).__init__(parent)
 
         self.segmenter = segmenter
-        
+
         if classification_config_yaml is None:
             self.config_yaml = ConfigPath.open_project_config_file()
         else:

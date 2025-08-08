@@ -352,35 +352,35 @@
         </item>
         <item>
          <layout class="QHBoxLayout" name="horizontalLayout_2">
-         <item>
-           <widget class="QPushButton" name="pushButton_Interpolate">
-            <property name="text">
-             <string>Interpolate</string>
-            </property>
-           </widget>
+          <item>
+            <widget class="QPushButton" name="pushButton_Interpolate">
+              <property name="text">
+              <string>Interpolate</string>
+              </property>
+            </widget>
           </item>
           <item>
-           <widget class="QPushButton" name="Previous">
-            <property name="text">
-             <string>&lt;&lt;  Previous</string>
-            </property>
-           </widget>
+            <widget class="QPushButton" name="Previous">
+              <property name="text">
+              <string>&lt;&lt;  Previous</string>
+              </property>
+            </widget>
           </item>
           <item>
-           <widget class="QPushButton" name="Next">
-            <property name="text">
-             <string>Next  &gt;&gt;</string>
-            </property>
-           </widget>
-          </item>
+            <widget class="QPushButton" name="Next">
+              <property name="text">
+              <string>Next  &gt;&gt;</string>
+              </property>
+            </widget>
+            </item>
           <item>
-           <widget class="QLabel" name="FileIndex">
-            <property name="text">
-             <string/>
-            </property>
-           </widget>
+            <widget class="QLabel" name="FileIndex">
+              <property name="text">
+              <string/>
+              </property>
+            </widget>
           </item>
-         </layout>
+        </layout>
         </item>
         <item>
          <widget class="QLineEdit" name="CurrentPath">
@@ -390,19 +390,30 @@
          </widget>
         </item>
         <item>
-         <widget class="QLabel" name="CurrentStatus">
-          <property name="text">
-           <string>Segmentation Status : ...</string>
-          </property>
-         </widget>
+        <layout class="QHBoxLayout" name="horizontalLayout_2">
+            <item>
+              <widget class="QLabel" name="CurrentStatus">
+                <property name="text">
+                <string>Segmentation Status : ...</string>
+                </property>
+              </widget>
+            </item>
+            <item>
+              <widget class="QPushButton" name="ConfigureMulticontrastButton">
+                <property name="text">
+                <string>Select contrasts to display</string>
+                </property>
+              </widget>
+            </item>
+        </layout>
         </item>
-        <item>
-         <widget class="QPushButton" name="SelectOutputFolder">
-          <property name="text">
-           <string>Select output folder</string>
-          </property>
-         </widget>
-        </item>
+          <item>
+          <widget class="QPushButton" name="SelectOutputFolder">
+            <property name="text">
+            <string>Select output folder</string>
+            </property>
+          </widget>
+          </item>
        </layout>
       </item>
       <item row="1" column="0" colspan="2">
